@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Check,
   Zap,
+  Info,
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
@@ -27,6 +28,7 @@ import StockDetail from '@/components/StockDetail';
 import AINewsFeed from '@/components/AINewsFeed';
 import PortfolioTracker from '@/components/PortfolioTracker';
 import AIChatbot from '@/components/AIChatbot';
+import AboutUs from '@/components/AboutUs';
 
 // ─── Reusable dark input style ─────────────────────────
 const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none text-text-primary placeholder:text-text-secondary transition-all";
@@ -74,6 +76,7 @@ export default function Page() {
       case 'portfolio': return <PortfolioTracker />;
       case 'profile':   return renderProfileView();
       case 'stock-detail': return <StockDetail />;
+      case 'about':     return <AboutUs />;
       default:          return renderHomeView();
     }
   };
@@ -769,6 +772,10 @@ export default function Page() {
       label: 'Portfolio',
       // Future: children: [{ label: 'Holdings', id: 'portfolio' }, { label: 'Performance', id: 'performance' }]
     },
+    {
+      id: 'about',
+      label: 'About us',
+    },
   ] as const;
 
   // Mobile bottom bar keeps icons for quick recognition at small sizes
@@ -777,6 +784,7 @@ export default function Page() {
     { id: 'markets' as const,   label: 'Markets',   icon: BarChart2 },
     { id: 'news' as const,      label: 'News',      icon: Newspaper, badge: true },
     { id: 'portfolio' as const, label: 'Portfolio', icon: Briefcase },
+    { id: 'about' as const,     label: 'About',     icon: Info },
     { id: 'profile' as const,   label: 'Profile',   icon: User },
   ];
 
@@ -812,7 +820,7 @@ export default function Page() {
               return (
                 <div key={item.id} className="relative group">
                   <button
-                    onClick={() => setView(item.id as 'home' | 'markets' | 'news' | 'portfolio')}
+                    onClick={() => setView(item.id as 'home' | 'markets' | 'news' | 'portfolio' | 'about')}
                     className="relative flex items-center gap-1.5 px-4 py-1 text-sm font-semibold transition-colors duration-200 focus:outline-none whitespace-nowrap"
                     style={{
                       color: isActive ? '#6366F1' : 'rgba(255,255,255,0.55)',

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { getConceptExplanation } from './mockData';
 
 export interface PortfolioHolding {
@@ -24,8 +25,8 @@ export interface UserProfile {
 
 export interface AppState {
   // Navigation & View Flow
-  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail';
-  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile';
+  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about';
+  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about';
   selectedTicker: string;
   
   // User Authentication & Onboarding
@@ -45,7 +46,7 @@ export interface AppState {
   isChatTyping: boolean;
 
   // Actions
-  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail') => void;
+  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about') => void;
   setSelectedTicker: (ticker: string) => void;
   loginUser: (name: string, email: string) => void;
   setOnboarding: (data: Partial<UserProfile>) => void;
@@ -61,7 +62,9 @@ export interface AppState {
   clearChat: () => void;
 }
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>()(
+  persist(
+    (set, get) => ({
   currentView: 'landing',
   previousView: 'landing',
   selectedTicker: 'DANGCEM',
@@ -233,4 +236,19 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
     ]
   }))
-}));
+  }),
+  {
+    name: 'sabitrade-session',
+    // Only persist the essential session state — not transient UI or chat history
+    partialize: (state) => ({
+      currentView: state.currentView,
+      previousView: state.previousView,
+      selectedTicker: state.selectedTicker,
+      user: state.user,
+      watchlist: state.watchlist,
+      portfolio: state.portfolio,
+      marketSectorFilter: state.marketSectorFilter,
+    }),
+  }
+)
+);
