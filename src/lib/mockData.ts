@@ -20,6 +20,10 @@ export interface Stock {
     Intermediate: string;
     Experienced: string;
   };
+  eps: number;
+  bvps: number;
+  targetPrice: number;
+  decision: 'Buy' | 'Hold' | 'Sell';
 }
 
 export interface NewsItem {
@@ -89,7 +93,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "Dangote Cement is making a lot of profit because Nigeria is building more roads and houses. It is like buying a share in Africa's biggest builder—very stable but price goes up mostly when the country is building.",
       Intermediate: "Solid domestic infrastructure demand and capacity expansion are offsetting high inflationary pressures. Excellent cost-control despite diesel price spikes keeps operating margins healthy.",
       Experienced: "FCFF yield remains strong at 8.2% despite elevated CAPEX. Solid defensive moat with 60% domestic market share. High pricing power allows pass-through of FX depreciation costs onto end consumers."
-    }
+    },
+    eps: 42.21,
+    bvps: 203.13,
+    targetPrice: 720.00,
+    decision: 'Buy'
   },
   {
     ticker: 'MTNN',
@@ -112,7 +120,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "MTN is losing a bit of stock value because they had to pay a lot of money for dollar loans, even though millions of Nigerians are still buying data and airtime every single day.",
       Intermediate: "FX translation losses on foreign-currency-denominated leases have impacted net profit. However, 18% YoY growth in active data subscribers shows that core operational revenue remains exceptionally robust.",
       Experienced: "EBITDA margin compressed by 150bps due to tower lease indexation to FX rates. Mobile Money (MoMo) active wallets grew to 5.2M, which represents the primary long-term upside to non-voice service expansion."
-    }
+    },
+    eps: 17.81,
+    bvps: 76.96,
+    targetPrice: 240.00,
+    decision: 'Hold'
   },
   {
     ticker: 'ZENITHBANK',
@@ -135,7 +147,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "Zenith Bank is having an amazing year! They made massive gains because higher interest rates in Nigeria mean banks can charge borrowers more, and they are paying out an excellent dividend cash reward to shareholders.",
       Intermediate: "Net Interest Margin (NIM) expanded to 8.4% due to the Central Bank's monetary policy rate hikes. FX revaluation gains continue to bolster the bank's non-interest income stream.",
       Experienced: "Tier-1 capital adequacy ratio sits securely at 21.0%. Trading at an attractive 3.5x trailing P/E, offering highly defensive characteristics coupled with a double-digit prospective dividend yield."
-    }
+    },
+    eps: 10.91,
+    bvps: 42.44,
+    targetPrice: 48.00,
+    decision: 'Buy'
   },
   {
     ticker: 'GTCO',
@@ -158,7 +174,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "GTCO (GTBank) is growing fast because its digital transfers are extremely popular with young Nigerians. They are making big money from charging small fees on millions of transfers every day.",
       Intermediate: "Cost-to-income ratio remains the best in the industry at 42%. Sustained growth in e-payment transaction volumes is successfully offsetting rising operating overheads.",
       Experienced: "RoE remains industry-leading at 28.5%. Highly efficient retail deposit base provides a cheap funding source, allowing GTCO to capture maximum benefits from the elevated yield environment."
-    }
+    },
+    eps: 11.87,
+    bvps: 41.00,
+    targetPrice: 55.00,
+    decision: 'Buy'
   },
   {
     ticker: 'SEPLAT',
@@ -170,7 +190,7 @@ export const ngxStocks: Stock[] = [
     volumeRaw: 400000,
     sector: 'Oil & Gas',
     sparkline: [3600, 3550, 3580, 3500, 3520, 3480, 3450],
-    chartData: generateChartData(3450, 0.03),
+    chartData: generateChartData(3450, 0.035),
     peRatio: 9.8,
     pbRatio: 1.4,
     marketCap: '₦2.03T',
@@ -181,7 +201,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "Seplat is losing price value today because international oil prices fell slightly, and the pipeline they use to ship oil had some temporary maintenance issues.",
       Intermediate: "Production decreased to 44,000 boepd due to pipeline downtime. However, gas-to-power revenue rose by 14%, offering an excellent secondary buffer to crude price volatility.",
       Experienced: "Free cash flow yield remains strong at 11.2% supporting their quarterly dividend policy. The pending acquisition of Mobil Producing Nigeria Unlimited (MPNU) assets remains the core catalyst for explosive reserve additions."
-    }
+    },
+    eps: 352.04,
+    bvps: 2464.29,
+    targetPrice: 3800.00,
+    decision: 'Buy'
   },
   {
     ticker: 'BUAFOODS',
@@ -204,7 +228,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "BUA Foods' price didn't change today because investors are holding onto their shares. People must buy food (like sugar and spaghetti) even when times are tough, so the company is a safe bet.",
       Intermediate: "Revenue grew 48% YoY driven by capacity expansion in flour and pasta lines. High gross margin of 32% helps absorb local currency devaluation impacts on imported raw wheat.",
       Experienced: "BUA Foods shows highly inelastic demand characteristics. P/E of 28.2x represents a growth premium, but outstanding return on assets (ROA) of 18% justifies investor confidence."
-    }
+    },
+    eps: 13.48,
+    bvps: 44.71,
+    targetPrice: 350.00,
+    decision: 'Hold'
   },
   {
     ticker: 'ACCESSCORP',
@@ -227,7 +255,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "Access Bank's price dropped because they are asking shareholders to invest more money (called a Rights Issue) to expand their business. This temporary surge in shares available makes the price dip.",
       Intermediate: "Rights Issue of ₦351B is currently underway to meet the Central Bank's new minimum capital requirements (₦500B for international banks). This dilution creates temporary price pressure.",
       Experienced: "At 0.5x book value, Access is highly undervalued. Pan-African expansion into 15+ countries creates a natural hedge against single-country Nigerian FX risk, promising strong long-term EPS accretion."
-    }
+    },
+    eps: 8.41,
+    bvps: 37.00,
+    targetPrice: 25.00,
+    decision: 'Buy'
   },
   {
     ticker: 'NESTLE',
@@ -250,7 +282,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "Nestle's stock dropped heavily today. The company had huge losses recently because they buy some ingredients in dollars, and the Naira became much weaker, which made their dollar-debts balloon.",
       Intermediate: "Substantial FX revaluation losses on USD-denominated loans have wiped out operating profits, leading to a negative equity position. Core operations, however, remain strong with a 24% increase in domestic brand sales.",
       Experienced: "Balance sheet repair is critical. Nestle’s net finance cost jumped 300% YoY due to Naira devaluation. Operating cash flow remains highly positive, but they will likely suspend dividend payments to conserve liquidity."
-    }
+    },
+    eps: -57.75,
+    bvps: -182.22,
+    targetPrice: 750.00,
+    decision: 'Sell'
   },
   {
     ticker: 'OANDO',
@@ -273,7 +309,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "Oando is flying high! The price went up by almost 10% today because the government officially approved their deal to buy an oil field from a giant foreign oil company (Eni).",
       Intermediate: "Stock hitting limits on heavy buy-side volume following the final regulatory sign-off on the 100% acquisition of Nigerian Agip Oil Company (NAOC). This will immediately double upstream output.",
       Experienced: "The acquisition of NAOC assets is highly transformative, adding 40,000 boepd of net production and extensive infrastructure. High leverage remains a concern, but cash-flow expansion will rapidly deleverage the company."
-    }
+    },
+    eps: 3.95,
+    bvps: 18.00,
+    targetPrice: 42.00,
+    decision: 'Buy'
   },
   {
     ticker: 'UBA',
@@ -296,7 +336,11 @@ export const ngxStocks: Stock[] = [
       Beginner: "UBA is having a great day. Because they do business in many other African countries, they make money in different currencies. When the Naira drops, their non-Naira profits become much bigger in Naira!",
       Intermediate: "Strong geographic diversification across UBA Africa subsidiaries is providing a substantial natural hedge against Naira FX depreciation, accounting for 45% of group earnings.",
       Experienced: "UBA is exceptionally well-positioned to meet capitalization requirements through retained earnings rather than dilution. Capital adequacy ratio of 22.8% is among the safest in Tier-1 banks."
-    }
+    },
+    eps: 9.57,
+    bvps: 38.29,
+    targetPrice: 35.00,
+    decision: 'Buy'
   }
 ];
 

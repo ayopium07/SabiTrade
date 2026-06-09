@@ -1,3 +1,4 @@
+// StockExplorer Component - Enhanced with Investment Metrics and Sorting
 import React, { useState } from 'react';
 import { Search, ChevronDown, Check, ArrowUpDown, Star } from 'lucide-react';
 import { ngxStocks } from '@/lib/mockData';
@@ -6,7 +7,7 @@ import { useAppStore } from '@/lib/store';
 export default function StockExplorer() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('All');
-  const [sortBy, setSortBy] = useState<'price' | 'change' | 'volume'>('change');
+  const [sortBy, setSortBy] = useState<'ticker' | 'price' | 'high' | 'low' | 'eps' | 'bvps' | 'peRatio' | 'target' | 'upside' | 'decision'>('price');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
@@ -26,16 +27,62 @@ export default function StockExplorer() {
     })
     .sort((a, b) => {
       let comparison = 0;
-      if (sortBy === 'price') comparison = a.price - b.price;
-      else if (sortBy === 'change') comparison = a.change - b.change;
-      else if (sortBy === 'volume') comparison = a.volumeRaw - b.volumeRaw;
+      if (sortBy === 'ticker') {
+        comparison = a.ticker.localeCompare(b.ticker);
+      } else if (sortBy === 'price') {
+        comparison = a.price - b.price;
+      } else if (sortBy === 'high') {
+        comparison = a.fiftyTwoWeekRange.high - b.fiftyTwoWeekRange.high;
+      } else if (sortBy === 'low') {
+        comparison = a.fiftyTwoWeekRange.low - b.fiftyTwoWeekRange.low;
+      } else if (sortBy === 'eps') {
+        comparison = a.eps - b.eps;
+      } else if (sortBy === 'bvps') {
+        comparison = a.bvps - b.bvps;
+      } else if (sortBy === 'peRatio') {
+        comparison = a.peRatio - b.peRatio;
+      } else if (sortBy === 'target') {
+        comparison = a.targetPrice - b.targetPrice;
+      } else if (sortBy === 'upside') {
+        const upsideA = (a.targetPrice - a.price) / a.price;
+        const upsideB = (b.targetPrice - b.price) / b.price;
+        comparison = upsideA - upsideB;
+      } else if (sortBy === 'decision') {
+        comparison = a.decision.localeCompare(b.decision);
+      }
       return sortOrder === 'desc' ? -comparison : comparison;
     });
 
-  const handleSort = (type: 'price' | 'change' | 'volume') => {
+  const handleSort = (type: typeof sortBy) => {
     if (sortBy === type) setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
     else { setSortBy(type); setSortOrder('desc'); }
     setIsSortOpen(false);
+  };
+
+  const renderHeader = (field: typeof sortBy, label: string, align: 'left' | 'right' | 'center' = 'left') => {
+    const isActive = sortBy === field;
+    return (
+      <th
+        onClick={(e) => {
+          e.stopPropagation();
+          handleSort(field);
+        }}
+        className={`px-4 py-3.5 cursor-pointer select-none text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans hover:text-text-primary transition-colors group/th ${
+          align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
+        }`}
+      >
+        <div className={`flex items-center gap-1 ${align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : 'justify-start'}`}>
+          <span>{label}</span>
+          <span className="inline-flex w-3 h-3 items-center justify-center">
+            {isActive ? (
+              sortOrder === 'desc' ? '↓' : '↑'
+            ) : (
+              <span className="opacity-0 group-hover/th:opacity-40 transition-opacity">↕</span>
+            )}
+          </span>
+        </div>
+      </th>
+    );
   };
 
   return (
@@ -62,20 +109,31 @@ export default function StockExplorer() {
             className="flex items-center gap-1.5 px-4 py-2.5 bg-bg-surface border border-border hover:border-brand-primary/30 rounded-xl text-xs font-bold font-dm-sans transition-all text-text-primary"
           >
             <ArrowUpDown className="h-3.5 w-3.5 text-brand-primary" />
-            <span>Sort: {sortBy === 'price' ? 'Price' : sortBy === 'change' ? 'Change' : 'Volume'} ({sortOrder === 'desc' ? '↓' : '↑'})</span>
+            <span>Sort: {sortBy === 'ticker' ? 'Company' : sortBy === 'price' ? 'Close Price' : sortBy === 'high' ? '52 Weeks High' : sortBy === 'low' ? '52 Weeks Low' : sortBy === 'eps' ? 'EPS' : sortBy === 'bvps' ? 'BVPS' : sortBy === 'peRatio' ? 'PE Ratio' : sortBy === 'target' ? 'Our Target' : sortBy === 'upside' ? 'Upside/Downside' : 'Decision'} ({sortOrder === 'desc' ? '↓' : '↑'})</span>
             <ChevronDown className="h-3.5 w-3.5 text-text-secondary" />
           </button>
 
           {isSortOpen && (
-            <div className="absolute right-0 mt-1 w-44 glass-elevated border border-border shadow-card rounded-xl p-1 z-30 animate-in fade-in slide-in-from-top-1 duration-150">
-              {(['change', 'price', 'volume'] as const).map((type) => (
+            <div className="absolute right-0 mt-1 w-48 glass-elevated border border-border shadow-card rounded-xl p-1 z-30 animate-in fade-in slide-in-from-top-1 duration-150 max-h-64 overflow-y-auto custom-scrollbar">
+              {([
+                { key: 'ticker', label: 'Company' },
+                { key: 'price', label: 'Close Price' },
+                { key: 'high', label: '52 Weeks High' },
+                { key: 'low', label: '52 Weeks Low' },
+                { key: 'eps', label: 'EPS' },
+                { key: 'bvps', label: 'BVPS' },
+                { key: 'peRatio', label: 'PE Ratio' },
+                { key: 'target', label: 'Our Target' },
+                { key: 'upside', label: 'Upside/Downside' },
+                { key: 'decision', label: 'Decision' }
+              ] as const).map(({ key, label }) => (
                 <button
-                  key={type}
-                  onClick={() => handleSort(type)}
+                  key={key}
+                  onClick={() => handleSort(key)}
                   className="flex items-center justify-between w-full text-left px-3 py-2 text-xs font-medium rounded-lg hover:bg-bg-hover text-text-primary transition-colors"
                 >
-                  <span className="capitalize">{type === 'change' ? '% Change' : type.charAt(0).toUpperCase() + type.slice(1)}</span>
-                  {sortBy === type && <Check className="h-3.5 w-3.5 text-brand-primary" />}
+                  <span>{label}</span>
+                  {sortBy === key && <Check className="h-3.5 w-3.5 text-brand-primary" />}
                 </button>
               ))}
             </div>
@@ -89,14 +147,10 @@ export default function StockExplorer() {
           <button
             key={sector}
             onClick={() => setSelectedSector(sector)}
-            className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border ${
-              selectedSector === sector
-                ? 'text-bg-base border-brand-primary'
-                : 'bg-bg-surface text-text-secondary border-border hover:border-border-bright hover:text-text-primary'
-            }`}
+            className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border"
             style={selectedSector === sector
-              ? { background: '#00E676', boxShadow: '0 0 12px rgba(0,230,118,0.3)' }
-              : {}}
+              ? { background: '#00E676', color: '#070615', border: '1px solid #00E676', boxShadow: '0 0 12px rgba(0,230,118,0.3)' }
+              : { backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)', borderColor: 'var(--border)' }}
           >
             {sector}
           </button>
@@ -106,122 +160,147 @@ export default function StockExplorer() {
       {/* ── Stock Table ───────────────────────────────────── */}
       <div className="rounded-2xl border border-border overflow-hidden"
         style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
-        {/* Table header */}
-        <div className="hidden sm:grid grid-cols-12 gap-4 px-6 py-3 bg-bg-base/60 border-b border-border text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans">
-          <div className="col-span-5">Company</div>
-          <div className="col-span-2 text-right">Price (₦)</div>
-          <div className="col-span-2 text-right">Change</div>
-          <div className="col-span-2 text-center">7D Chart</div>
-          <div className="col-span-1 text-center">View</div>
-        </div>
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full border-collapse text-left min-w-[1050px]">
+            {/* Table header */}
+            <thead>
+              <tr className="bg-bg-base/60 border-b border-border">
+                {renderHeader('ticker', 'Company', 'left')}
+                {renderHeader('price', 'Close Price', 'right')}
+                {renderHeader('high', '52 Weeks High', 'right')}
+                {renderHeader('low', '52 Weeks Low', 'right')}
+                {renderHeader('eps', 'EPS', 'right')}
+                {renderHeader('bvps', 'BVPS', 'right')}
+                {renderHeader('peRatio', 'PE Ratio', 'right')}
+                {renderHeader('target', 'Our Target', 'right')}
+                {renderHeader('upside', 'Upside/Downside', 'right')}
+                {renderHeader('decision', 'Decision', 'center')}
+                <th className="px-4 py-3.5 text-center text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans w-[80px]">View</th>
+              </tr>
+            </thead>
 
-        <div className="divide-y divide-border/60">
-          {filteredStocks.length > 0 ? (
-            filteredStocks.map((stock) => {
-              const isPositive = stock.change >= 0;
-              const isWatched = watchlist.includes(stock.ticker);
-              const color = isPositive ? '#10B981' : '#FF4D4D';
+            <tbody className="divide-y divide-border/60">
+              {filteredStocks.length > 0 ? (
+                filteredStocks.map((stock) => {
+                  const isPositive = stock.change >= 0;
+                  const isWatched = watchlist.includes(stock.ticker);
+                  const color = isPositive ? '#10B981' : '#FF4D4D';
+                  
+                  const upside = ((stock.targetPrice - stock.price) / stock.price) * 100;
+                  const isUpsidePositive = upside >= 0;
+                  
+                  let decisionClass = '';
+                  if (stock.decision === 'Buy') {
+                    decisionClass = 'bg-gain/10 text-gain border border-gain/20';
+                  } else if (stock.decision === 'Hold') {
+                    decisionClass = 'bg-warning/10 text-warning border border-warning/20';
+                  } else {
+                    decisionClass = 'bg-danger/10 text-danger border border-danger/20';
+                  }
 
-              // Sparkline area chart
-              const min = Math.min(...stock.sparkline);
-              const max = Math.max(...stock.sparkline);
-              const range = max - min || 1;
-              const W = 80; const H = 24;
-              const pts = stock.sparkline.map((v, i) => ({
-                x: (i / (stock.sparkline.length - 1)) * W,
-                y: H - 2 - ((v - min) / range) * (H - 4),
-              }));
-              const linePath = pts.reduce((d, p, i) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
-              const areaPath = linePath + ` L ${W} ${H} L 0 ${H} Z`;
-
-              return (
-                <div
-                  key={stock.ticker}
-                  onClick={() => setSelectedTicker(stock.ticker)}
-                  className="grid grid-cols-12 gap-2 sm:gap-4 items-center px-4 sm:px-6 py-3.5 transition-all cursor-pointer group"
-                  style={{ borderLeft: '2px solid transparent' }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.background = 'rgba(99,102,241,0.02)';
-                    (e.currentTarget as HTMLDivElement).style.borderLeftColor = color;
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.background = 'transparent';
-                    (e.currentTarget as HTMLDivElement).style.borderLeftColor = 'transparent';
-                  }}
-                >
-                  {/* Ticker & Name */}
-                  <div className="col-span-7 sm:col-span-5 flex items-center gap-3">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); toggleWatchlist(stock.ticker); }}
-                      className={`text-sm focus:outline-none transition-all ${
-                        isWatched ? 'text-warning' : 'text-text-muted hover:text-text-secondary'
-                      }`}
+                  return (
+                    <tr
+                      key={stock.ticker}
+                      onClick={() => setSelectedTicker(stock.ticker)}
+                      className="hover:bg-brand-primary/[0.02] transition-colors cursor-pointer group"
                     >
-                      <Star className={`h-3.5 w-3.5 ${isWatched ? 'fill-warning' : ''}`} />
-                    </button>
-                    <div className="truncate">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-extrabold font-sora tracking-tight group-hover:underline"
-                          style={{ color, textShadow: isPositive ? '0 0 6px rgba(16,185,129,0.3)' : 'none' }}>
-                          {stock.ticker}
+                      {/* Company */}
+                      <td className="px-4 py-3.5 align-middle">
+                        <div className="flex items-center gap-3 max-w-[240px]">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleWatchlist(stock.ticker); }}
+                            className={`text-sm focus:outline-none transition-all flex-shrink-0 ${
+                              isWatched ? 'text-warning' : 'text-text-muted hover:text-text-secondary'
+                            }`}
+                          >
+                            <Star className={`h-3.5 w-3.5 ${isWatched ? 'fill-warning' : ''}`} />
+                          </button>
+                          <div className="truncate">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-extrabold font-sora tracking-tight group-hover:underline"
+                                style={{ color, textShadow: isPositive ? '0 0 6px rgba(16,185,129,0.3)' : 'none' }}>
+                                {stock.ticker}
+                              </span>
+                              <span className="px-1.5 py-0.5 bg-bg-base border border-border rounded text-[9px] font-bold text-text-secondary">
+                                {stock.sector}
+                              </span>
+                            </div>
+                            <p className="text-xs text-text-secondary font-medium font-dm-sans truncate">{stock.name}</p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Close Price */}
+                      <td className="px-4 py-3.5 text-right align-middle">
+                        <span className="text-sm font-extrabold text-text-primary font-sora">
+                          ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                         </span>
-                        <span className="hidden sm:inline-block px-1.5 py-0.5 bg-bg-base border border-border rounded text-[9px] font-bold text-text-secondary">
-                          {stock.sector}
+                        <span className={`block text-[10px] font-bold ${isPositive ? 'text-gain' : 'text-danger'}`}>
+                          {isPositive ? '+' : ''}{stock.change.toFixed(1)}%
                         </span>
-                      </div>
-                      <p className="text-xs text-text-secondary font-medium font-dm-sans truncate">{stock.name}</p>
-                    </div>
-                  </div>
+                      </td>
 
-                  {/* Price */}
-                  <div className="col-span-3 sm:col-span-2 text-right">
-                    <span className="text-sm font-extrabold text-text-primary font-sora">
-                      ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-                    </span>
-                    <span className="block sm:hidden text-[9px] text-text-secondary font-medium uppercase font-dm-sans">
-                      {stock.volume}
-                    </span>
-                  </div>
+                      {/* 52W High */}
+                      <td className="px-4 py-3.5 text-right align-middle font-medium text-xs text-text-secondary">
+                        ₦{stock.fiftyTwoWeekRange.high.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                      </td>
 
-                  {/* Change */}
-                  <div className="col-span-2 text-right">
-                    <span className={`inline-flex text-xs font-extrabold px-2 py-0.5 rounded-lg ${
-                      isPositive ? 'bg-gain/10 text-gain border border-gain/20' : 'bg-danger/10 text-danger'
-                    }`}>
-                      {isPositive ? '+' : ''}{stock.change.toFixed(1)}%
-                    </span>
-                  </div>
+                      {/* 52W Low */}
+                      <td className="px-4 py-3.5 text-right align-middle font-medium text-xs text-text-secondary">
+                        ₦{stock.fiftyTwoWeekRange.low.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                      </td>
 
-                  {/* Sparkline */}
-                  <div className="hidden sm:block col-span-2">
-                    <div className="h-6 w-20 mx-auto">
-                      <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-                        <defs>
-                          <linearGradient id={`sg-${stock.ticker}`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-                            <stop offset="100%" stopColor={color} stopOpacity="0" />
-                          </linearGradient>
-                        </defs>
-                        <path d={areaPath} fill={`url(#sg-${stock.ticker})`} />
-                        <path d={linePath} fill="none" stroke={color} strokeWidth="1.5"
-                          strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  </div>
+                      {/* EPS */}
+                      <td className="px-4 py-3.5 text-right align-middle font-medium text-xs text-text-secondary">
+                        {stock.eps < 0 ? `-₦${Math.abs(stock.eps).toFixed(2)}` : `₦${stock.eps.toFixed(2)}`}
+                      </td>
 
-                  {/* Arrow */}
-                  <div className="col-span-2 sm:col-span-1 text-center">
-                    <span className="text-brand-primary text-sm group-hover:translate-x-1 inline-block transition-transform duration-200">→</span>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="p-10 text-center text-text-secondary font-medium font-dm-sans">
-              <span className="block text-2xl mb-2">🔍</span>
-              No stocks match &quot;{searchQuery}&quot;. Try a different name or ticker.
-            </div>
-          )}
+                      {/* BVPS */}
+                      <td className="px-4 py-3.5 text-right align-middle font-medium text-xs text-text-secondary">
+                        {stock.bvps < 0 ? `-₦${Math.abs(stock.bvps).toFixed(2)}` : `₦${stock.bvps.toFixed(2)}`}
+                      </td>
+
+                      {/* PE Ratio */}
+                      <td className="px-4 py-3.5 text-right align-middle font-medium text-xs text-text-secondary">
+                        {stock.peRatio < 0 ? 'N/A' : `${stock.peRatio.toFixed(1)}x`}
+                      </td>
+
+                      {/* Our Target */}
+                      <td className="px-4 py-3.5 text-right align-middle font-bold text-xs text-brand-primary">
+                        ₦{stock.targetPrice.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                      </td>
+
+                      {/* Upside/Downside */}
+                      <td className="px-4 py-3.5 text-right align-middle">
+                        <span className={`text-xs font-bold ${isUpsidePositive ? 'text-gain' : 'text-danger'}`}>
+                          {isUpsidePositive ? '+' : ''}{upside.toFixed(1)}%
+                        </span>
+                      </td>
+
+                      {/* Decision */}
+                      <td className="px-4 py-3.5 text-center align-middle">
+                        <span className={`inline-flex text-[10px] font-extrabold px-2 py-0.5 rounded-lg uppercase tracking-wider ${decisionClass}`}>
+                          {stock.decision}
+                        </span>
+                      </td>
+
+                      {/* View Button */}
+                      <td className="px-4 py-3.5 text-center align-middle">
+                        <span className="text-brand-primary text-sm group-hover:translate-x-1 inline-block transition-transform duration-200">→</span>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={11} className="p-10 text-center text-text-secondary font-medium font-dm-sans">
+                    <span className="block text-2xl mb-2">🔍</span>
+                    No stocks match &quot;{searchQuery}&quot;. Try a different name or ticker.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

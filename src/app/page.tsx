@@ -15,10 +15,14 @@ import {
   Check,
   Zap,
   Info,
+  TrendingUp,
+  Shield,
+  Percent,
+  Award,
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
-import { ngxStocks, mockNews } from '@/lib/mockData';
+import { ngxStocks, mockNews, Stock } from '@/lib/mockData';
 
 import MarketStatus from '@/components/MarketStatus';
 import TopMovers from '@/components/TopMovers';
@@ -50,6 +54,7 @@ export default function Page() {
   const [authMode, setAuthMode]       = useState<'login' | 'signup'>('signup');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [onboardingStep, setOnboardingStep]   = useState(1);
+  const [activeHomeTab, setActiveHomeTab]     = useState<'report' | 'dividend' | 'growth' | 'analyst' | 'safe'>('report');
 
   const availableInterests = ['Banking', 'Consumer Goods', 'Oil & Gas', 'Industrials', 'Agriculture', 'Technology'];
 
@@ -85,11 +90,302 @@ export default function Page() {
   const renderHomeView = () => {
     const watchStocks = ngxStocks.filter((s) => watchlist.includes(s.ticker)).slice(0, 4);
 
+    // ── Data Computations for Tabs ────────────────────────
+    const dividendStocks = [...ngxStocks]
+      .filter(s => parseFloat(s.dividendYield) > 0)
+      .sort((a, b) => parseFloat(b.dividendYield) - parseFloat(a.dividendYield))
+      .slice(0, 6);
+
+    const catalysts: Record<string, string> = {
+      OANDO: 'Agip Oil Field Acquisition Approval',
+      SEPLAT: 'MPNU Asset Acquisition Catalyst',
+      UBA: 'Pan-African Subsidiary Earnings Expansion',
+      ACCESSCORP: 'Rights Issue Recapitalization Anchor',
+      DANGCEM: 'Sub-Saharan Infrastructure Growth',
+      ZENITHBANK: 'High Net Margin Yield & Tech Focus',
+    };
+    const growthStocks = [...ngxStocks]
+      .filter(s => catalysts[s.ticker])
+      .sort((a, b) => b.change - a.change)
+      .slice(0, 6)
+      .map(s => ({ ...s, catalyst: catalysts[s.ticker] }));
+
+    const analystPicks = [...ngxStocks]
+      .map(s => {
+        const upside = ((s.targetPrice - s.price) / s.price) * 100;
+        return { ...s, upside };
+      })
+      .filter(s => s.upside > 0)
+      .sort((a, b) => b.upside - a.upside)
+      .slice(0, 6);
+
+    const safeStocksList = ['DANGCEM', 'BUAFOODS', 'MTNN', 'ZENITHBANK', 'GTCO'];
+    const safetyReasons: Record<string, string> = {
+      DANGCEM: 'Defensive Infrastructure Play',
+      BUAFOODS: 'Inelastic Food Staples Demand',
+      MTNN: 'Leading Telecom Subscriber Moat',
+      ZENITHBANK: 'High Tier-1 Capital Buffers',
+      GTCO: 'Industry-Best Cost Efficiency Ratio',
+    };
+    const safeStocks = [...ngxStocks]
+      .filter(s => safeStocksList.includes(s.ticker))
+      .map(s => ({ ...s, safetyReason: safetyReasons[s.ticker] }))
+      .slice(0, 6);
+
+    // ── Helper to render custom stock card for tabs ─────
+    const renderDashboardStockCard = ({
+      stock,
+      metricLabel,
+      metricValue,
+      metricSub,
+      badge,
+      color,
+    }: {
+      stock: Stock;
+      metricLabel: string;
+      metricValue: string;
+      metricSub?: string;
+      badge: React.ReactNode;
+      color: string;
+    }) => {
+      const isPos = stock.change >= 0;
+      const min = Math.min(...stock.sparkline);
+      const max = Math.max(...stock.sparkline);
+      const range = max - min || 1;
+      const W = 100;
+      const H = 28;
+
+      const points = stock.sparkline.map((val: number, idx: number) => ({
+        x: (idx / (stock.sparkline.length - 1)) * W,
+        y: H - 2 - ((val - min) / range) * (H - 4),
+      }));
+
+      const linePath = points.reduce((d: string, p: { x: number; y: number }, i: number) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
+      const areaPath = linePath + ` L ${W} ${H} L 0 ${H} Z`;
+
+      return (
+        <div
+          key={stock.ticker}
+          onClick={() => setSelectedTicker(stock.ticker)}
+          className="rounded-2xl p-4 sm:p-5 cursor-pointer border hover:border-brand-primary/40 transition-all duration-300 group relative overflow-hidden text-left"
+          style={{
+            background: 'linear-gradient(145deg, #0E0D25, #070615)',
+            borderColor: '#23214C',
+          }}
+        >
+          {/* Hover glow */}
+          <div className="absolute inset-0 bg-brand-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
+
+          {/* Header */}
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-extrabold font-sora text-text-primary group-hover:text-brand-primary transition-colors">
+                  {stock.ticker}
+                </span>
+                <span className="px-1.5 py-0.5 bg-bg-base border border-border rounded text-[9px] font-bold text-text-secondary">
+                  {stock.sector}
+                </span>
+              </div>
+              <p className="text-[10px] text-text-secondary font-medium font-dm-sans truncate max-w-[140px] mt-0.5">
+                {stock.name}
+              </p>
+            </div>
+            {badge}
+          </div>
+
+          {/* Price & Sparkline */}
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <span className="text-sm font-extrabold text-text-primary font-sora">
+                ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              </span>
+              <span className={`block text-[10px] font-bold ${isPos ? 'text-gain' : 'text-danger'} mt-0.5`}>
+                {isPos ? '+' : ''}{stock.change.toFixed(1)}%
+              </span>
+            </div>
+
+            <div className="h-7 w-20 opacity-80">
+              <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id={`area-card-grad-${stock.ticker}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={isPos ? '#10B981' : '#FF4D4D'} stopOpacity="0.2" />
+                    <stop offset="100%" stopColor={isPos ? '#10B981' : '#FF4D4D'} stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path d={areaPath} fill={`url(#area-card-grad-${stock.ticker})`} />
+                <path d={linePath} fill="none" stroke={isPos ? '#10B981' : '#FF4D4D'} strokeWidth="1.5"
+                  strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Metric Bottom Row */}
+          <div className="flex items-center justify-between pt-3 border-t border-border/40 text-xs font-semibold font-dm-sans">
+            <div className="flex-grow pr-2 min-w-0">
+              <span className="block text-[8px] text-text-secondary font-bold uppercase tracking-wider">
+                {metricLabel}
+              </span>
+              <span className="text-xs font-extrabold text-text-primary mt-0.5 block truncate" style={{ color }}>
+                {metricValue}
+              </span>
+            </div>
+            {metricSub && (
+              <div className="text-right flex-shrink-0">
+                <span className="block text-[8px] text-text-secondary font-bold uppercase tracking-wider">
+                  Details
+                </span>
+                <span className="text-[10px] font-bold text-text-secondary mt-0.5 block">
+                  {metricSub}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
     return (
       <div className="space-y-6">
-        <MarketStatus />
-        <TopMovers />
-        <AIDailyBrief />
+        
+        {/* ─── Premium Tab Switched Navigation ─── */}
+        <div className="space-y-5">
+          <div className="flex gap-2 overflow-x-auto pb-1.5 custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+            {([
+              { id: 'report', label: 'Daily Market Report', icon: Newspaper, color: '#6366F1' },
+              { id: 'dividend', label: 'Best Dividend Paying Stocks', icon: Percent, color: '#10B981' },
+              { id: 'growth', label: 'Fast Growing Companies', icon: TrendingUp, color: '#A855F7' },
+              { id: 'analyst', label: 'Top Analyst Picks', icon: Award, color: '#00B8FF' },
+              { id: 'safe', label: 'Play Safe Stocks', icon: Shield, color: '#FFB800' }
+            ] as const).map((tab) => {
+              const TabIcon = tab.icon;
+              const isSelected = activeHomeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveHomeTab(tab.id)}
+                  className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-300 border focus:outline-none"
+                  style={isSelected
+                    ? { backgroundColor: tab.color, borderColor: tab.color, color: '#070615', boxShadow: `0 0 16px ${tab.color}35` }
+                    : { backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
+                >
+                  <TabIcon className="h-3.5 w-3.5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* ─── Tab Content ─── */}
+          {activeHomeTab === 'report' && (
+            <div className="space-y-6 animate-in fade-in duration-300 text-left">
+              <MarketStatus />
+              <TopMovers />
+              <AIDailyBrief />
+            </div>
+          )}
+
+          {activeHomeTab === 'dividend' && (
+            <div className="space-y-4 animate-in fade-in duration-300 text-left">
+              <div>
+                <h3 className="text-sm font-extrabold text-text-primary font-sora">Best Dividend Paying Stocks</h3>
+                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Top-yielding equities on the NGX offering defensive income payouts</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {dividendStocks.map((stock) =>
+                  renderDashboardStockCard({
+                    stock,
+                    metricLabel: 'Dividend Yield',
+                    metricValue: `${stock.dividendYield} Yield`,
+                    metricSub: stock.peRatio > 0 ? `${stock.peRatio}x P/E` : 'N/A P/E',
+                    color: '#10B981',
+                    badge: (
+                      <span className="px-1.5 py-0.5 bg-gain/10 text-gain border border-gain/20 rounded-md text-[9px] font-extrabold uppercase">
+                        Yield Leader
+                      </span>
+                    ),
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeHomeTab === 'growth' && (
+            <div className="space-y-4 animate-in fade-in duration-300 text-left">
+              <div>
+                <h3 className="text-sm font-extrabold text-text-primary font-sora">Fast Growing Companies you should invest in</h3>
+                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Equities experiencing high revenue growth, operational scale, or transformational catalysts</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {growthStocks.map((stock) =>
+                  renderDashboardStockCard({
+                    stock,
+                    metricLabel: 'Growth Catalyst',
+                    metricValue: stock.catalyst,
+                    metricSub: stock.eps > 0 ? `₦${stock.eps.toFixed(1)} EPS` : 'N/A',
+                    color: '#A855F7',
+                    badge: (
+                      <span className="px-1.5 py-0.5 bg-brand-primary/10 text-[#A855F7] border border-[#A855F7]/30 rounded-md text-[9px] font-extrabold uppercase">
+                        Expansion
+                      </span>
+                    ),
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeHomeTab === 'analyst' && (
+            <div className="space-y-4 animate-in fade-in duration-300 text-left">
+              <div>
+                <h3 className="text-sm font-extrabold text-text-primary font-sora">Top stock pick from analysts</h3>
+                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">NGX equities showing the highest analyst consensus target upside from current market price</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {analystPicks.map((stock) =>
+                  renderDashboardStockCard({
+                    stock,
+                    metricLabel: 'Analyst Target Upside',
+                    metricValue: `+${stock.upside.toFixed(1)}% Upside`,
+                    metricSub: `Target ₦${stock.targetPrice.toFixed(0)}`,
+                    color: '#00B8FF',
+                    badge: (
+                      <span className="px-1.5 py-0.5 bg-bg-base border border-brand-primary/20 text-[#00B8FF] rounded-md text-[9px] font-extrabold uppercase">
+                        {stock.decision} Pick
+                      </span>
+                    ),
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeHomeTab === 'safe' && (
+            <div className="space-y-4 animate-in fade-in duration-300 text-left">
+              <div>
+                <h3 className="text-sm font-extrabold text-text-primary font-sora">Play Safe Stocks</h3>
+                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Stable defensive anchors with dominant market share, resilient utility-like cash flows, or inelastic consumer demand</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {safeStocks.map((stock) =>
+                  renderDashboardStockCard({
+                    stock,
+                    metricLabel: 'Defensive Anchor',
+                    metricValue: stock.safetyReason,
+                    metricSub: `Cap ${stock.marketCap}`,
+                    color: '#FFB800',
+                    badge: (
+                      <span className="px-1.5 py-0.5 bg-warning/10 text-warning border border-warning/20 rounded-md text-[9px] font-extrabold uppercase">
+                        Low Volatility
+                      </span>
+                    ),
+                  })
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Watchlist Preview */}
         <div className="rounded-2xl border border-border overflow-hidden"
@@ -112,7 +408,7 @@ export default function Page() {
                   const color = isPos ? '#10B981' : '#FF4D4D';
                   return (
                     <button key={stock.ticker} onClick={() => setSelectedTicker(stock.ticker)}
-                      className="p-4 rounded-xl text-left transition-all duration-200 border group focus:outline-none"
+                      className="p-4 rounded-xl text-left transition-all duration-200 border group focus:outline-none animate-in fade-in"
                       style={{ background: '#070615', borderColor: '#23214C' }}
                       onMouseEnter={e => {
                         (e.currentTarget as HTMLButtonElement).style.borderColor = color;
@@ -163,7 +459,7 @@ export default function Page() {
               const dot = dotColors[news.marketImpact];
               return (
                 <div key={news.id} onClick={() => setView('news')}
-                  className="rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-300 group border"
+                  className="rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-300 group border text-left"
                   style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)', borderColor: '#23214C', borderLeft: `3px solid ${dot}` }}
                   onMouseEnter={e => {
                     (e.currentTarget as HTMLDivElement).style.borderColor = `${dot}50`;
@@ -1003,7 +1299,9 @@ export default function Page() {
           MAIN CONTENT
           ══════════════════════════════════════════════════════ */}
       <main className="flex-grow flex flex-col">
-        <div className="flex-grow p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto pb-28 lg:pb-10">
+        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-28 lg:pb-10 ${
+          currentView === 'markets' || currentView === 'portfolio' ? 'max-w-7xl' : 'max-w-6xl'
+        }`}>
           {renderViewContent()}
         </div>
       </main>
