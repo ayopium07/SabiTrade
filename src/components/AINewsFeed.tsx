@@ -103,7 +103,43 @@ export default function AINewsFeed() {
 
                 {/* Expanded Content */}
                 {isExpanded && (
-                  <div className="mt-4 pt-3.5 border-t border-border/60 space-y-3 animate-in fade-in duration-200">
+                  <div className="mt-4 pt-3.5 border-t border-border/60 space-y-4 animate-in fade-in duration-200">
+                    {/* AI Insights block */}
+                    <div className="space-y-3 bg-bg-base/40 p-3.5 rounded-xl border border-border/40 text-left">
+                      <div>
+                        <span className="block text-[9px] text-brand-primary font-extrabold uppercase tracking-wider mb-1">
+                          Why It Matters
+                        </span>
+                        <p className="text-xs text-text-primary/90 font-medium leading-relaxed font-dm-sans">
+                          {news.whyItMatters}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="block text-[9px] text-brand-primary font-extrabold uppercase tracking-wider mb-1">
+                          Potential Implications
+                        </span>
+                        <p className="text-xs text-text-primary/90 font-medium leading-relaxed font-dm-sans">
+                          {news.implications}
+                        </p>
+                      </div>
+
+                      {/* Related Companies */}
+                      <div>
+                        <span className="block text-[9px] text-text-secondary font-extrabold uppercase tracking-wider mb-1.5">
+                          Related Companies
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {news.affectedStocks.map((ticker) => (
+                            <span key={ticker}
+                              className="px-2 py-0.5 rounded-lg text-[9px] font-bold text-brand-primary border border-brand-primary/20 bg-brand-primary/5">
+                              {ticker}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Driver Tags */}
                     {news.drivers && (
                       <div className="flex flex-wrap gap-1.5">
@@ -115,10 +151,18 @@ export default function AINewsFeed() {
                         ))}
                       </div>
                     )}
-                    <button className="flex items-center gap-1.5 text-[10px] font-bold text-brand-primary hover:underline focus:outline-none">
-                      <ExternalLink className="h-3 w-3" />
-                      Read full article
-                    </button>
+
+                    <div className="flex items-center justify-between gap-4">
+                      <button className="flex items-center gap-1.5 text-[10px] font-bold text-brand-primary hover:underline focus:outline-none">
+                        <ExternalLink className="h-3 w-3" />
+                        Read full article
+                      </button>
+                    </div>
+
+                    {/* Regulatory Disclaimer */}
+                    <p className="text-[9px] leading-relaxed text-text-secondary italic border-t border-border/20 pt-2 font-dm-sans text-left">
+                      This information is for educational and research purposes only and should not be considered financial advice.
+                    </p>
                   </div>
                 )}
 

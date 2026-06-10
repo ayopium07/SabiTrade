@@ -431,7 +431,7 @@ export default function StockDetail() {
             </div>
 
             <div className="pt-2 border-t border-border/40 text-[9px] text-text-secondary font-medium font-dm-sans relative z-10">
-              AI-generated insight. Not financial advice.
+              This information is for educational and research purposes only and should not be considered financial advice.
             </div>
           </div>
 
@@ -675,13 +675,13 @@ export default function StockDetail() {
                 </span>
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-border/20">
-                <span className="text-xs text-text-secondary font-medium">Recommended Action:</span>
+                <span className="text-xs text-text-secondary font-medium">Analyst Consensus Rating:</span>
                 <span className={`text-xs font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                  stock.decision === 'Buy' ? 'bg-gain/15 text-gain border border-gain/35 shadow-glow-green-sm' :
-                  stock.decision === 'Sell' ? 'bg-danger/15 text-danger border border-danger/35 shadow-glow-red' :
+                  stock.rating === 'Outperform' ? 'bg-gain/15 text-gain border border-gain/35 shadow-glow-green-sm' :
+                  stock.rating === 'Underperform' ? 'bg-danger/15 text-danger border border-danger/35 shadow-glow-red' :
                   'bg-warning/15 text-warning border border-warning/35'
                 }`}>
-                  {stock.decision}
+                  {stock.rating}
                 </span>
               </div>
             </div>

@@ -23,7 +23,7 @@ export interface Stock {
   eps: number;
   bvps: number;
   targetPrice: number;
-  decision: 'Buy' | 'Hold' | 'Sell';
+  rating: 'Outperform' | 'Neutral' | 'Underperform';
 }
 
 export interface NewsItem {
@@ -32,6 +32,8 @@ export interface NewsItem {
   timeAgo: string;
   originalHeadline: string;
   aiSummary: string;
+  whyItMatters: string;
+  implications: string;
   keyDriver: 'Earnings Beat' | 'Policy Change' | 'Macro Event' | 'Dividend Payout' | 'Inflation Surge' | 'Regulatory Approval';
   affectedStocks: string[]; // Ticker list
   marketImpact: 'Positive' | 'Negative' | 'Neutral';
@@ -97,7 +99,7 @@ export const ngxStocks: Stock[] = [
     eps: 42.21,
     bvps: 203.13,
     targetPrice: 720.00,
-    decision: 'Buy'
+    rating: 'Outperform'
   },
   {
     ticker: 'MTNN',
@@ -124,7 +126,7 @@ export const ngxStocks: Stock[] = [
     eps: 17.81,
     bvps: 76.96,
     targetPrice: 240.00,
-    decision: 'Hold'
+    rating: 'Neutral'
   },
   {
     ticker: 'ZENITHBANK',
@@ -151,7 +153,7 @@ export const ngxStocks: Stock[] = [
     eps: 10.91,
     bvps: 42.44,
     targetPrice: 48.00,
-    decision: 'Buy'
+    rating: 'Outperform'
   },
   {
     ticker: 'GTCO',
@@ -178,7 +180,7 @@ export const ngxStocks: Stock[] = [
     eps: 11.87,
     bvps: 41.00,
     targetPrice: 55.00,
-    decision: 'Buy'
+    rating: 'Outperform'
   },
   {
     ticker: 'SEPLAT',
@@ -205,7 +207,7 @@ export const ngxStocks: Stock[] = [
     eps: 352.04,
     bvps: 2464.29,
     targetPrice: 3800.00,
-    decision: 'Buy'
+    rating: 'Outperform'
   },
   {
     ticker: 'BUAFOODS',
@@ -232,7 +234,7 @@ export const ngxStocks: Stock[] = [
     eps: 13.48,
     bvps: 44.71,
     targetPrice: 350.00,
-    decision: 'Hold'
+    rating: 'Neutral'
   },
   {
     ticker: 'ACCESSCORP',
@@ -259,7 +261,7 @@ export const ngxStocks: Stock[] = [
     eps: 8.41,
     bvps: 37.00,
     targetPrice: 25.00,
-    decision: 'Buy'
+    rating: 'Outperform'
   },
   {
     ticker: 'NESTLE',
@@ -286,7 +288,7 @@ export const ngxStocks: Stock[] = [
     eps: -57.75,
     bvps: -182.22,
     targetPrice: 750.00,
-    decision: 'Sell'
+    rating: 'Underperform'
   },
   {
     ticker: 'OANDO',
@@ -313,7 +315,7 @@ export const ngxStocks: Stock[] = [
     eps: 3.95,
     bvps: 18.00,
     targetPrice: 42.00,
-    decision: 'Buy'
+    rating: 'Outperform'
   },
   {
     ticker: 'UBA',
@@ -340,7 +342,7 @@ export const ngxStocks: Stock[] = [
     eps: 9.57,
     bvps: 38.29,
     targetPrice: 35.00,
-    decision: 'Buy'
+    rating: 'Outperform'
   }
 ];
 
@@ -362,6 +364,8 @@ export const mockNews: NewsItem[] = [
     timeAgo: '2h ago',
     originalHeadline: 'CBN Grants Final Approval for Oando Acquisition of Agip Oil Assets',
     aiSummary: 'Oando PLC has received final regulatory approval from the Central Bank and NUPRC to buy Italian oil giant Eni\'s local subsidiary (Agip). This massive deal will instantly double Oando\'s oil production capacity, creating high optimism in the energy market.',
+    whyItMatters: 'NAOC acquisition instantly doubles Oando\'s upstream oil production capacity from 20,000 to 40,000 barrels per day, creating substantial cash flow expansion.',
+    implications: 'Investors are highly optimistic because expanded upstream reserves will increase Oando\'s revenue and help deleverage its balance sheet faster.',
     keyDriver: 'Regulatory Approval',
     affectedStocks: ['OANDO', 'SEPLAT'],
     marketImpact: 'Positive',
@@ -373,6 +377,8 @@ export const mockNews: NewsItem[] = [
     timeAgo: '4h ago',
     originalHeadline: 'Nestle Nigeria Records FX Loss as Naira Volatility Weighs on Earnings',
     aiSummary: 'Nestle Nigeria reported substantial losses in its latest quarterly results due to dollar-based loans. Although local sales of Milo and Maggi grew by 24%, the cost of paying off dollar debts in weakened Naira has completely wiped out their profits.',
+    whyItMatters: 'Dollar-denominated loans caused massive currency revaluation losses due to Naira devaluation, wiping out otherwise profitable local sales.',
+    implications: 'Nestle\'s negative equity position means they will likely suspend future dividend payouts to conserve liquidity.',
     keyDriver: 'Inflation Surge',
     affectedStocks: ['NESTLE', 'BUAFOODS'],
     marketImpact: 'Negative',
@@ -384,6 +390,8 @@ export const mockNews: NewsItem[] = [
     timeAgo: '6h ago',
     originalHeadline: 'Zenith Bank Proposes Outstanding Interim Dividend of N1.00 Per Share',
     aiSummary: 'Zenith Bank has announced a cash payout of ₦1.00 for every share you own. This reward comes after their half-year profits surged by 42% due to high interest rates, making it highly attractive to dividend-seeking investors.',
+    whyItMatters: 'Profits rose 42% due to high interest rates, allowing the bank to reward shareholders with an attractive interim cash payout.',
+    implications: 'Seeking dividend income? Zenith is highly attractive, drawing more domestic capital into tier-1 banking equities.',
     keyDriver: 'Dividend Payout',
     affectedStocks: ['ZENITHBANK', 'GTCO'],
     marketImpact: 'Positive',
@@ -395,6 +403,8 @@ export const mockNews: NewsItem[] = [
     timeAgo: '1d ago',
     originalHeadline: 'Inflation Hits 33.69% in Nigeria; Consumer Spending Power Drops',
     aiSummary: 'Nigeria\'s inflation continues to climb, rising to 33.69%. This means food, transport, and energy are much more expensive. Consumers are spending less on snacks, forcing food companies to cut costs and struggle with sales.',
+    whyItMatters: 'Rising price levels reduce the purchasing power of average consumers, squeezing sales for consumer goods manufacturers.',
+    implications: 'Margins will continue to contract unless firms can successfully pass rising import costs down to local consumers.',
     keyDriver: 'Macro Event',
     affectedStocks: ['NESTLE', 'BUAFOODS'],
     marketImpact: 'Negative',
@@ -406,6 +416,8 @@ export const mockNews: NewsItem[] = [
     timeAgo: '2d ago',
     originalHeadline: 'Access Holdings Launches N351 Billion Rights Issue for Capital Raise',
     aiSummary: 'Access Holdings is asking current investors to buy new shares at a discount (₦19.75) to raise ₦351 Billion. This money will help them meet the Central Bank\'s new high capital rules, but the extra shares on the market have caused the price to drop slightly.',
+    whyItMatters: 'The bank needs to raise ₦351 Billion to satisfy the Central Bank of Nigeria\'s new tier-1 capital requirements.',
+    implications: 'The addition of new discounted shares will create short-term dilution and price pressure, though long-term solvency improves.',
     keyDriver: 'Policy Change',
     affectedStocks: ['ACCESSCORP', 'UBA'],
     marketImpact: 'Neutral',

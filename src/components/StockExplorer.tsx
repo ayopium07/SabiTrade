@@ -7,7 +7,7 @@ import { useAppStore } from '@/lib/store';
 export default function StockExplorer() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('All');
-  const [sortBy, setSortBy] = useState<'ticker' | 'price' | 'high' | 'low' | 'eps' | 'bvps' | 'peRatio' | 'target' | 'upside' | 'decision'>('price');
+  const [sortBy, setSortBy] = useState<'ticker' | 'price' | 'high' | 'low' | 'eps' | 'bvps' | 'peRatio' | 'target' | 'upside' | 'rating'>('price');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
@@ -47,8 +47,8 @@ export default function StockExplorer() {
         const upsideA = (a.targetPrice - a.price) / a.price;
         const upsideB = (b.targetPrice - b.price) / b.price;
         comparison = upsideA - upsideB;
-      } else if (sortBy === 'decision') {
-        comparison = a.decision.localeCompare(b.decision);
+      } else if (sortBy === 'rating') {
+        comparison = a.rating.localeCompare(b.rating);
       }
       return sortOrder === 'desc' ? -comparison : comparison;
     });
@@ -108,11 +108,10 @@ export default function StockExplorer() {
             onClick={() => setIsSortOpen(!isSortOpen)}
             className="flex items-center gap-1.5 px-4 py-2.5 bg-bg-surface border border-border hover:border-brand-primary/30 rounded-xl text-xs font-bold font-dm-sans transition-all text-text-primary"
           >
-            <ArrowUpDown className="h-3.5 w-3.5 text-brand-primary" />
-            <span>Sort: {sortBy === 'ticker' ? 'Company' : sortBy === 'price' ? 'Close Price' : sortBy === 'high' ? '52 Weeks High' : sortBy === 'low' ? '52 Weeks Low' : sortBy === 'eps' ? 'EPS' : sortBy === 'bvps' ? 'BVPS' : sortBy === 'peRatio' ? 'PE Ratio' : sortBy === 'target' ? 'Our Target' : sortBy === 'upside' ? 'Upside/Downside' : 'Decision'} ({sortOrder === 'desc' ? '↓' : '↑'})</span>
+            <span>Sort: {sortBy === 'ticker' ? 'Company' : sortBy === 'price' ? 'Close Price' : sortBy === 'high' ? '52 Weeks High' : sortBy === 'low' ? '52 Weeks Low' : sortBy === 'eps' ? 'EPS' : sortBy === 'bvps' ? 'BVPS' : sortBy === 'peRatio' ? 'PE Ratio' : sortBy === 'target' ? 'Our Target' : sortBy === 'upside' ? 'Upside/Downside' : 'Consensus Rating'} ({sortOrder === 'desc' ? '↓' : '↑'})</span>
             <ChevronDown className="h-3.5 w-3.5 text-text-secondary" />
           </button>
-
+ 
           {isSortOpen && (
             <div className="absolute right-0 mt-1 w-48 glass-elevated border border-border shadow-card rounded-xl p-1 z-30 animate-in fade-in slide-in-from-top-1 duration-150 max-h-64 overflow-y-auto custom-scrollbar">
               {([
@@ -125,7 +124,7 @@ export default function StockExplorer() {
                 { key: 'peRatio', label: 'PE Ratio' },
                 { key: 'target', label: 'Our Target' },
                 { key: 'upside', label: 'Upside/Downside' },
-                { key: 'decision', label: 'Decision' }
+                { key: 'rating', label: 'Consensus Rating' }
               ] as const).map(({ key, label }) => (
                 <button
                   key={key}
@@ -174,7 +173,7 @@ export default function StockExplorer() {
                 {renderHeader('peRatio', 'PE Ratio', 'right')}
                 {renderHeader('target', 'Our Target', 'right')}
                 {renderHeader('upside', 'Upside/Downside', 'right')}
-                {renderHeader('decision', 'Decision', 'center')}
+                {renderHeader('rating', 'Consensus Rating', 'center')}
                 <th className="px-4 py-3.5 text-center text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans w-[80px]">View</th>
               </tr>
             </thead>
@@ -189,13 +188,13 @@ export default function StockExplorer() {
                   const upside = ((stock.targetPrice - stock.price) / stock.price) * 100;
                   const isUpsidePositive = upside >= 0;
                   
-                  let decisionClass = '';
-                  if (stock.decision === 'Buy') {
-                    decisionClass = 'bg-gain/10 text-gain border border-gain/20';
-                  } else if (stock.decision === 'Hold') {
-                    decisionClass = 'bg-warning/10 text-warning border border-warning/20';
+                  let ratingClass = '';
+                  if (stock.rating === 'Outperform') {
+                    ratingClass = 'bg-gain/10 text-gain border border-gain/20';
+                  } else if (stock.rating === 'Neutral') {
+                    ratingClass = 'bg-warning/10 text-warning border border-warning/20';
                   } else {
-                    decisionClass = 'bg-danger/10 text-danger border border-danger/20';
+                    ratingClass = 'bg-danger/10 text-danger border border-danger/20';
                   }
 
                   return (
@@ -277,10 +276,10 @@ export default function StockExplorer() {
                         </span>
                       </td>
 
-                      {/* Decision */}
+                      {/* Rating */}
                       <td className="px-4 py-3.5 text-center align-middle">
-                        <span className={`inline-flex text-[10px] font-extrabold px-2 py-0.5 rounded-lg uppercase tracking-wider ${decisionClass}`}>
-                          {stock.decision}
+                        <span className={`inline-flex text-[10px] font-extrabold px-2 py-0.5 rounded-lg uppercase tracking-wider ${ratingClass}`}>
+                          {stock.rating}
                         </span>
                       </td>
 

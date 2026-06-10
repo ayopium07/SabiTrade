@@ -292,6 +292,11 @@ export default function AIChatbot() {
             </div>
           )}
 
+          {/* Disclaimer */}
+          <div className="px-4 py-2 border-t border-border/40 text-[9px] text-text-secondary leading-relaxed font-dm-sans bg-bg-base/40 text-left">
+            This information is for educational and research purposes only and should not be considered financial advice.
+          </div>
+
           {/* Input */}
           <form onSubmit={handleSend} className="p-3 border-t border-border/40 flex gap-2 flex-shrink-0"
             style={{ background: 'rgba(7,6,21,0.8)' }}>

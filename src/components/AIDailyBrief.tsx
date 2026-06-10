@@ -59,9 +59,9 @@ export default function AIDailyBrief() {
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-4 pt-3.5 border-t border-border/50 flex items-center gap-2 text-[10px] text-text-secondary font-dm-sans">
+        <div className="mt-4 pt-3.5 border-t border-border/50 flex items-center gap-2 text-[10px] text-text-secondary font-dm-sans text-left">
           <ShieldAlert className="h-3.5 w-3.5 text-warning/70 flex-shrink-0" />
-          <span>AI-generated insight. Not financial advice. Based on latest 24h NGX publications.</span>
+          <span>This information is for educational and research purposes only and should not be considered financial advice.</span>
         </div>
       </div>
     </div>

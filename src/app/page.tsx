@@ -352,7 +352,7 @@ export default function Page() {
                     color: '#00B8FF',
                     badge: (
                       <span className="px-1.5 py-0.5 bg-bg-base border border-brand-primary/20 text-[#00B8FF] rounded-md text-[9px] font-extrabold uppercase">
-                        {stock.decision} Pick
+                        {stock.rating}
                       </span>
                     ),
                   })
