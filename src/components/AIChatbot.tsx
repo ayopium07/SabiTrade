@@ -152,10 +152,10 @@ export default function AIChatbot() {
           height: `${ORB_SIZE}px`,
           right:  `${pos.x}px`,
           bottom: `${pos.y}px`,
-          background: 'linear-gradient(135deg, #6366F1, #4F46E5)',
+          background: 'linear-gradient(135deg, #CFA343, #B58C35)',
           boxShadow: isChatOpen
-            ? '0 0 30px rgba(99,102,241,0.5), 0 0 60px rgba(99,102,241,0.2)'
-            : '0 0 20px rgba(99,102,241,0.35), 0 8px 30px rgba(0,0,0,0.5)',
+            ? '0 0 30px rgba(207,163,67,0.5), 0 0 60px rgba(207,163,67,0.2)'
+            : '0 0 20px rgba(207,163,67,0.35), 0 8px 30px rgba(0,0,0,0.5)',
           cursor: isDragging.current ? 'grabbing' : 'grab',
           transition: isDragging.current ? 'none' : 'box-shadow 0.2s ease',
           display: 'flex',
@@ -168,7 +168,7 @@ export default function AIChatbot() {
         {/* Pulse ring */}
         {!isChatOpen && (
           <span className="absolute inset-0 rounded-full animate-ping pointer-events-none"
-            style={{ background: 'rgba(99,102,241,0.2)' }} />
+            style={{ background: 'rgba(207,163,67,0.2)' }} />
         )}
 
         {/* Online dot */}
@@ -178,7 +178,7 @@ export default function AIChatbot() {
         {/* Drag hint tooltip — shows briefly on first hover */}
         <span
           className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-bold text-text-secondary opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity px-2 py-0.5 rounded-lg"
-          style={{ background: 'rgba(14,13,37,0.9)', border: '1px solid #23214C' }}
+          style={{ background: 'rgba(8,29,56,0.9)', border: '1px solid #11325D' }}
         >
           drag me
         </span>
@@ -193,19 +193,19 @@ export default function AIChatbot() {
             height: `${PANEL_H}px`,
             right:  `${panelRight}px`,
             bottom: `${panelBottom}px`,
-            background: 'rgba(14, 13, 37, 0.97)',
+            background: 'rgba(8, 29, 56, 0.97)',
             backdropFilter: 'blur(32px)',
-            border: '1px solid rgba(99,102,241,0.12)',
-            boxShadow: '0 0 0 1px rgba(99,102,241,0.04), 0 40px 80px rgba(0,0,0,0.8)',
+            border: '1px solid rgba(207,163,67,0.15)',
+            boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)',
           }}
         >
           {/* Top gradient border */}
           <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-            style={{ background: 'linear-gradient(90deg, transparent, #6366F1, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
 
           {/* Header */}
           <div className="px-4 py-3.5 flex items-center justify-between border-b border-border/60 flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.06), transparent)' }}>
+            style={{ background: 'linear-gradient(135deg, rgba(207,163,67,0.06), transparent)' }}>
             <div className="flex items-center gap-2.5">
               <div className="relative">
                 <div className="bg-brand-primary/15 border border-brand-primary/25 p-1.5 rounded-lg">
@@ -215,7 +215,7 @@ export default function AIChatbot() {
                   style={{ background: '#10B981' }} />
               </div>
               <div>
-                <h4 className="text-sm font-bold font-sora text-text-primary">SabiTrade Assistant</h4>
+                <h4 className="text-sm font-bold font-sora text-text-primary">EquityStack Assistant</h4>
                 <span className="text-[9px] font-semibold text-brand-primary uppercase tracking-widest block font-dm-sans">
                   NGX Intelligence · 🇳🇬
                 </span>
@@ -236,7 +236,7 @@ export default function AIChatbot() {
                 <div key={idx} className={`flex items-start gap-2.5 ${isAi ? '' : 'justify-end'}`}>
                   {isAi && (
                     <div className="h-7 w-7 rounded-full flex items-center justify-center text-bg-base flex-shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)' }}>
+                      style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
                       <Sparkles className="h-3.5 w-3.5" />
                     </div>
                   )}
@@ -244,8 +244,8 @@ export default function AIChatbot() {
                     isAi ? 'rounded-tl-none text-text-primary/90' : 'rounded-tr-none text-bg-base'
                   }`}
                     style={isAi
-                      ? { background: 'rgba(14,13,37,0.9)', border: '1px solid rgba(99,102,241,0.1)' }
-                      : { background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.25)' }
+                      ? { background: 'rgba(8,29,56,0.9)', border: '1px solid rgba(207,163,67,0.1)' }
+                      : { background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.25)' }
                     }>
                     {isAi
                       ? parseMarkdown(msg.text)
@@ -260,14 +260,14 @@ export default function AIChatbot() {
             {isChatTyping && (
               <div className="flex items-start gap-2.5">
                 <div className="h-7 w-7 rounded-full flex items-center justify-center text-bg-base flex-shrink-0"
-                  style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)' }}>
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
                   <Sparkles className="h-3.5 w-3.5" />
                 </div>
                 <div className="rounded-2xl rounded-tl-none p-3 flex items-center gap-1.5 h-9"
-                  style={{ background: 'rgba(14,13,37,0.9)', border: '1px solid rgba(99,102,241,0.1)' }}>
+                  style={{ background: 'rgba(8,29,56,0.9)', border: '1px solid rgba(207,163,67,0.1)' }}>
                   {[0, 150, 300].map((delay) => (
                     <span key={delay} className="h-1.5 w-1.5 rounded-full animate-bounce"
-                      style={{ background: '#6366F1', animationDelay: `${delay}ms` }} />
+                      style={{ background: '#CFA343', animationDelay: `${delay}ms` }} />
                   ))}
                 </div>
               </div>
@@ -283,9 +283,9 @@ export default function AIChatbot() {
                 <button key={q}
                   onClick={() => sendChatMessage(q.replace(/ [^\w\s]/g, '').trim())}
                   className="px-2.5 py-1 rounded-full text-[10px] font-extrabold text-brand-primary transition-all focus:outline-none"
-                  style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.15)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.08)')}>
+                  style={{ background: 'rgba(207,163,67,0.08)', border: '1px solid rgba(207,163,67,0.2)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(207,163,67,0.15)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(207,163,67,0.08)')}>
                   {q}
                 </button>
               ))}
@@ -306,13 +306,13 @@ export default function AIChatbot() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               className="flex-grow px-3.5 py-2 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none text-text-primary placeholder:text-text-secondary"
-              style={{ background: 'rgba(14,13,37,0.8)', border: '1px solid rgba(99,102,241,0.12)' }}
-              onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.35)')}
-              onBlur={e => (e.target.style.borderColor = 'rgba(99,102,241,0.12)')}
+              style={{ background: 'rgba(8,29,56,0.8)', border: '1px solid rgba(207,163,67,0.12)' }}
+              onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.35)')}
+              onBlur={e => (e.target.style.borderColor = 'rgba(207,163,67,0.12)')}
             />
             <button type="submit"
               className="p-2 rounded-xl text-bg-base focus:outline-none flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 10px rgba(99,102,241,0.3)' }}>
+              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 10px rgba(207,163,67,0.3)' }}>
               <Send className="h-4 w-4" />
             </button>
           </form>

@@ -14,10 +14,10 @@ const team = [
   {
     name: 'Timilehin Olaniyi',
     role: 'Founder & CEO',
-    bio: 'A dynamic financial analyst and investment intelligence architect with extensive knowledge in investment banking. Currently working for one of the Big 4 professional services firms in Nigeria, he advises leading corporate portfolios. Timilehin is passionate about retail equity accessibility, and conceptualized SabiTrade to build robust financial intelligence interfaces that speak the language of everyday retail investors.',
+    bio: 'A dynamic financial analyst and investment intelligence architect with extensive knowledge in investment banking. Currently working for one of the Big 4 professional services firms in Nigeria, he advises leading corporate portfolios. Timilehin is passionate about retail equity accessibility, and conceptualized EquityStack to build robust financial intelligence interfaces that speak the language of everyday retail investors.',
     initials: 'TO',
     image: '/Timilehin.jpg',
-    color: '#6366F1',
+    color: '#CFA343',
     linkedin: 'https://linkedin.com',
     email: 'timilehinolaniyi193@gmail.com',
     icon: Award,
@@ -25,7 +25,7 @@ const team = [
   {
     name: 'Joshua Ayotope',
     role: 'Co-Founder & CTO',
-    bio: 'A versatile tech innovator and systems architect with multi-disciplinary knowledge across different sectors. Joshua has worked closely with different sectors to build efficient technical solutions. At SabiTrade, he translates complex market intelligence models into a production-ready web platform, directing the Sora AI logic implementation.',
+    bio: 'A versatile tech innovator and systems architect with multi-disciplinary knowledge across different sectors. Joshua has worked closely with different sectors to build efficient technical solutions. At EquityStack, he translates complex market intelligence models into a production-ready web platform, directing the Sora AI logic implementation.',
     initials: 'JAA',
     image: '/Temisann.png',
     color: '#10B981',
@@ -43,22 +43,22 @@ export default function AboutUs() {
 
       {/* ── Header / Hero ─────────────────────────────────── */}
       <div className="relative rounded-3xl overflow-hidden border border-brand-primary/10 p-6 sm:p-10 text-center"
-        style={{ background: 'linear-gradient(145deg, #0E0D25 0%, #070615 100%)' }}>
+        style={{ background: 'linear-gradient(145deg, #081D38 0%, #041226 100%)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.08) 0%, transparent 70%)' }} />
         <div className="absolute top-0 left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, #6366F1, transparent)' }} />
+          style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
         <div className="relative z-10 max-w-2xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border border-brand-primary/20 text-brand-primary"
-            style={{ background: 'rgba(99,102,241,0.08)' }}>
+            style={{ background: 'rgba(207,163,67,0.08)' }}>
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Behind SabiTrade</span>
+            <span>Behind EquityStack</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora tracking-tight">
             Our Story &amp; Philosophy
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-medium">
-            SabiTrade was born from a simple observation: Nigerian financial markets are full of compounding opportunities, but the raw data is wrapped in complex, intimidating jargon. We are here to bridge that gap.
+            EquityStack was born from a simple observation: Nigerian financial markets are full of compounding opportunities, but the raw data is wrapped in complex, intimidating jargon. We are here to bridge that gap.
           </p>
         </div>
       </div>
@@ -66,9 +66,9 @@ export default function AboutUs() {
       {/* ── Vision & Mission ──────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:border-brand-primary/30"
-          style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)', border: '1px solid #23214C' }}>
+          style={{ background: 'linear-gradient(145deg, #081D38, #041226)', border: '1px solid #11325D' }}>
           <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
+            style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.05) 0%, transparent 70%)' }} />
           <div className="flex items-center gap-3.5 mb-4">
             <div className="bg-brand-primary/10 border border-brand-primary/25 p-2.5 rounded-xl text-brand-primary">
               <Compass className="h-5 w-5" />
@@ -81,7 +81,7 @@ export default function AboutUs() {
         </div>
 
         <div className="p-6 rounded-2xl relative overflow-hidden transition-all duration-300 hover:border-gain/30"
-          style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)', border: '1px solid #23214C' }}>
+          style={{ background: 'linear-gradient(145deg, #081D38, #041226)', border: '1px solid #11325D' }}>
           <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full pointer-events-none"
             style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%)' }} />
           <div className="flex items-center gap-3.5 mb-4">
@@ -103,7 +103,7 @@ export default function AboutUs() {
             <p className="text-[10px] font-extrabold text-text-secondary uppercase tracking-widest font-dm-sans">
               Leadership Team
             </p>
-            <h2 className="text-lg font-bold text-text-primary font-sora mt-0.5">Meet the Minds Building SabiTrade</h2>
+            <h2 className="text-lg font-bold text-text-primary font-sora mt-0.5">Meet the Minds Building EquityStack</h2>
           </div>
           <Users className="h-5 w-5 text-brand-primary" />
         </div>
@@ -116,7 +116,7 @@ export default function AboutUs() {
                 key={member.name}
                 onClick={() => setActiveMember(member)}
                 className="group text-left rounded-2xl overflow-hidden border border-border transition-all duration-300 hover:-translate-y-1 hover:border-brand-primary/30 focus:outline-none"
-                style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}
+                style={{ background: 'linear-gradient(145deg, #081D38, #041226)' }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 16px 40px ${member.color}18`;
                 }}
@@ -135,7 +135,7 @@ export default function AboutUs() {
                   {/* Subtle bottom fade into card footer only */}
                   <div
                     className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
-                    style={{ background: 'linear-gradient(to top, #0E0D25 0%, transparent 100%)' }}
+                    style={{ background: 'linear-gradient(to top, #081D38 0%, transparent 100%)' }}
                   />
                   {/* Hover CTA chip */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
@@ -179,7 +179,7 @@ export default function AboutUs() {
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-2xl rounded-3xl overflow-hidden flex flex-row"
             style={{
-              background: '#0C0B20',
+              background: '#081D38',
               border: '1px solid rgba(255,255,255,0.07)',
               boxShadow: '0 30px 80px rgba(0,0,0,0.8)',
               minHeight: '420px',
@@ -187,7 +187,7 @@ export default function AboutUs() {
           >
             {/* Colour accent top bar */}
             <div className="absolute top-0 left-0 right-0 h-1 z-10"
-              style={{ background: `linear-gradient(90deg, ${activeMember.color}, #4F46E5)` }} />
+              style={{ background: `linear-gradient(90deg, ${activeMember.color}, #B58C35)` }} />
 
             {/* Close button */}
             <button

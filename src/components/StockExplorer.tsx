@@ -1,13 +1,13 @@
 // StockExplorer Component - Enhanced with Investment Metrics and Sorting
 import React, { useState } from 'react';
-import { Search, ChevronDown, Check, ArrowUpDown, Star } from 'lucide-react';
+import { Search, ChevronDown, Check, Star } from 'lucide-react';
 import { ngxStocks } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
 export default function StockExplorer() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('All');
-  const [sortBy, setSortBy] = useState<'ticker' | 'price' | 'high' | 'low' | 'eps' | 'bvps' | 'peRatio' | 'target' | 'upside' | 'rating'>('price');
+  const [sortBy, setSortBy] = useState<'ticker' | 'price' | 'change' | 'high' | 'low' | 'eps' | 'bvps' | 'peRatio' | 'target' | 'upside' | 'rating'>('price');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
@@ -31,6 +31,8 @@ export default function StockExplorer() {
         comparison = a.ticker.localeCompare(b.ticker);
       } else if (sortBy === 'price') {
         comparison = a.price - b.price;
+      } else if (sortBy === 'change') {
+        comparison = a.change - b.change;
       } else if (sortBy === 'high') {
         comparison = a.fiftyTwoWeekRange.high - b.fiftyTwoWeekRange.high;
       } else if (sortBy === 'low') {
@@ -108,7 +110,7 @@ export default function StockExplorer() {
             onClick={() => setIsSortOpen(!isSortOpen)}
             className="flex items-center gap-1.5 px-4 py-2.5 bg-bg-surface border border-border hover:border-brand-primary/30 rounded-xl text-xs font-bold font-dm-sans transition-all text-text-primary"
           >
-            <span>Sort: {sortBy === 'ticker' ? 'Company' : sortBy === 'price' ? 'Close Price' : sortBy === 'high' ? '52 Weeks High' : sortBy === 'low' ? '52 Weeks Low' : sortBy === 'eps' ? 'EPS' : sortBy === 'bvps' ? 'BVPS' : sortBy === 'peRatio' ? 'PE Ratio' : sortBy === 'target' ? 'Our Target' : sortBy === 'upside' ? 'Upside/Downside' : 'Consensus Rating'} ({sortOrder === 'desc' ? '↓' : '↑'})</span>
+            <span>Sort: {sortBy === 'ticker' ? 'Company' : sortBy === 'price' ? 'Close Price' : sortBy === 'change' ? 'Daily Change' : sortBy === 'high' ? '52 Weeks High' : sortBy === 'low' ? '52 Weeks Low' : sortBy === 'eps' ? 'EPS' : sortBy === 'bvps' ? 'BVPS' : sortBy === 'peRatio' ? 'PE Ratio' : sortBy === 'target' ? 'Our Target' : sortBy === 'upside' ? 'Upside/Downside' : 'Consensus Rating'} ({sortOrder === 'desc' ? '↓' : '↑'})</span>
             <ChevronDown className="h-3.5 w-3.5 text-text-secondary" />
           </button>
  
@@ -117,6 +119,7 @@ export default function StockExplorer() {
               {([
                 { key: 'ticker', label: 'Company' },
                 { key: 'price', label: 'Close Price' },
+                { key: 'change', label: 'Daily Change' },
                 { key: 'high', label: '52 Weeks High' },
                 { key: 'low', label: '52 Weeks Low' },
                 { key: 'eps', label: 'EPS' },
@@ -154,18 +157,17 @@ export default function StockExplorer() {
             {sector}
           </button>
         ))}
-      </div>
-
-      {/* ── Stock Table ───────────────────────────────────── */}
+      </div>      {/* ── Stock Table ───────────────────────────────────── */}
       <div className="rounded-2xl border border-border overflow-hidden"
         style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
         <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full border-collapse text-left min-w-[1050px]">
+          <table className="w-full border-collapse text-left min-w-[1200px]">
             {/* Table header */}
             <thead>
               <tr className="bg-bg-base/60 border-b border-border">
                 {renderHeader('ticker', 'Company', 'left')}
                 {renderHeader('price', 'Close Price', 'right')}
+                {renderHeader('change', 'Daily Change', 'right')}
                 {renderHeader('high', '52 Weeks High', 'right')}
                 {renderHeader('low', '52 Weeks Low', 'right')}
                 {renderHeader('eps', 'EPS', 'right')}
@@ -174,7 +176,7 @@ export default function StockExplorer() {
                 {renderHeader('target', 'Our Target', 'right')}
                 {renderHeader('upside', 'Upside/Downside', 'right')}
                 {renderHeader('rating', 'Consensus Rating', 'center')}
-                <th className="px-4 py-3.5 text-center text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans w-[80px]">View</th>
+                <th className="px-4 py-3.5 text-center text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans w-[100px]">7D Chart</th>
               </tr>
             </thead>
 
@@ -230,12 +232,17 @@ export default function StockExplorer() {
                       </td>
 
                       {/* Close Price */}
+                      <td className="px-4 py-3.5 text-right align-middle font-bold text-xs text-text-primary">
+                        ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                      </td>
+
+                      {/* Daily Change */}
                       <td className="px-4 py-3.5 text-right align-middle">
-                        <span className="text-sm font-extrabold text-text-primary font-sora">
-                          ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                        <span className={`text-xs font-extrabold ${isPositive ? 'text-gain' : 'text-danger'}`}>
+                          {isPositive ? '+' : ''}₦{stock.changeAmount.toFixed(2)}
                         </span>
                         <span className={`block text-[10px] font-bold ${isPositive ? 'text-gain' : 'text-danger'}`}>
-                          {isPositive ? '+' : ''}{stock.change.toFixed(1)}%
+                          ({isPositive ? '+' : ''}{stock.change.toFixed(2)}%)
                         </span>
                       </td>
 
@@ -283,16 +290,46 @@ export default function StockExplorer() {
                         </span>
                       </td>
 
-                      {/* View Button */}
+                      {/* 7D Chart */}
                       <td className="px-4 py-3.5 text-center align-middle">
-                        <span className="text-brand-primary text-sm group-hover:translate-x-1 inline-block transition-transform duration-200">→</span>
+                        {(() => {
+                          const min = Math.min(...stock.sparkline);
+                          const max = Math.max(...stock.sparkline);
+                          const range = max - min || 1;
+                          const W = 80;
+                          const H = 22;
+
+                          const points = stock.sparkline.map((val: number, idx: number) => ({
+                            x: (idx / (stock.sparkline.length - 1)) * W,
+                            y: H - 2 - ((val - min) / range) * (H - 4),
+                          }));
+
+                          const linePath = points.reduce((d: string, p: { x: number; y: number }, i: number) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
+                          const areaPath = linePath + ` L ${W} ${H} L 0 ${H} Z`;
+
+                          return (
+                            <div className="h-6 w-20 mx-auto opacity-80">
+                              <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+                                <defs>
+                                  <linearGradient id={`area-table-grad-${stock.ticker}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor={isPositive ? '#10B981' : '#FF4D4D'} stopOpacity="0.25" />
+                                    <stop offset="100%" stopColor={isPositive ? '#10B981' : '#FF4D4D'} stopOpacity="0.0" />
+                                  </linearGradient>
+                                </defs>
+                                <path d={areaPath} fill={`url(#area-table-grad-${stock.ticker})`} />
+                                <path d={linePath} fill="none" stroke={isPositive ? '#10B981' : '#FF4D4D'} strokeWidth="1.5"
+                                  strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </div>
+                          );
+                        })()}
                       </td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan={11} className="p-10 text-center text-text-secondary font-medium font-dm-sans">
+                  <td colSpan={12} className="p-10 text-center text-text-secondary font-medium font-dm-sans">
                     <span className="block text-2xl mb-2">🔍</span>
                     No stocks match &quot;{searchQuery}&quot;. Try a different name or ticker.
                   </td>

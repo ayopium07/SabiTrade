@@ -25,8 +25,8 @@ export interface UserProfile {
 
 export interface AppState {
   // Navigation & View Flow
-  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about';
-  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about';
+  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade';
+  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about' | 'learn' | 'community' | 'trade';
   selectedTicker: string;
   
   // User Authentication & Onboarding
@@ -39,6 +39,8 @@ export interface AppState {
   
   // Portfolio Holdings
   portfolio: PortfolioHolding[];
+  demoPortfolio: PortfolioHolding[];
+  cashBalance: number;
   
   // Chatbot State
   chatMessages: ChatMessage[];
@@ -46,7 +48,7 @@ export interface AppState {
   isChatTyping: boolean;
 
   // Actions
-  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about') => void;
+  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => void;
   setSelectedTicker: (ticker: string) => void;
   loginUser: (name: string, email: string) => void;
   setOnboarding: (data: Partial<UserProfile>) => void;
@@ -54,6 +56,7 @@ export interface AppState {
   logoutUser: () => void;
   toggleWatchlist: (ticker: string) => void;
   addHolding: (ticker: string, shares: number, buyPrice: number) => void;
+  addDemoTrade: (ticker: string, shares: number, price: number, type: 'buy' | 'sell', totalCostOrProceeds: number) => { success: boolean; error?: string };
   removeHolding: (ticker: string) => void;
   setMarketSearch: (query: string) => void;
   setMarketSector: (sector: string) => void;
@@ -76,10 +79,12 @@ export const useAppStore = create<AppState>()(
     { ticker: 'ZENITHBANK', shares: 5000, buyPrice: 35.50, date: '2026-04-12' },
     { ticker: 'DANGCEM', shares: 200, buyPrice: 620.00, date: '2026-05-01' }
   ],
+  demoPortfolio: [],
+  cashBalance: 10000000,
   chatMessages: [
     {
       sender: 'ai',
-      text: "Ẹ n lẹ! Welcome to SabiTrade assistant! 👋 I translate scary Nigerian stock jargon into plain English. \n\nSelect a quick-reply chip below or type your question. How can I help you start your wealth journey today?",
+      text: "Ẹ n lẹ! Welcome to EquityStack assistant! 👋 I translate scary Nigerian stock jargon into plain English. \n\nSelect a quick-reply chip below or type your question. How can I help you start your wealth journey today?",
       timestamp: new Date()
     }
   ],
@@ -177,6 +182,66 @@ export const useAppStore = create<AppState>()(
     return { portfolio: newPortfolio };
   }),
 
+  addDemoTrade: (ticker, shares, price, type, totalCostOrProceeds) => {
+    const state = get();
+    if (type === 'buy') {
+      if (totalCostOrProceeds > state.cashBalance) {
+        return { success: false, error: 'Insufficient simulated cash balance!' };
+      }
+      
+      const newCash = state.cashBalance - totalCostOrProceeds;
+      const existingIndex = state.demoPortfolio.findIndex(h => h.ticker === ticker);
+      const newDemoPortfolio = [...state.demoPortfolio];
+      
+      if (existingIndex >= 0) {
+        const existing = state.demoPortfolio[existingIndex];
+        const newShares = existing.shares + shares;
+        const newCost = (existing.shares * existing.buyPrice) + (shares * price);
+        const newAvgPrice = parseFloat((newCost / newShares).toFixed(2));
+        
+        newDemoPortfolio[existingIndex] = {
+          ticker,
+          shares: newShares,
+          buyPrice: newAvgPrice,
+          date: new Date().toISOString().split('T')[0]
+        };
+      } else {
+        newDemoPortfolio.push({
+          ticker,
+          shares,
+          buyPrice: price,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+      
+      set({ cashBalance: newCash, demoPortfolio: newDemoPortfolio });
+      return { success: true };
+    } else { // sell
+      const existingIndex = state.demoPortfolio.findIndex(h => h.ticker === ticker);
+      if (existingIndex < 0 || state.demoPortfolio[existingIndex].shares < shares) {
+        return { success: false, error: 'Insufficient shares to sell!' };
+      }
+      
+      const existing = state.demoPortfolio[existingIndex];
+      const newShares = existing.shares - shares;
+      let newDemoPortfolio = [...state.demoPortfolio];
+      
+      if (newShares === 0) {
+        newDemoPortfolio = newDemoPortfolio.filter(h => h.ticker !== ticker);
+      } else {
+        newDemoPortfolio[existingIndex] = {
+          ...existing,
+          shares: newShares,
+          date: new Date().toISOString().split('T')[0]
+        };
+      }
+      
+      const newCash = state.cashBalance + totalCostOrProceeds;
+      set({ cashBalance: newCash, demoPortfolio: newDemoPortfolio });
+      return { success: true };
+    }
+  },
+
   removeHolding: (ticker) => set((state) => ({
     portfolio: state.portfolio.filter(h => h.ticker !== ticker)
   })),
@@ -231,14 +296,14 @@ export const useAppStore = create<AppState>()(
     chatMessages: [
       {
         sender: 'ai',
-        text: `Hey ${state.user?.name || ''}! Welcome back to SabiTrade assistant. Ask me to explain anything in a simplified way!`,
+        text: `Hey ${state.user?.name || ''}! Welcome back to EquityStack assistant. Ask me to explain anything in a simplified way!`,
         timestamp: new Date()
       }
     ]
   }))
   }),
   {
-    name: 'sabitrade-session',
+    name: 'equitystack-session',
     // Only persist the essential session state — not transient UI or chat history
     partialize: (state) => ({
       currentView: state.currentView,
@@ -247,6 +312,8 @@ export const useAppStore = create<AppState>()(
       user: state.user,
       watchlist: state.watchlist,
       portfolio: state.portfolio,
+      demoPortfolio: state.demoPortfolio,
+      cashBalance: state.cashBalance,
       marketSectorFilter: state.marketSectorFilter,
     }),
   }

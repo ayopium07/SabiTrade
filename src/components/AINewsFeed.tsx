@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ExternalLink, TrendingUp, TrendingDown, Minus, ChevronDown, ChevronUp } from 'lucide-react';
-import { mockNews } from '@/lib/mockData';
+import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info } from 'lucide-react';
+import { mockNews, ngxStocks, NewsItem } from '@/lib/mockData';
+import { useAppStore } from '@/lib/store';
 
 const sentimentConfig = {
   Positive: {
@@ -26,11 +27,26 @@ const sentimentConfig = {
   },
 };
 
+const categories = ['Featured', 'Breaking', 'Most Popular', 'Cryptocurrency'] as const;
+
 export default function AINewsFeed() {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<typeof categories[number]>('Featured');
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
+  const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
+  const setView = useAppStore((s) => s.setView);
+
+  // Filter news by active category
+  const filteredNews = mockNews.filter((item) => item.category === activeCategory);
+
+  const handleStockClick = (ticker: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening news modal
+    setSelectedTicker(ticker);
+    setView('stock-detail');
+  };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -45,142 +61,298 @@ export default function AINewsFeed() {
         </span>
       </div>
 
-      {/* News Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {mockNews.map((news) => {
-          const cfg = sentimentConfig[news.marketImpact];
-          const IconComp = cfg.icon;
-          const isExpanded = expandedId === news.id;
-
+      {/* Category Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none border-b border-border/30">
+        {categories.map((cat) => {
+          const isSelected = activeCategory === cat;
           return (
-            <div
-              key={news.id}
-              className="rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer group"
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="flex-shrink-0 px-4 py-2 border-b-2 font-bold text-xs transition-all duration-300 focus:outline-none"
               style={{
-                background: 'linear-gradient(145deg, #0E0D25, #070615)',
-                border: `1px solid ${isExpanded ? cfg.border : '#23214C'}`,
-                boxShadow: isExpanded ? `0 0 24px ${cfg.dot}20` : 'none',
-                borderLeft: `3px solid ${cfg.dot}`,
-              }}
-              onClick={() => setExpandedId(isExpanded ? null : news.id)}
-              onMouseEnter={e => {
-                if (!isExpanded) {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = cfg.border;
-                  (e.currentTarget as HTMLDivElement).style.borderLeftColor = cfg.dot;
-                }
-              }}
-              onMouseLeave={e => {
-                if (!isExpanded) {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = '#23214C';
-                  (e.currentTarget as HTMLDivElement).style.borderLeftColor = cfg.dot;
-                }
+                borderColor: isSelected ? '#6366F1' : 'transparent',
+                color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
               }}
             >
-              <div className="p-4 sm:p-5">
-                {/* Source & Metadata Row */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-extrabold border ${cfg.badge}`}>
-                      <IconComp className="h-2.5 w-2.5" />
-                      {news.marketImpact}
-                    </span>
-                    <span className="text-[9px] font-bold text-text-secondary uppercase tracking-wider font-dm-sans">
-                      {news.source}
-                    </span>
-                  </div>
-                  <span className="text-[9px] text-text-secondary font-dm-sans">{news.timeAgo}</span>
-                </div>
-
-                {/* Headline */}
-                <h4 className="text-sm font-bold text-text-primary font-sora leading-snug mb-2.5 line-clamp-2 group-hover:text-brand-primary transition-colors">
-                  {news.originalHeadline}
-                </h4>
-
-                {/* AI Summary */}
-                <p className="text-xs text-text-secondary font-medium leading-relaxed font-dm-sans line-clamp-3">
-                  {news.aiSummary}
-                </p>
-
-                {/* Expanded Content */}
-                {isExpanded && (
-                  <div className="mt-4 pt-3.5 border-t border-border/60 space-y-4 animate-in fade-in duration-200">
-                    {/* AI Insights block */}
-                    <div className="space-y-3 bg-bg-base/40 p-3.5 rounded-xl border border-border/40 text-left">
-                      <div>
-                        <span className="block text-[9px] text-brand-primary font-extrabold uppercase tracking-wider mb-1">
-                          Why It Matters
-                        </span>
-                        <p className="text-xs text-text-primary/90 font-medium leading-relaxed font-dm-sans">
-                          {news.whyItMatters}
-                        </p>
-                      </div>
-
-                      <div>
-                        <span className="block text-[9px] text-brand-primary font-extrabold uppercase tracking-wider mb-1">
-                          Potential Implications
-                        </span>
-                        <p className="text-xs text-text-primary/90 font-medium leading-relaxed font-dm-sans">
-                          {news.implications}
-                        </p>
-                      </div>
-
-                      {/* Related Companies */}
-                      <div>
-                        <span className="block text-[9px] text-text-secondary font-extrabold uppercase tracking-wider mb-1.5">
-                          Related Companies
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {news.affectedStocks.map((ticker) => (
-                            <span key={ticker}
-                              className="px-2 py-0.5 rounded-lg text-[9px] font-bold text-brand-primary border border-brand-primary/20 bg-brand-primary/5">
-                              {ticker}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Driver Tags */}
-                    {news.drivers && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {news.drivers.map((tag: string) => (
-                          <span key={tag}
-                            className="px-2 py-0.5 rounded-lg text-[9px] font-bold text-text-secondary border border-border bg-bg-base">
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between gap-4">
-                      <button className="flex items-center gap-1.5 text-[10px] font-bold text-brand-primary hover:underline focus:outline-none">
-                        <ExternalLink className="h-3 w-3" />
-                        Read full article
-                      </button>
-                    </div>
-
-                    {/* Regulatory Disclaimer */}
-                    <p className="text-[9px] leading-relaxed text-text-secondary italic border-t border-border/20 pt-2 font-dm-sans text-left">
-                      This information is for educational and research purposes only and should not be considered financial advice.
-                    </p>
-                  </div>
-                )}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/40">
-                  <div className="flex items-center gap-1.5 text-[9px] text-text-secondary font-dm-sans">
-                    <span style={{ color: cfg.dot }}>●</span>
-                    <span>Market impact: <strong className="text-text-primary">{news.marketImpact}</strong></span>
-                  </div>
-                  {isExpanded
-                    ? <ChevronUp className="h-3.5 w-3.5 text-text-secondary" />
-                    : <ChevronDown className="h-3.5 w-3.5 text-text-secondary" />}
-                </div>
-              </div>
-            </div>
+              {cat}
+            </button>
           );
         })}
       </div>
+
+      {/* News Stack (High Density List) */}
+      <div className="flex flex-col gap-3">
+        {filteredNews.length > 0 ? (
+          filteredNews.map((news) => {
+            const cfg = sentimentConfig[news.marketImpact];
+            return (
+              <div
+                key={news.id}
+                onClick={() => setSelectedNews(news)}
+                className="flex gap-4 p-3 rounded-2xl border transition-all duration-300 cursor-pointer group relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(145deg, #0E0D25, #070615)',
+                  borderColor: '#23214C',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(99,102,241,0.4)';
+                  (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)';
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 20px rgba(99,102,241,0.08)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = '#23214C';
+                  (e.currentTarget as HTMLDivElement).style.transform = 'none';
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                }}
+              >
+                {/* Left Side: Thumbnail Image */}
+                <div className="w-20 h-20 sm:w-24 sm:h-20 flex-shrink-0 rounded-xl overflow-hidden relative border border-border/35 bg-bg-base/60">
+                  <img
+                    src={news.imageUrl}
+                    alt={news.originalHeadline}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {/* Subtle impact corner badge */}
+                  <span
+                    className="absolute top-1 left-1 w-2 h-2 rounded-full"
+                    style={{ backgroundColor: cfg.dot }}
+                    title={`Market Impact: ${news.marketImpact}`}
+                  />
+                </div>
+
+                {/* Right Side: Content Area */}
+                <div className="flex-1 flex flex-col justify-between min-w-0">
+                  <div className="space-y-1">
+                    {/* Stock Badges with Live price changes */}
+                    {news.affectedStocks && news.affectedStocks.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        {news.affectedStocks.map((ticker) => {
+                          const stock = ngxStocks.find((s) => s.ticker === ticker);
+                          if (!stock) return null;
+                          const isPos = stock.change >= 0;
+                          return (
+                            <button
+                              key={ticker}
+                              onClick={(e) => handleStockClick(ticker, e)}
+                              className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-bg-base border border-border/40 hover:border-brand-primary/40 hover:text-brand-primary transition-colors focus:outline-none"
+                            >
+                              <span className="text-text-secondary">{ticker}</span>
+                              <span className={isPos ? 'text-gain' : 'text-danger'}>
+                                {isPos ? '+' : ''}
+                                {stock.change.toFixed(2)}%
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Headline */}
+                    <h3 className="text-xs sm:text-sm font-bold text-text-primary font-sora leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                      {news.originalHeadline}
+                    </h3>
+                  </div>
+
+                  {/* Metadata Row */}
+                  <div className="flex items-center justify-between text-[10px] text-text-secondary font-medium font-dm-sans mt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-text-primary/80">{news.source}</span>
+                      <span>·</span>
+                      <span>{news.timeAgo}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <MessageSquare className="h-3.5 w-3.5 text-text-secondary/80" />
+                      <span>{news.commentsCount}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="py-12 border border-dashed border-border/50 rounded-2xl text-center text-xs text-text-secondary font-medium font-dm-sans">
+            <span className="text-2xl block mb-2">📰</span>
+            <span>No articles available in this category. Check back later!</span>
+          </div>
+        )}
+      </div>
+
+      {/* Details Modal */}
+      {selectedNews && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+          style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}
+        >
+          {/* Backdrop click close */}
+          <div className="absolute inset-0" onClick={() => setSelectedNews(null)} />
+
+          {/* Modal content box */}
+          <div
+            className="w-full max-w-xl rounded-3xl p-6 sm:p-8 relative overflow-y-auto max-h-[90vh] border animate-in zoom-in-95 duration-300 text-left z-10 space-y-5 shadow-2xl"
+            style={{
+              background: 'linear-gradient(145deg, #0E0D25, #070615)',
+              borderColor: sentimentConfig[selectedNews.marketImpact].border,
+              boxShadow: `0 0 24px ${sentimentConfig[selectedNews.marketImpact].dot}15`,
+            }}
+          >
+            {/* Top Close Button & Indicators */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span
+                  className="px-2 py-0.5 rounded-lg text-[9px] font-extrabold border uppercase tracking-wider"
+                  style={{
+                    backgroundColor: sentimentConfig[selectedNews.marketImpact].bg,
+                    color: sentimentConfig[selectedNews.marketImpact].dot,
+                    borderColor: sentimentConfig[selectedNews.marketImpact].border,
+                  }}
+                >
+                  {selectedNews.marketImpact} Impact
+                </span>
+                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">
+                  {selectedNews.category}
+                </span>
+              </div>
+              <button
+                onClick={() => setSelectedNews(null)}
+                className="text-text-secondary hover:text-text-primary p-1.5 rounded-full border border-border/40 hover:border-border transition-colors focus:outline-none"
+                style={{ background: '#070615' }}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Featured Image */}
+            <div className="w-full h-44 sm:h-52 rounded-2xl overflow-hidden border border-border/30 bg-bg-base/60">
+              <img
+                src={selectedNews.imageUrl}
+                alt={selectedNews.originalHeadline}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Headline & Meta info */}
+            <div className="space-y-2">
+              <h2 className="text-base sm:text-lg font-extrabold font-sora text-text-primary leading-snug">
+                {selectedNews.originalHeadline}
+              </h2>
+              <div className="flex items-center gap-2 text-[10px] text-text-secondary">
+                <span className="font-bold text-text-primary">{selectedNews.source}</span>
+                <span>·</span>
+                <span>{selectedNews.timeAgo}</span>
+                <span>·</span>
+                <span className="flex items-center gap-0.5">
+                  <MessageSquare className="h-3 w-3" />
+                  {selectedNews.commentsCount} comments
+                </span>
+              </div>
+            </div>
+
+            {/* AI summary block */}
+            <div className="p-4 rounded-2xl border border-brand-primary/10 bg-brand-primary/5 space-y-2">
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="h-4 w-4 text-brand-primary animate-pulse" />
+                <span className="text-[10px] font-extrabold text-brand-primary uppercase tracking-wider">
+                  Sora AI Summary
+                </span>
+              </div>
+              <p className="text-xs text-text-primary font-medium leading-relaxed font-dm-sans">
+                {selectedNews.aiSummary}
+              </p>
+            </div>
+
+            {/* AI Insights: why it matters & implications */}
+            <div className="space-y-3.5 pt-1">
+              <div>
+                <span className="block text-[9px] text-text-secondary font-extrabold uppercase tracking-wider mb-1">
+                  Why It Matters
+                </span>
+                <p className="text-xs text-text-primary/90 font-medium leading-relaxed font-dm-sans">
+                  {selectedNews.whyItMatters}
+                </p>
+              </div>
+
+              <div>
+                <span className="block text-[9px] text-text-secondary font-extrabold uppercase tracking-wider mb-1">
+                  Potential Implications
+                </span>
+                <p className="text-xs text-text-primary/90 font-medium leading-relaxed font-dm-sans">
+                  {selectedNews.implications}
+                </p>
+              </div>
+
+              {/* Related Companies */}
+              {selectedNews.affectedStocks && selectedNews.affectedStocks.length > 0 && (
+                <div>
+                  <span className="block text-[9px] text-text-secondary font-extrabold uppercase tracking-wider mb-1.5">
+                    Related Companies
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedNews.affectedStocks.map((ticker) => {
+                      const stock = ngxStocks.find((s) => s.ticker === ticker);
+                      const isPos = stock ? stock.change >= 0 : true;
+                      const price = stock ? stock.price.toFixed(2) : '';
+                      return (
+                        <button
+                          key={ticker}
+                          onClick={(e) => handleStockClick(ticker, e)}
+                          className="px-2.5 py-1 rounded-xl text-xs font-bold text-brand-primary border border-brand-primary/20 bg-brand-primary/5 hover:bg-brand-primary/10 transition-colors flex items-center gap-1.5 focus:outline-none"
+                        >
+                          <span>{ticker}</span>
+                          {price && (
+                            <span className="text-[10px] opacity-85">
+                              ₦{price}
+                            </span>
+                          )}
+                          {stock && (
+                            <span className={`text-[10px] font-extrabold ${isPos ? 'text-gain' : 'text-danger'}`}>
+                              {isPos ? '+' : ''}
+                              {stock.change.toFixed(1)}%
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Drivers Tags */}
+            {selectedNews.drivers && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {selectedNews.drivers.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2 py-0.5 rounded-lg text-[9px] font-bold text-text-secondary border border-border bg-bg-base"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Read full article & disclaimers */}
+            <div className="pt-2 border-t border-border/40 space-y-3">
+              <button
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold bg-brand-primary text-bg-base hover:bg-brand-primary/90 transition-all focus:outline-none"
+                style={{ boxShadow: '0 4px 12px rgba(99,102,241,0.25)' }}
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                Read full article
+              </button>
+
+              <div className="flex gap-2 items-start text-[9px] leading-relaxed text-text-secondary italic font-dm-sans">
+                <Info className="h-3.5 w-3.5 text-text-secondary flex-shrink-0 mt-0.5" />
+                <span>
+                  This analysis is for educational purposes only. Always consult a licensed broker before making financial decisions.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

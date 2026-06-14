@@ -19,6 +19,9 @@ import {
   Shield,
   Percent,
   Award,
+  GraduationCap,
+  Users,
+  Search,
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
@@ -33,6 +36,9 @@ import AINewsFeed from '@/components/AINewsFeed';
 import PortfolioTracker from '@/components/PortfolioTracker';
 import AIChatbot from '@/components/AIChatbot';
 import AboutUs from '@/components/AboutUs';
+import Stock101 from '@/components/Stock101';
+import Community from '@/components/Community';
+import TradePage from '@/components/TradePage';
 
 // ─── Reusable dark input style ─────────────────────────
 const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none text-text-primary placeholder:text-text-secondary transition-all";
@@ -55,6 +61,18 @@ export default function Page() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [onboardingStep, setOnboardingStep]   = useState(1);
   const [activeHomeTab, setActiveHomeTab]     = useState<'report' | 'dividend' | 'growth' | 'analyst' | 'safe'>('report');
+  const [isHeaderSearchOpen, setIsHeaderSearchOpen] = useState(false);
+  const [headerSearchQuery, setHeaderSearchQuery]   = useState('');
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsHeaderSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const availableInterests = ['Banking', 'Consumer Goods', 'Oil & Gas', 'Industrials', 'Agriculture', 'Technology'];
 
@@ -82,6 +100,9 @@ export default function Page() {
       case 'profile':   return renderProfileView();
       case 'stock-detail': return <StockDetail />;
       case 'about':     return <AboutUs />;
+      case 'learn':     return <Stock101 />;
+      case 'community': return <Community />;
+      case 'trade':     return <TradePage />;
       default:          return renderHomeView();
     }
   };
@@ -574,24 +595,24 @@ export default function Page() {
   // ══════════════════════════════════════════════════════════
   if (currentView === 'landing') {
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative overflow-hidden">
+      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative overflow-y-auto overflow-x-hidden">
         {/* ── Ambient Background Orbs ── */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.07) 0%, transparent 70%)' }} />
         <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(0,184,255,0.03) 0%, transparent 70%)' }} />
         <div className="absolute top-1/3 left-0 w-[300px] h-[300px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.04) 0%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.04) 0%, transparent 70%)' }} />
 
         {/* ── Top Nav ── */}
         <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-5 sm:px-8 py-5 z-10 relative">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 16px rgba(99,102,241,0.4)' }}>
-              <span className="text-bg-base font-sora font-extrabold text-sm tracking-tighter">ST</span>
+            <div className="h-9 w-9 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"
+              style={{ boxShadow: '0 0 16px rgba(207,163,67,0.4)' }}>
+              <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
             <div>
-              <span className="font-sora font-extrabold text-lg text-text-primary tracking-tight block leading-tight">SabiTrade</span>
+              <span className="font-sora font-extrabold text-lg text-text-primary tracking-tight block leading-tight">EquityStack</span>
               <span className="text-[9px] font-bold text-brand-primary uppercase tracking-widest leading-none">Market Pulse 🇳🇬</span>
             </div>
           </div>
@@ -603,7 +624,7 @@ export default function Page() {
             </button>
             <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
               className="text-xs font-extrabold px-5 py-2.5 rounded-xl transition-all focus:outline-none text-bg-base"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 14px rgba(99,102,241,0.35)' }}>
+              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 14px rgba(207,163,67,0.35)' }}>
               Create Account
             </button>
           </div>
@@ -613,7 +634,7 @@ export default function Page() {
         <div className="max-w-7xl mx-auto w-full flex flex-col items-center text-center z-10 px-5 sm:px-8 pt-8 pb-16 sm:pt-16 sm:pb-24 flex-grow">
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-xs font-extrabold tracking-wide border"
-            style={{ background: 'rgba(99,102,241,0.08)', borderColor: 'rgba(99,102,241,0.2)', color: '#818CF8' }}>
+            style={{ background: 'rgba(207,163,67,0.08)', borderColor: 'rgba(207,163,67,0.2)', color: '#E5C06F' }}>
             <Zap className="h-3.5 w-3.5" />
             <span>Next-Gen NGX Investment Intelligence</span>
           </div>
@@ -621,37 +642,37 @@ export default function Page() {
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-text-primary font-sora tracking-tight leading-[1.05] max-w-3xl mx-auto mb-6">
             Your Nigerian market{' '}
-            <span className="relative inline-block" style={{ color: '#818CF8', textShadow: '0 0 40px rgba(99,102,241,0.4)' }}>
+            <span className="relative inline-block" style={{ color: '#E5C06F', textShadow: '0 0 40px rgba(207,163,67,0.4)' }}>
               intelligence
             </span>
             {', simplified.'}
           </h1>
 
           <p className="text-base sm:text-lg text-text-secondary leading-relaxed font-medium max-w-xl mx-auto mb-10">
-            SabiTrade translates raw NGX data and complex financial metrics into clear, AI-powered summaries. Built for the modern Nigerian retail investor.
+            EquityStack translates raw NGX data and complex financial metrics into clear, AI-powered summaries. Built for the modern Nigerian retail investor.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-3 mb-16">
             <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
               className="px-8 py-3.5 rounded-xl text-sm font-extrabold transition-all text-bg-base focus:outline-none"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 24px rgba(99,102,241,0.4)' }}
+              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 24px rgba(207,163,67,0.4)' }}
               onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 40px rgba(0,230,118,0.6)')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px rgba(99,102,241,0.4)')}>
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px rgba(207,163,67,0.4)')}>
               Create Free Account
             </button>
-            <button onClick={() => loginUser('Nigerian Investor', 'investor@sabitrade.ng')}
+            <button onClick={() => loginUser('Nigerian Investor', 'investor@equitystack.ng')}
               className="px-8 py-3.5 rounded-xl text-sm font-extrabold transition-all border text-text-primary focus:outline-none"
-              style={{ borderColor: '#23214C', background: 'rgba(14,13,37,0.6)' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(99,102,241,0.3)')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#23214C')}>
+              style={{ borderColor: '#11325D', background: 'rgba(8,29,56,0.6)' }}
+              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(207,163,67,0.3)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#11325D')}>
               ⚡ Interactive Quick-Demo
             </button>
           </div>
 
           {/* ── Dashboard Mock Terminal ── */}
           <div className="w-full max-w-4xl rounded-2xl overflow-hidden border border-border shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
-            style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
+            style={{ background: 'linear-gradient(145deg, #081D38, #041226)' }}>
             {/* Window controls */}
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/50"
               style={{ background: 'rgba(0,0,0,0.3)' }}>
@@ -661,7 +682,7 @@ export default function Page() {
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-primary/70" />
               </div>
               <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">
-                SabiTrade Intelligence Terminal
+                EquityStack Intelligence Terminal
               </span>
               <div className="w-12" />
             </div>
@@ -679,7 +700,7 @@ export default function Page() {
                 </div>
                 <div className="flex items-baseline gap-3 mb-2">
                   <span className="text-2xl font-extrabold font-sora text-brand-primary"
-                    style={{ textShadow: '0 0 20px rgba(99,102,241,0.4)' }}>
+                    style={{ textShadow: '0 0 20px rgba(207,163,67,0.4)' }}>
                     ₦104,256.80
                   </span>
                   <span className="text-xs font-bold text-brand-primary px-2 py-0.5 rounded-lg bg-brand-primary/10 border border-brand-primary/20">
@@ -720,7 +741,7 @@ export default function Page() {
 
               {/* AI Brief */}
               <div className="md:col-span-12 p-4 rounded-xl border border-brand-primary/15"
-                style={{ background: 'rgba(99,102,241,0.03)' }}>
+                style={{ background: 'rgba(207,163,67,0.03)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="h-3.5 w-3.5 text-brand-primary animate-pulse" />
                   <span className="text-[9px] font-bold uppercase tracking-wider text-brand-primary">Sora AI Market Summary</span>
@@ -740,10 +761,10 @@ export default function Page() {
               { title: 'Manual Portfolio Ledger', desc: 'Log stock purchases, track cost bases, calculate real-time gains, and visualize asset allocations with SVG donut charts.' },
             ].map(({ title, desc }) => (
               <div key={title} className="rounded-2xl p-5 border border-border transition-all duration-300 group"
-                style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}
+                style={{ background: 'linear-gradient(145deg, #081D38, #041226)' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0,230,118,0.25)')}
                 onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(30,48,40,0.6)')}>
-                <div className="h-1 w-8 rounded-full mb-3" style={{ background: 'linear-gradient(90deg, #6366F1, transparent)' }} />
+                <div className="h-1 w-8 rounded-full mb-3" style={{ background: 'linear-gradient(90deg, #CFA343, transparent)' }} />
                 <span className="block text-sm font-extrabold text-text-primary font-sora mb-2 group-hover:text-brand-primary transition-colors">{title}</span>
                 <span className="text-xs text-text-secondary leading-relaxed font-medium font-dm-sans">{desc}</span>
               </div>
@@ -753,7 +774,7 @@ export default function Page() {
 
         {/* Footer */}
         <div className="max-w-7xl mx-auto w-full z-10 text-center text-[10px] text-text-secondary font-medium font-dm-sans border-t border-border/40 py-5 px-5">
-          © {new Date().getFullYear()} SabiTrade · Nigerian Financial Intelligence Platform · MVP v1.0 · Strictly Confidential
+          © {new Date().getFullYear()} EquityStack · Nigerian Financial Intelligence Platform · MVP v1.0 · Strictly Confidential
         </div>
 
         {/* ── Auth Modal ── */}
@@ -761,32 +782,32 @@ export default function Page() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
             style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
             <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden animate-in zoom-in-95 duration-300"
-              style={{ background: 'rgba(14,13,37,0.97)', border: '1px solid rgba(0,230,118,0.15)', boxShadow: '0 0 0 1px rgba(0,230,118,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
+              style={{ background: 'rgba(8,29,56,0.97)', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
               {/* Top border */}
               <div className="absolute top-0 left-0 right-0 h-px"
-                style={{ background: 'linear-gradient(90deg, transparent, #6366F1, transparent)' }} />
+                style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
               {/* Ambient glow */}
               <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none"
-                style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)' }} />
+                style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.12) 0%, transparent 70%)' }} />
 
               {/* Close */}
               <button onClick={() => setIsAuthModalOpen(false)}
                 className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 rounded-full transition-colors focus:outline-none"
-                style={{ background: 'rgba(14,13,37,0.8)' }}>
+                style={{ background: 'rgba(8,29,56,0.8)' }}>
                 ✕
               </button>
 
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-5">
-                  <div className="h-8 w-8 rounded-xl flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.4)' }}>
-                    <span className="text-bg-base font-sora font-extrabold text-xs">ST</span>
+                  <div className="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center"
+                    style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
+                    <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
                   </div>
-                  <span className="font-sora font-extrabold text-text-primary text-sm">SabiTrade</span>
+                  <span className="font-sora font-extrabold text-text-primary text-sm">EquityStack</span>
                 </div>
 
                 <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-                  style={{ textShadow: '0 0 20px rgba(99,102,241,0.3)' }}>
+                  style={{ textShadow: '0 0 20px rgba(207,163,67,0.3)' }}>
                   {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back'}
                 </h2>
                 <p className="text-xs text-text-secondary font-medium mb-6 font-dm-sans">
@@ -864,7 +885,7 @@ export default function Page() {
   // ══════════════════════════════════════════════════════════
   if (currentView === 'onboarding') {
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col py-10 px-4 sm:px-6 relative font-dm-sans overflow-hidden">
+      <div className="min-h-screen bg-bg-base flex flex-col py-10 px-4 sm:px-6 relative font-dm-sans overflow-y-auto overflow-x-hidden">
         {/* Ambient */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
@@ -872,11 +893,11 @@ export default function Page() {
         {/* Brand header */}
         <div className="max-w-xl mx-auto w-full flex items-center justify-between mb-8 relative z-10">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.35)' }}>
-              <span className="text-bg-base font-sora font-extrabold text-xs">ST</span>
+            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center"
+              style={{ boxShadow: '0 0 12px rgba(207,163,67,0.35)' }}>
+              <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
-            <span className="font-sora font-extrabold text-sm text-brand-primary">SabiTrade Onboarding</span>
+            <span className="font-sora font-extrabold text-sm text-brand-primary">EquityStack Onboarding</span>
           </div>
           <button onClick={handleOnboardingSkip}
             className="text-xs font-bold text-text-secondary hover:text-text-primary focus:outline-none">
@@ -886,9 +907,9 @@ export default function Page() {
 
         {/* Wizard Panel */}
         <div className="max-w-xl mx-auto w-full rounded-3xl p-6 sm:p-8 space-y-6 z-10 relative"
-          style={{ background: 'rgba(14,13,37,0.97)', border: '1px solid rgba(99,102,241,0.12)', boxShadow: '0 0 0 1px rgba(99,102,241,0.03), 0 40px 80px rgba(0,0,0,0.7)' }}>
+          style={{ background: 'rgba(8,29,56,0.97)', border: '1px solid rgba(207,163,67,0.12)', boxShadow: '0 0 0 1px rgba(207,163,67,0.03), 0 40px 80px rgba(0,0,0,0.7)' }}>
           <div className="absolute top-0 left-0 right-0 h-px rounded-t-3xl"
-            style={{ background: 'linear-gradient(90deg, transparent, #6366F1, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
 
           {/* Progress */}
           <div className="flex items-center justify-between pb-3 border-b border-border/40">
@@ -899,7 +920,7 @@ export default function Page() {
               {[1, 2, 3].map((s) => (
                 <span key={s} className={`h-1.5 rounded-full transition-all duration-300 ${
                   onboardingStep === s ? 'w-6' : 'w-1.5 bg-border'
-                }`} style={onboardingStep === s ? { background: '#10B981', boxShadow: '0 0 8px rgba(99,102,241,0.5)' } : {}} />
+                }`} style={onboardingStep === s ? { background: '#10B981', boxShadow: '0 0 8px rgba(207,163,67,0.5)' } : {}} />
               ))}
             </div>
           </div>
@@ -909,8 +930,8 @@ export default function Page() {
             <div className="space-y-4 animate-in fade-in duration-200">
               <div>
                 <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider block w-max mb-2 border border-brand-primary/20 text-brand-primary"
-                  style={{ background: 'rgba(99,102,241,0.08)' }}>
-                  Welcome to SabiTrade
+                  style={{ background: 'rgba(207,163,67,0.08)' }}>
+                  Welcome to EquityStack
                 </span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-text-primary font-sora tracking-tight">
                   Let&apos;s personalize your intelligence
@@ -1026,7 +1047,7 @@ export default function Page() {
             )}
             <button onClick={handleOnboardingNext}
               className="px-5 py-2.5 rounded-xl text-xs font-extrabold text-bg-base flex items-center gap-1.5 transition-all focus:outline-none"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 14px rgba(99,102,241,0.35)' }}>
+              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 14px rgba(207,163,67,0.35)' }}>
               <span>{onboardingStep === 3 ? 'Launch Dashboard' : 'Next Step'}</span>
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
@@ -1034,7 +1055,7 @@ export default function Page() {
         </div>
 
         <div className="max-w-xl mx-auto w-full text-center text-[10px] text-text-secondary font-medium font-dm-sans border-t border-border/30 pt-5 mt-6 relative z-10">
-          SabiTrade Onboarding · Secure · Paperless · BVN exempt
+          EquityStack Onboarding · Secure · Paperless · BVN exempt
         </div>
       </div>
     );
@@ -1061,12 +1082,22 @@ export default function Page() {
       id: 'news',
       label: 'News & Insights',
       badge: true,
-      // Future: children: [{ label: 'AI News Feed', id: 'news' }, { label: 'Market Calendar', id: 'calendar' }]
+    },
+    {
+      id: 'learn',
+      label: 'Stock 101',
+    },
+    {
+      id: 'community',
+      label: 'Market Place',
+    },
+    {
+      id: 'trade',
+      label: 'Trade',
     },
     {
       id: 'portfolio',
       label: 'Portfolio',
-      // Future: children: [{ label: 'Holdings', id: 'portfolio' }, { label: 'Performance', id: 'performance' }]
     },
     {
       id: 'about',
@@ -1079,6 +1110,9 @@ export default function Page() {
     { id: 'home' as const,      label: 'Home',      icon: HomeIcon },
     { id: 'markets' as const,   label: 'Markets',   icon: BarChart2 },
     { id: 'news' as const,      label: 'News',      icon: Newspaper, badge: true },
+    { id: 'learn' as const,     label: 'Stock 101', icon: GraduationCap },
+    { id: 'community' as const, label: 'Community', icon: Users },
+    { id: 'trade' as const,     label: 'Trade',     icon: TrendingUp },
     { id: 'portfolio' as const, label: 'Portfolio', icon: Briefcase },
     { id: 'about' as const,     label: 'About',     icon: Info },
     { id: 'profile' as const,   label: 'Profile',   icon: User },
@@ -1095,12 +1129,12 @@ export default function Page() {
 
           {/* ── Brand ───────────────────────────────────────── */}
           <div className="flex items-center gap-3 flex-shrink-0 pr-8 border-r border-border/40">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.35)' }}>
-              <span className="text-bg-base font-sora font-extrabold text-xs tracking-tighter">ST</span>
+            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0"
+              style={{ boxShadow: '0 0 12px rgba(207,163,67,0.35)' }}>
+              <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
             <div className="leading-none">
-              <span className="font-sora font-extrabold text-sm tracking-tight text-text-primary block">SabiTrade</span>
+              <span className="font-sora font-extrabold text-sm tracking-tight text-text-primary block">EquityStack</span>
               <span className="text-[8px] font-bold text-brand-primary uppercase tracking-[0.15em] block mt-0.5">NGX Intelligence</span>
             </div>
           </div>
@@ -1116,10 +1150,10 @@ export default function Page() {
               return (
                 <div key={item.id} className="relative group">
                   <button
-                    onClick={() => setView(item.id as 'home' | 'markets' | 'news' | 'portfolio' | 'about')}
+                    onClick={() => setView(item.id as Parameters<typeof setView>[0])}
                     className="relative flex items-center gap-1.5 px-4 py-1 text-sm font-semibold transition-colors duration-200 focus:outline-none whitespace-nowrap"
                     style={{
-                      color: isActive ? '#6366F1' : 'rgba(255,255,255,0.55)',
+                      color: isActive ? '#CFA343' : 'rgba(255,255,255,0.55)',
                       fontFamily: 'var(--font-dm-sans)',
                     }}
                     onMouseEnter={e => {
@@ -1182,6 +1216,18 @@ export default function Page() {
 
           {/* ── Right Controls ──────────────────────────────── */}
           <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Search Button */}
+            <button
+              onClick={() => setIsHeaderSearchOpen(true)}
+              className="p-2 rounded-lg transition-all focus:outline-none"
+              style={{ color: 'rgba(255,255,255,0.5)' }}
+              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF')}
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.5)')}
+              title="Search Stocks"
+            >
+              <Search className="h-4.5 w-4.5" />
+            </button>
+
             {/* Notifications */}
             <button
               className="relative p-2 rounded-lg transition-all focus:outline-none"
@@ -1192,24 +1238,24 @@ export default function Page() {
             >
               <Bell className="h-4.5 w-4.5" />
               <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full"
-                style={{ background: '#10B981', boxShadow: '0 0 4px rgba(99,102,241,0.8)' }} />
+                style={{ background: '#10B981', boxShadow: '0 0 4px rgba(207,163,67,0.8)' }} />
             </button>
 
             {/* Divider */}
             <div className="h-5 w-px mx-1" style={{ background: 'rgba(35,33,76,0.8)' }} />
 
-            {/* User avatar + name + dropdown trigger */}
+            {/* User Profile Avatar */}
             <button
               onClick={() => setView('profile')}
-              className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all duration-200 focus:outline-none group"
+              className="h-8.5 w-8.5 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none border border-transparent"
               style={{
-                background: currentView === 'profile' ? 'rgba(99,102,241,0.08)' : 'transparent',
-                border: currentView === 'profile' ? '1px solid rgba(99,102,241,0.18)' : '1px solid transparent',
+                background: currentView === 'profile' ? 'rgba(207,163,67,0.15)' : 'transparent',
+                borderColor: currentView === 'profile' ? '#CFA343' : 'transparent',
               }}
               onMouseEnter={e => {
                 if (currentView !== 'profile') {
                   (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)';
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(35,33,76,0.8)';
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(207,163,67,0.3)';
                 }
               }}
               onMouseLeave={e => {
@@ -1218,29 +1264,18 @@ export default function Page() {
                   (e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent';
                 }
               }}
+              title="Profile"
             >
               {/* Avatar circle */}
               <div
                 className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-extrabold text-bg-base flex-shrink-0"
                 style={{
-                  background: 'linear-gradient(135deg, #6366F1, #4F46E5)',
-                  boxShadow: '0 0 8px rgba(99,102,241,0.3)',
+                  background: 'linear-gradient(135deg, #CFA343, #B58C35)',
+                  boxShadow: '0 0 8px rgba(207,163,67,0.3)',
                 }}
               >
                 {user?.name.slice(0, 2).toUpperCase()}
               </div>
-
-              {/* Name + level */}
-              <div className="text-left leading-none">
-                <span className="block text-xs font-semibold text-text-primary" style={{ fontFamily: 'var(--font-dm-sans)' }}>
-                  {user?.name}
-                </span>
-                <span className="block text-[9px] font-bold uppercase tracking-wider" style={{ color: 'rgba(99,102,241,0.7)' }}>
-                  {user?.experienceLevel}
-                </span>
-              </div>
-
-              <ChevronDown className="h-3.5 w-3.5 opacity-40 group-hover:opacity-80 transition-opacity" style={{ color: '#FFFFFF' }} />
             </button>
 
             {/* Logout */}
@@ -1264,7 +1299,7 @@ export default function Page() {
         </div>
 
         {/* Active-page green bottom border line */}
-        <div className="h-px w-full" style={{ background: 'rgba(99,102,241,0.06)' }} />
+        <div className="h-px w-full" style={{ background: 'rgba(207,163,67,0.06)' }} />
       </header>
 
       {/* ══════════════════════════════════════════════════════
@@ -1273,22 +1308,27 @@ export default function Page() {
       <div className="lg:hidden sticky top-0 z-30 glass-nav">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 10px rgba(99,102,241,0.35)' }}>
-              <span className="text-bg-base font-sora font-extrabold text-xs">ST</span>
+            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center"
+              style={{ boxShadow: '0 0 10px rgba(207,163,67,0.35)' }}>
+              <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
-            <span className="font-sora font-extrabold text-sm text-text-primary">SabiTrade</span>
+            <span className="font-sora font-extrabold text-sm text-text-primary">EquityStack</span>
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={() => setIsHeaderSearchOpen(true)}
+              className="p-1.5 rounded-lg focus:outline-none"
+              style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <Search className="h-4 w-4" />
+            </button>
             <button className="relative p-1.5 rounded-lg focus:outline-none"
               style={{ color: 'rgba(255,255,255,0.6)' }}>
               <Bell className="h-4 w-4" />
               <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full"
-                style={{ background: '#10B981', boxShadow: '0 0 4px rgba(99,102,241,0.7)' }} />
+                style={{ background: '#10B981', boxShadow: '0 0 4px rgba(207,163,67,0.7)' }} />
             </button>
             <button onClick={() => setView('profile')}
               className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-extrabold font-sora text-bg-base flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 8px rgba(99,102,241,0.3)' }}>
+              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 8px rgba(207,163,67,0.3)' }}>
               {user?.name.slice(0, 2).toUpperCase()}
             </button>
           </div>
@@ -1300,7 +1340,7 @@ export default function Page() {
           ══════════════════════════════════════════════════════ */}
       <main className="flex-grow flex flex-col">
         <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-28 lg:pb-10 ${
-          currentView === 'markets' || currentView === 'portfolio' ? 'max-w-7xl' : 'max-w-6xl'
+          currentView === 'markets' || currentView === 'portfolio' || currentView === 'trade' ? 'max-w-7xl' : 'max-w-6xl'
         }`}>
           {renderViewContent()}
         </div>
@@ -1325,19 +1365,19 @@ export default function Page() {
                 key={item.id}
                 onClick={() => setView(item.id)}
                 className="flex flex-col items-center gap-0.5 py-1.5 px-3 text-center focus:outline-none relative transition-all duration-200"
-                style={{ color: isActive ? '#6366F1' : 'rgba(255,255,255,0.35)' }}
+                style={{ color: isActive ? '#CFA343' : 'rgba(255,255,255,0.35)' }}
               >
                 {/* Active top glow pill */}
                 {isActive && (
                   <span
                     className="absolute -top-0.5 left-1/2 -translate-x-1/2 h-0.5 w-6 rounded-full"
-                    style={{ background: '#10B981', boxShadow: '0 0 8px rgba(99,102,241,0.7)' }}
+                    style={{ background: '#CFA343', boxShadow: '0 0 8px rgba(207,163,67,0.7)' }}
                   />
                 )}
 
                 <IconComp
                   className="h-5 w-5 transition-all duration-200"
-                  style={isActive ? { filter: 'drop-shadow(0 0 5px rgba(99,102,241,0.55))' } : {}}
+                  style={isActive ? { filter: 'drop-shadow(0 0 5px rgba(207,163,67,0.55))' } : {}}
                 />
                 <span className="text-[9px] font-bold tracking-tight font-dm-sans">{item.label}</span>
 
@@ -1345,7 +1385,7 @@ export default function Page() {
                 {'badge' in item && item.badge && !isActive && (
                   <span
                     className="absolute top-1 right-2 h-1.5 w-1.5 rounded-full border border-bg-base"
-                    style={{ background: '#6366F1' }}
+                    style={{ background: '#CFA343' }}
                   />
                 )}
               </button>
@@ -1356,6 +1396,86 @@ export default function Page() {
 
       {/* ── AI Chatbot ─────────────────────────────────────── */}
       <AIChatbot />
+
+      {/* ── Header Search Modal ── */}
+      {isHeaderSearchOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 animate-in fade-in duration-200"
+          style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)' }}
+          onClick={() => setIsHeaderSearchOpen(false)}>
+          <div className="w-full max-w-lg rounded-2xl border border-brand-primary/20 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-250"
+            style={{ background: 'rgba(8, 29, 56, 0.98)' }}
+            onClick={(e) => e.stopPropagation()}>
+            
+            {/* Input row */}
+            <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/40">
+              <Search className="h-5 w-5 text-text-secondary" />
+              <input
+                type="text"
+                value={headerSearchQuery}
+                onChange={(e) => setHeaderSearchQuery(e.target.value)}
+                placeholder="Search Nigerian stocks (e.g. DANGCEM, GTCO)..."
+                className="w-full bg-transparent text-sm text-text-primary focus:outline-none placeholder:text-text-secondary"
+                autoFocus
+              />
+              <button
+                onClick={() => setIsHeaderSearchOpen(false)}
+                className="text-xs text-text-secondary hover:text-text-primary font-bold px-2 py-1 rounded bg-white/5 transition-colors focus:outline-none"
+              >
+                ESC
+              </button>
+            </div>
+
+            {/* Results */}
+            <div className="max-h-[360px] overflow-y-auto p-2">
+              {ngxStocks
+                .filter((s) => 
+                  s.ticker.toLowerCase().includes(headerSearchQuery.toLowerCase()) ||
+                  s.name.toLowerCase().includes(headerSearchQuery.toLowerCase())
+                )
+                .map((stock) => {
+                  const isPositive = stock.change >= 0;
+                  return (
+                    <button
+                      key={stock.ticker}
+                      onClick={() => {
+                        setSelectedTicker(stock.ticker);
+                        setIsHeaderSearchOpen(false);
+                        setHeaderSearchQuery('');
+                      }}
+                      className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-left transition-colors focus:outline-none"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="px-2.5 py-1 rounded bg-brand-primary/10 border border-brand-primary/20">
+                          <span className="text-xs font-extrabold text-brand-primary font-sora">{stock.ticker}</span>
+                        </div>
+                        <div>
+                          <span className="block text-xs font-semibold text-text-primary">{stock.name}</span>
+                          <span className="block text-[9px] font-bold text-text-secondary uppercase tracking-wider">{stock.sector}</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="block text-xs font-extrabold text-text-primary font-sora">
+                          ₦{stock.price.toFixed(2)}
+                        </span>
+                        <span className={`block text-[10px] font-bold ${isPositive ? 'text-gain' : 'text-danger'}`}>
+                          {isPositive ? '+' : ''}{stock.change.toFixed(2)}%
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              {ngxStocks.filter((s) => 
+                s.ticker.toLowerCase().includes(headerSearchQuery.toLowerCase()) ||
+                s.name.toLowerCase().includes(headerSearchQuery.toLowerCase())
+              ).length === 0 && (
+                <div className="p-8 text-center text-xs font-bold text-text-secondary">
+                  No matching stocks found. Try searching for {"DANGCEM"} or {"Banking"}.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { 
   ChevronLeft, 
   Star, 
-  Briefcase, 
   Sparkles, 
   BookOpen, 
   BarChart2, 
@@ -147,13 +146,9 @@ export default function StockDetail() {
   const toggleWatchlist = useAppStore((state) => state.toggleWatchlist);
   const watchlist      = useAppStore((state) => state.watchlist);
   const user           = useAppStore((state) => state.user);
-  const addHolding     = useAppStore((state) => state.addHolding);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'financials' | 'dividend' | 'valuation' | 'management' | 'competitors' | 'news'>('overview');
   const [activeDuration, setActiveDuration] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1M');
-  const [sharesInput, setSharesInput] = useState('');
-  const [priceInput, setPriceInput]   = useState('');
-  const [showAddSuccess, setShowAddSuccess] = useState(false);
 
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
@@ -167,17 +162,7 @@ export default function StockDetail() {
 
   const relatedNews = mockNews.filter((news) => news.affectedStocks.includes(stock.ticker));
 
-  const handleBuy = (e: React.FormEvent) => {
-    e.preventDefault();
-    const shares = parseInt(sharesInput);
-    const price  = parseFloat(priceInput) || stock.price;
-    if (shares > 0) {
-      addHolding(stock.ticker, shares, price);
-      setShowAddSuccess(true);
-      setSharesInput(''); setPriceInput('');
-      setTimeout(() => setShowAddSuccess(false), 3000);
-    }
-  };
+
 
   const rawData = stock.chartData;
   const getSlicedData = () => {
@@ -230,11 +215,10 @@ export default function StockDetail() {
   const hoveredPoint = hoverIndex !== null ? points[hoverIndex] : null;
 
   const cardStyle = {
-    background: 'linear-gradient(145deg, #0E0D2A, #050410)',
-    border: '1px solid rgba(59, 56, 141, 0.5)', // border-bright/50
-    boxShadow: '0 10px 30px rgba(99, 102, 241, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.02)',
+    background: 'linear-gradient(145deg, #081D38, #041226)',
+    border: '1px solid rgba(207, 163, 67, 0.2)',
+    boxShadow: '0 10px 30px rgba(207, 163, 67, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.02)',
   };
-  const inputStyle = { background: 'rgba(14,13,37,0.8)', border: '1px solid #23214C', color: '#FFFFFF' };
 
   // ─── Render Helper functions for Tabs ────────────────
   const renderTabContent = () => {
@@ -435,43 +419,7 @@ export default function StockDetail() {
             </div>
           </div>
 
-          {/* Ledger Add Form */}
-          <div className="p-5 rounded-3xl space-y-4" style={cardStyle}>
-            <div className="flex items-center gap-2 pb-3 border-b border-border/40">
-              <Briefcase className="h-4 w-4 text-brand-primary" />
-              <h4 className="text-sm font-bold text-brand-primary font-sora">Manual Ledger</h4>
-            </div>
 
-            {showAddSuccess && (
-              <div className="bg-brand-primary/10 border border-brand-primary/20 text-brand-primary rounded-xl p-3 text-xs font-bold text-center animate-in fade-in duration-200">
-                ✅ Transaction saved to Portfolio!
-              </div>
-            )}
-
-            <form onSubmit={handleBuy} className="space-y-3.5">
-              {[
-                { label: 'Shares Volume', placeholder: 'e.g. 1,000 shares', value: sharesInput, onChange: setSharesInput, type: 'number', required: true },
-                { label: `Buy Price / Share (₦)`, placeholder: `Current: ₦${stock.price.toFixed(2)}`, value: priceInput, onChange: setPriceInput, type: 'number' },
-              ].map(({ label, placeholder, value, onChange, type, required }) => (
-                <div key={label}>
-                  <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">{label}</label>
-                  <input type={type} placeholder={placeholder} value={value}
-                    onChange={e => onChange(e.target.value)}
-                    required={required}
-                    className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none placeholder:text-text-secondary"
-                    style={inputStyle}
-                    onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.4)')}
-                    onBlur={e => (e.target.style.borderColor = '#23214C')} />
-                </div>
-              ))}
-
-              <button type="submit"
-                className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 focus:outline-none text-bg-base transition-all"
-                style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.3)' }}>
-                Add to Portfolio Ledger
-              </button>
-            </form>
-          </div>
 
           {/* News mentioned */}
           {relatedNews.slice(0, 2).length > 0 && (

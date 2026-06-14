@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --background: #070615;
+  --background: #041226;
   --foreground: #FFFFFF;
-  --brand:      #6366F1;
-  --brand-dim:  #4F46E5;
+  --brand:      #CFA343;
+  --brand-dim:  #B58C35;
   --gain-green: #10B981;
 }
 
 /* ─── Base Reset ─────────────────────────────────────── */
 html {
-  background: #070615;
+  background: #041226;
   color-scheme: dark;
 }
 
@@ -26,34 +26,34 @@ body {
 /* ─── Glass Card Utilities ───────────────────────────── */
 @layer components {
   .glass {
-    background: rgba(14, 13, 37, 0.7);
+    background: rgba(8, 29, 56, 0.7);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(207, 163, 67, 0.08);
   }
 
   .glass-elevated {
-    background: rgba(22, 21, 59, 0.85);
+    background: rgba(16, 42, 78, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(207, 163, 67, 0.15);
     box-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
   }
 
   .glass-nav {
-    background: rgba(7, 6, 21, 0.85);
+    background: rgba(4, 18, 38, 0.85);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(99, 102, 241, 0.07);
+    border-bottom: 1px solid rgba(207, 163, 67, 0.1);
     box-shadow: 0 8px 32px rgba(0,0,0,0.6);
   }
 
   .glass-modal {
-    background: rgba(14, 13, 37, 0.95);
+    background: rgba(8, 29, 56, 0.95);
     backdrop-filter: blur(32px);
     -webkit-backdrop-filter: blur(32px);
-    border: 1px solid rgba(99, 102, 241, 0.15);
-    box-shadow: 0 0 0 1px rgba(99,102,241,0.05), 0 40px 80px rgba(0,0,0,0.8);
+    border: 1px solid rgba(207, 163, 67, 0.25);
+    box-shadow: 0 0 0 1px rgba(207,163,67,0.05), 0 40px 80px rgba(0,0,0,0.8);
   }
 }
 
@@ -67,11 +67,11 @@ body {
 }
 
 .text-glow-indigo {
-  text-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+  text-shadow: 0 0 12px rgba(207, 163, 67, 0.6);
 }
 
 .text-glow-indigo-sm {
-  text-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
+  text-shadow: 0 0 6px rgba(207, 163, 67, 0.4);
 }
 
 .text-glow-red {
@@ -85,7 +85,7 @@ body {
   border-radius: 9999px;
   filter: blur(80px);
   opacity: 0.07;
-  background: #6366F1;
+  background: #CFA343;
 }
 
 /* ─── Skeleton Shimmer (dark version) ───────────────── */
@@ -95,7 +95,7 @@ body {
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(90deg, #0E0D25 25%, #16153B 50%, #0E0D25 75%);
+  background: linear-gradient(90deg, #081D38 25%, #102A4E 50%, #081D38 75%);
   background-size: 200% 100%;
   animation: pulse-shimmer 1.5s infinite linear;
 }
@@ -127,23 +127,23 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.2);
+  background: rgba(207, 163, 67, 0.2);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.4);
+  background: rgba(207, 163, 67, 0.4);
 }
 
 /* Global scrollbar */
 ::-webkit-scrollbar       { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #070615; }
-::-webkit-scrollbar-thumb { background: #23214C; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.3); }
+::-webkit-scrollbar-track { background: #041226; }
+::-webkit-scrollbar-thumb { background: #102A4E; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(207,163,67,0.3); }
 
 /* ─── Interactive Focus Ring ─────────────────────────── */
 *:focus-visible {
-  outline: 2px solid rgba(99, 102, 241, 0.6);
+  outline: 2px solid rgba(207, 163, 67, 0.6);
   outline-offset: 2px;
 }
 
@@ -169,7 +169,7 @@ body {
   position: absolute;
   top: -2px; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #6366F1, #4F46E5);
+  background: linear-gradient(90deg, #CFA343, #B58C35);
   border-radius: 9999px 9999px 0 0;
 }
 
