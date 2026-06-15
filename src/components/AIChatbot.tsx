@@ -61,6 +61,7 @@ export default function AIChatbot() {
 
   // Touch
   const onTouchMove = useCallback((e: TouchEvent) => {
+    if (!isDragging.current) return; // don't block page scroll when not dragging
     e.preventDefault();
     onDragMove(e.touches[0].clientX, e.touches[0].clientY);
   }, [onDragMove]);

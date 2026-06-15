@@ -604,7 +604,7 @@ export default function Page() {
   // ══════════════════════════════════════════════════════════
   if (currentView === 'landing') {
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative overflow-x-hidden">
+      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative">
         {/* ── Ambient Background Orbs ── */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.07) 0%, transparent 70%)' }} />
@@ -894,7 +894,7 @@ export default function Page() {
   // ══════════════════════════════════════════════════════════
   if (currentView === 'onboarding') {
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col py-10 px-4 sm:px-6 relative font-dm-sans overflow-y-auto overflow-x-hidden">
+      <div className="min-h-screen bg-bg-base flex flex-col py-10 px-4 sm:px-6 relative font-dm-sans">
         {/* Ambient */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
@@ -1128,7 +1128,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg-base font-dm-sans flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-bg-base font-dm-sans flex flex-col">
 
       {/* ══════════════════════════════════════════════════════
           DESKTOP TOP NAVIGATION
