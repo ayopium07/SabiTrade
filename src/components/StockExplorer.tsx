@@ -190,6 +190,13 @@ export default function StockExplorer() {
                   const upside = ((stock.targetPrice - stock.price) / stock.price) * 100;
                   const isUpsidePositive = upside >= 0;
                   
+                  const ratingLabelMap: Record<string, string> = {
+                    Outperform: 'Bullish',
+                    Neutral: 'Watch',
+                    Underperform: 'Bearish',
+                  };
+                  const ratingLabel = ratingLabelMap[stock.rating] ?? stock.rating;
+
                   let ratingClass = '';
                   if (stock.rating === 'Outperform') {
                     ratingClass = 'bg-gain/10 text-gain border border-gain/20';
@@ -278,15 +285,18 @@ export default function StockExplorer() {
 
                       {/* Upside/Downside */}
                       <td className="px-4 py-3.5 text-right align-middle">
-                        <span className={`text-xs font-bold ${isUpsidePositive ? 'text-gain' : 'text-danger'}`}>
+                        <span className={`block text-xs font-extrabold leading-tight ${isUpsidePositive ? 'text-gain' : 'text-danger'}`}>
                           {isUpsidePositive ? '+' : ''}{upside.toFixed(1)}%
+                        </span>
+                        <span className={`block text-[9px] font-bold uppercase tracking-wider leading-tight mt-0.5 ${isUpsidePositive ? 'text-gain/60' : 'text-danger/60'}`}>
+                          {isUpsidePositive ? 'Upside' : 'Downside'}
                         </span>
                       </td>
 
                       {/* Rating */}
                       <td className="px-4 py-3.5 text-center align-middle">
                         <span className={`inline-flex text-[10px] font-extrabold px-2 py-0.5 rounded-lg uppercase tracking-wider ${ratingClass}`}>
-                          {stock.rating}
+                          {ratingLabel}
                         </span>
                       </td>
 

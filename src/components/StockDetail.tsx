@@ -629,7 +629,7 @@ export default function StockDetail() {
                   stock.rating === 'Underperform' ? 'bg-danger/15 text-danger border border-danger/35 shadow-glow-red' :
                   'bg-warning/15 text-warning border border-warning/35'
                 }`}>
-                  {stock.rating}
+                  {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string,string>)[stock.rating] ?? stock.rating}
                 </span>
               </div>
             </div>

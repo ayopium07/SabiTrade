@@ -66,6 +66,7 @@ export default function Page() {
   const [isHeaderSearchOpen, setIsHeaderSearchOpen] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery]   = useState('');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -382,7 +383,7 @@ export default function Page() {
                     color: '#00B8FF',
                     badge: (
                       <span className="px-1.5 py-0.5 bg-bg-base border border-brand-primary/20 text-[#00B8FF] rounded-md text-[9px] font-extrabold uppercase">
-                        {stock.rating}
+                        {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string,string>)[stock.rating] ?? stock.rating}
                       </span>
                     ),
                   })
@@ -1076,55 +1077,42 @@ export default function Page() {
 
   // Nav structure — each item supports an optional `children` array for future dropdowns.
   // When `children` is present, a ChevronDown is rendered and the item becomes a dropdown trigger.
-  const navItems = [
-    {
-      id: 'home',
-      label: 'Overview',
-      // No children — plain link
-    },
-    {
-      id: 'markets',
-      label: 'Markets',
-      // Future: children: [{ label: 'Stock Explorer', id: 'markets' }, { label: 'Sector Heat Map', id: 'sectors' }]
-    },
-    {
-      id: 'news',
-      label: 'News & Insights',
-      badge: true,
-    },
-    {
-      id: 'learn',
-      label: 'Stock 101',
-    },
-    {
-      id: 'community',
-      label: 'Market Place',
-    },
-    {
-      id: 'trade',
-      label: 'Trade',
-    },
-    {
-      id: 'portfolio',
-      label: 'Portfolio',
-    },
-    {
-      id: 'about',
-      label: 'About us',
-    },
+  // Desktop nav — all items as flat links
+  const allNavItems = [
+    { id: 'home',      label: 'Overview' },
+    { id: 'markets',  label: 'Markets' },
+    { id: 'portfolio',label: 'Portfolio' },
+    { id: 'news',     label: 'News & Insights', badge: true },
+    { id: 'trade',    label: 'Trade' },
+    { id: 'community',label: 'Marketplace' },
+    { id: 'learn',    label: 'Learn' },
+    { id: 'about',    label: 'About us' },
   ] as const;
 
-  // Mobile bottom bar keeps icons for quick recognition at small sizes
+  // Items hidden inside the "More" dropdown
+  const moreNavItems = [
+    { id: 'trade',     label: 'Trade',       icon: TrendingUp },
+    { id: 'community', label: 'Marketplace', icon: Users },
+    { id: 'learn',     label: 'Learn',       icon: GraduationCap },
+    { id: 'about',     label: 'About us',    icon: Info },
+    { id: 'profile',   label: 'Profile',     icon: User },
+  ] as const;
+
+  // Mobile bottom 5-tab bar
+  const mobileBottomTabs = [
+    { id: 'home' as const,      label: 'Home',     icon: HomeIcon },
+    { id: 'markets' as const,   label: 'Markets',  icon: BarChart2 },
+    { id: 'portfolio' as const, label: 'Portfolio',icon: Briefcase },
+    { id: 'news' as const,      label: 'News',     icon: Newspaper, badge: true },
+  ] as const;
+
+  // Drawer items (More panel) — all overflow items
   const mobileNavItems = [
-    { id: 'home' as const,      label: 'Home',      icon: HomeIcon },
-    { id: 'markets' as const,   label: 'Markets',   icon: BarChart2 },
-    { id: 'news' as const,      label: 'News',      icon: Newspaper, badge: true },
-    { id: 'learn' as const,     label: 'Stock 101', icon: GraduationCap },
-    { id: 'community' as const, label: 'Community', icon: Users },
-    { id: 'trade' as const,     label: 'Trade',     icon: TrendingUp },
-    { id: 'portfolio' as const, label: 'Portfolio', icon: Briefcase },
-    { id: 'about' as const,     label: 'About',     icon: Info },
-    { id: 'profile' as const,   label: 'Profile',   icon: User },
+    { id: 'trade' as const,     label: 'Trade',       icon: TrendingUp },
+    { id: 'community' as const, label: 'Marketplace', icon: Users },
+    { id: 'learn' as const,     label: 'Learn',       icon: GraduationCap },
+    { id: 'about' as const,     label: 'About',       icon: Info },
+    { id: 'profile' as const,   label: 'Profile',     icon: User },
   ];
 
   return (
@@ -1148,77 +1136,28 @@ export default function Page() {
             </div>
           </div>
 
-          {/* ── Primary Nav Links ───────────────────────────── */}
+          {/* ── Nav Links ── */}
           <nav className="flex items-center flex-1 px-6">
-            {navItems.map((item) => {
+            {allNavItems.map((item) => {
               const isActive = currentView === item.id ||
                 (item.id === 'markets' && currentView === 'stock-detail');
-              // hasChildren would be true when item.children is populated in the future
-              const hasChildren = false;
-
               return (
-                <div key={item.id} className="relative group">
-                  <button
-                    onClick={() => setView(item.id as Parameters<typeof setView>[0])}
-                    className="relative flex items-center gap-1.5 px-4 py-1 text-sm font-semibold transition-colors duration-200 focus:outline-none whitespace-nowrap"
-                    style={{
-                      color: isActive ? '#CFA343' : 'rgba(255,255,255,0.55)',
-                      fontFamily: 'var(--font-dm-sans)',
-                    }}
-                    onMouseEnter={e => {
-                      if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.9)';
-                    }}
-                    onMouseLeave={e => {
-                      if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.55)';
-                    }}
-                  >
-                    <span>{item.label}</span>
-
-                    {/* Live badge dot */}
-                    {'badge' in item && item.badge && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-brand-primary"
-                        style={{ boxShadow: '0 0 4px rgba(207,163,67,0.8)' }} />
-                    )}
-
-                    {/* Dropdown chevron — shown when item has children */}
-                    {hasChildren && (
-                      <ChevronDown className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-all duration-200 group-hover:rotate-180" />
-                    )}
-
-                    {/* Active underline indicator */}
-                    {isActive && (
-                      <span
-                        className="absolute bottom-0 left-0 right-0 h-px rounded-full"
-                        style={{
-                          background: 'linear-gradient(90deg, transparent, #CFA343, transparent)',
-                          boxShadow: '0 0 8px rgba(207,163,67,0.6)',
-                          bottom: '-9px',  // aligns to the bottom edge of the header
-                        }}
-                      />
-                    )}
-                  </button>
-
-                  {/*
-                    ── DROPDOWN PANEL (future use) ──────────────────
-                    When item.children is populated, render this panel.
-                    Currently hidden — structure is ready for wiring up.
-
-                    <div className="absolute top-full left-0 mt-2 min-w-[200px] glass-elevated
-                      rounded-xl p-1.5 opacity-0 pointer-events-none group-hover:opacity-100
-                      group-hover:pointer-events-auto transition-all duration-200
-                      translate-y-1 group-hover:translate-y-0 shadow-card z-50">
-                      {item.children?.map(child => (
-                        <button key={child.id}
-                          onClick={() => setView(child.id)}
-                          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-xs
-                            font-semibold text-text-secondary hover:text-text-primary
-                            hover:bg-bg-hover transition-colors text-left focus:outline-none">
-                          {child.label}
-                        </button>
-                      ))}
-                    </div>
-                  */}
-                </div>
+                <button
+                  key={item.id}
+                  onClick={() => setView(item.id as Parameters<typeof setView>[0])}
+                  className="relative flex items-center gap-1.5 px-3 py-1 text-sm font-semibold transition-colors duration-200 focus:outline-none whitespace-nowrap"
+                  style={{ color: isActive ? '#CFA343' : 'rgba(255,255,255,0.55)' }}
+                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.9)'; }}
+                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.55)'; }}
+                >
+                  <span>{item.label}</span>
+                  {'badge' in item && item.badge && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" style={{ boxShadow: '0 0 4px rgba(207,163,67,0.8)' }} />
+                  )}
+                  {isActive && (
+                    <span className="absolute left-0 right-0 h-px rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)', boxShadow: '0 0 8px rgba(207,163,67,0.6)', bottom: '-9px' }} />
+                  )}
+                </button>
               );
             })}
           </nav>
@@ -1312,7 +1251,7 @@ export default function Page() {
       </header>
 
       {/* ══════════════════════════════════════════════════════
-          MOBILE HEADER
+          MOBILE HEADER (top bar — logo + utilities only)
           ══════════════════════════════════════════════════════ */}
       <div className="lg:hidden sticky top-0 z-30 glass-nav">
         <div className="flex items-center justify-between px-4 py-3">
@@ -1335,11 +1274,6 @@ export default function Page() {
               <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full"
                 style={{ background: '#10B981', boxShadow: '0 0 4px rgba(207,163,67,0.7)' }} />
             </button>
-            <button onClick={() => setIsMobileDrawerOpen(true)}
-              className="p-1.5 rounded-lg focus:outline-none ml-0.5"
-              style={{ color: 'rgba(255,255,255,0.6)' }}>
-              <Menu className="h-5 w-5" />
-            </button>
           </div>
         </div>
       </div>
@@ -1348,7 +1282,7 @@ export default function Page() {
           MAIN CONTENT
           ══════════════════════════════════════════════════════ */}
       <main className="flex-grow flex flex-col">
-        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-10 ${
+        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 ${
           currentView === 'markets' || currentView === 'portfolio' || currentView === 'trade' ? 'max-w-7xl' : 'max-w-6xl'
         }`}>
           {renderViewContent()}
@@ -1356,9 +1290,38 @@ export default function Page() {
       </main>
 
       {/* ══════════════════════════════════════════════════════
-          MOBILE BOTTOM TAB BAR  (icons kept — essential at small sizes)
+          MOBILE BOTTOM TAB BAR
           ══════════════════════════════════════════════════════ */}
-      {/* ── Mobile Navigation Drawer ── */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-stretch" style={{ background: 'rgba(4,18,38,0.97)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(207,163,67,0.1)', boxShadow: '0 -8px 32px rgba(0,0,0,0.5)' }}>
+        {mobileBottomTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = currentView === tab.id || (tab.id === 'markets' && currentView === 'stock-detail');
+          return (
+            <button key={tab.id} onClick={() => setView(tab.id)}
+              className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2 focus:outline-none relative transition-all duration-200"
+              style={{ color: isActive ? '#CFA343' : 'rgba(255,255,255,0.45)' }}>
+              {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style={{ background: '#CFA343', boxShadow: '0 0 8px rgba(207,163,67,0.7)' }} />}
+              <div className="relative">
+                <Icon className="h-[18px] w-[18px]" />
+                {'badge' in tab && tab.badge && (
+                  <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full" style={{ background: '#10B981', boxShadow: '0 0 4px rgba(16,185,129,0.8)' }} />
+                )}
+              </div>
+              <span className={`text-[9px] font-semibold tracking-tight ${isActive ? 'text-brand-primary' : 'text-text-secondary'}`}>{tab.label}</span>
+            </button>
+          );
+        })}
+        {/* More tab */}
+        <button onClick={() => setIsMobileDrawerOpen(true)}
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2 focus:outline-none relative transition-all duration-200"
+          style={{ color: mobileNavItems.some(i => i.id === currentView) ? '#CFA343' : 'rgba(255,255,255,0.45)' }}>
+          {mobileNavItems.some(i => i.id === currentView) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style={{ background: '#CFA343', boxShadow: '0 0 8px rgba(207,163,67,0.7)' }} />}
+          <Menu className="h-[18px] w-[18px]" />
+          <span className={`text-[9px] font-semibold tracking-tight ${mobileNavItems.some(i => i.id === currentView) ? 'text-brand-primary' : 'text-text-secondary'}`}>More</span>
+        </button>
+      </nav>
+
+      {/* ── Mobile Navigation Drawer (triggered by More tab) ── */}
       {isMobileDrawerOpen && (
         <div className="fixed inset-0 z-50 flex justify-end lg:hidden animate-in fade-in duration-200"
           style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)' }}
