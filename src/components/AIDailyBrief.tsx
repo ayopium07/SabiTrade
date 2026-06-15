@@ -14,13 +14,13 @@ export default function AIDailyBrief() {
 
       {/* Ambient glow decorations */}
       <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' }} />
+        style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.08) 0%, transparent 70%)' }} />
       <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
+        style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.05) 0%, transparent 70%)' }} />
 
       {/* Top gradient border line */}
       <div className="absolute top-0 left-0 right-0 h-px"
-        style={{ background: 'linear-gradient(90deg, transparent, #6366F1, transparent)' }} />
+        style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
 
       <div className="p-5 sm:p-6 relative z-10">
         {/* Header */}
@@ -28,7 +28,7 @@ export default function AIDailyBrief() {
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="absolute inset-0 rounded-xl animate-pulse-glow" 
-                style={{ background: 'rgba(99,102,241,0.2)', filter: 'blur(8px)' }} />
+                style={{ background: 'rgba(207,163,67,0.2)', filter: 'blur(8px)' }} />
               <div className="relative bg-brand-primary/15 border border-brand-primary/25 p-2.5 rounded-xl">
                 <Sparkles className="h-4 w-4 text-brand-primary" />
               </div>
@@ -52,7 +52,7 @@ export default function AIDailyBrief() {
         {/* Brief text */}
         <div className="relative">
           <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full"
-            style={{ background: 'linear-gradient(180deg, #6366F1, transparent)' }} />
+            style={{ background: 'linear-gradient(180deg, #CFA343, transparent)' }} />
           <p className="pl-4 text-sm leading-relaxed text-text-primary/90 font-dm-sans font-medium">
             {briefText}
           </p>

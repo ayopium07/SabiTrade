@@ -288,7 +288,7 @@ export default function StockDetail() {
                   <button key={d} onClick={() => setActiveDuration(d)}
                     className="px-2.5 py-1 rounded font-bold font-dm-sans transition-all focus:outline-none"
                     style={activeDuration === d
-                      ? { background: '#6366F1', color: '#FFFFFF', boxShadow: '0 0 8px rgba(99,102,241,0.4)' }
+                      ? { background: '#CFA343', color: '#FFFFFF', boxShadow: '0 0 8px rgba(207,163,67,0.4)' }
                       : { color: 'rgba(255,255,255,0.5)' }}>
                     {d}
                   </button>
@@ -392,9 +392,9 @@ export default function StockDetail() {
           <div className="p-5 rounded-3xl space-y-3 relative overflow-hidden border border-brand-primary/12"
             style={{ background: 'linear-gradient(145deg, #0E0D2A, #050410)' }}>
             <div className="absolute top-0 left-0 right-0 h-px"
-              style={{ background: 'linear-gradient(90deg, transparent, #6366F1, transparent)' }} />
+              style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
             <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none"
-              style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' }} />
+              style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.08) 0%, transparent 70%)' }} />
 
             <div className="flex items-center gap-2 relative z-10">
               <div className="bg-brand-primary/15 border border-brand-primary/25 p-1.5 rounded-lg">
@@ -677,7 +677,7 @@ export default function StockDetail() {
               {/* Highlight Bar */}
               <div className="absolute h-full rounded-full bg-brand-primary/25" style={{ left: '0%', width: `${rangePercent}%` }} />
               {/* Current Price Marker */}
-              <div className="absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-brand-primary border-4 border-foreground shadow-[0_0_12px_#6366F1]"
+              <div className="absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-brand-primary border-4 border-foreground shadow-[0_0_12px_#CFA343]"
                 style={{ left: `calc(${rangePercent}% - 10px)` }} />
             </div>
 

@@ -71,7 +71,7 @@ export default function AINewsFeed() {
               onClick={() => setActiveCategory(cat)}
               className="flex-shrink-0 px-4 py-2 border-b-2 font-bold text-xs transition-all duration-300 focus:outline-none"
               style={{
-                borderColor: isSelected ? '#6366F1' : 'transparent',
+                borderColor: isSelected ? '#CFA343' : 'transparent',
                 color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
               }}
             >

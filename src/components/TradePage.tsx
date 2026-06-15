@@ -123,14 +123,14 @@ export default function TradePage() {
       {/* ── Stats Summary Row ────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Virtual Cash */}
-        <div className="p-5 rounded-2xl relative overflow-hidden" style={cardStyle}>
+        <div className="p-5 rounded-2xl relative overflow-hidden hover-scale-effect cursor-default transition-all duration-300" style={cardStyle}>
           <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)' }} />
+            style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.08) 0%, transparent 70%)' }} />
           <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
             Simulated Cash
           </span>
           <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-            style={{ textShadow: '0 0 20px rgba(99,102,241,0.2)' }}>
+            style={{ textShadow: '0 0 20px rgba(207,163,67,0.2)' }}>
             ₦{cashBalance.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
           </h2>
           <span className="text-[9px] text-text-secondary font-medium uppercase font-dm-sans">
@@ -139,7 +139,7 @@ export default function TradePage() {
         </div>
 
         {/* Demo Holdings Valuation */}
-        <div className="p-5 rounded-2xl relative overflow-hidden" style={cardStyle}>
+        <div className="p-5 rounded-2xl relative overflow-hidden hover-scale-effect cursor-default transition-all duration-300" style={cardStyle}>
           <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
             Demo Portfolio Value
           </span>
@@ -152,7 +152,7 @@ export default function TradePage() {
         </div>
 
         {/* Account Total Capital */}
-        <div className="p-5 rounded-2xl relative overflow-hidden" style={cardStyle}>
+        <div className="p-5 rounded-2xl relative overflow-hidden hover-scale-effect cursor-default transition-all duration-300" style={cardStyle}>
           <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
             Total Account Value
           </span>
@@ -338,7 +338,7 @@ export default function TradePage() {
                       </div>
                       <div className="flex justify-between text-xs font-extrabold text-text-primary">
                         <span>{tradeType === 'buy' ? 'Total cost' : 'Total proceeds'}</span>
-                        <span className={tradeType === 'buy' ? 'text-brand-primary' : 'text-gain'} style={{ textShadow: '0 0 10px rgba(99,102,241,0.2)' }}>
+                        <span className={tradeType === 'buy' ? 'text-brand-primary' : 'text-gain'} style={{ textShadow: '0 0 10px rgba(207,163,67,0.2)' }}>
                           ₦{finalAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                         </span>
                       </div>

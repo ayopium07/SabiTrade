@@ -3,7 +3,7 @@ import { Briefcase, Plus, TrendingUp, TrendingDown, Trash2, LayoutGrid } from 'l
 import { ngxStocks } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
-const DONUT_COLORS = ['#6366F1', '#10B981', '#00B8FF', '#FFB800', '#FF4D4D', '#A855F7'];
+const DONUT_COLORS = ['#CFA343', '#10B981', '#00B8FF', '#FFB800', '#FF4D4D', '#A855F7'];
 
 export default function PortfolioTracker() {
   const portfolio = useAppStore((state) => state.portfolio);
@@ -194,7 +194,7 @@ export default function PortfolioTracker() {
             </h3>
             <button onClick={() => setIsAddOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold focus:outline-none transition-all text-bg-base"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.3)' }}>
+              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.3)' }}>
               <Plus className="h-3.5 w-3.5" />
               Record Purchase
             </button>
@@ -276,7 +276,7 @@ export default function PortfolioTracker() {
                 </p>
                 <button onClick={() => setIsAddOpen(true)}
                   className="px-5 py-2 rounded-xl text-xs font-bold text-bg-base transition-all focus:outline-none"
-                  style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.3)' }}>
                   Start tracking investments
                 </button>
               </div>
@@ -290,9 +290,9 @@ export default function PortfolioTracker() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
           style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}>
           <div className="w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-300"
-            style={{ background: '#0E0D25', border: '1px solid rgba(99,102,241,0.15)', boxShadow: '0 0 0 1px rgba(99,102,241,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
+            style={{ background: '#0E0D25', border: '1px solid rgba(207,163,67,0.15)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
             <div className="absolute top-0 left-0 right-0 h-px rounded-t-3xl"
-              style={{ background: 'linear-gradient(90deg, transparent, #6366F1, transparent)' }} />
+              style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
 
             <div className="flex items-center justify-between border-b border-border/50 pb-3">
               <h3 className="text-sm font-extrabold text-brand-primary font-sora flex items-center gap-2">
@@ -342,7 +342,7 @@ export default function PortfolioTracker() {
                 </button>
                 <button type="submit"
                   className="px-5 py-2 rounded-xl text-xs font-bold text-bg-base transition-all"
-                  style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 12px rgba(99,102,241,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.3)' }}>
                   Add Transaction
                 </button>
               </div>

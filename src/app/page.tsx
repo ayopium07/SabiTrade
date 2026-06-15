@@ -22,6 +22,8 @@ import {
   GraduationCap,
   Users,
   Search,
+  Menu,
+  X,
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
@@ -63,6 +65,7 @@ export default function Page() {
   const [activeHomeTab, setActiveHomeTab]     = useState<'report' | 'dividend' | 'growth' | 'analyst' | 'safe'>('report');
   const [isHeaderSearchOpen, setIsHeaderSearchOpen] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery]   = useState('');
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -92,19 +95,25 @@ export default function Page() {
   };
 
   const renderViewContent = () => {
+    let content;
     switch (currentView) {
-      case 'home':      return renderHomeView();
-      case 'markets':   return <StockExplorer />;
-      case 'news':      return <AINewsFeed />;
-      case 'portfolio': return <PortfolioTracker />;
-      case 'profile':   return renderProfileView();
-      case 'stock-detail': return <StockDetail />;
-      case 'about':     return <AboutUs />;
-      case 'learn':     return <Stock101 />;
-      case 'community': return <Community />;
-      case 'trade':     return <TradePage />;
-      default:          return renderHomeView();
+      case 'home':         content = renderHomeView(); break;
+      case 'markets':      content = <StockExplorer />; break;
+      case 'news':         content = <AINewsFeed />; break;
+      case 'portfolio':    content = <PortfolioTracker />; break;
+      case 'profile':      content = renderProfileView(); break;
+      case 'stock-detail': content = <StockDetail />; break;
+      case 'about':        content = <AboutUs />; break;
+      case 'learn':        content = <Stock101 />; break;
+      case 'community':    content = <Community />; break;
+      case 'trade':        content = <TradePage />; break;
+      default:             content = renderHomeView();
     }
+    return (
+      <div key={currentView} className="animate-slide-up">
+        {content}
+      </div>
+    );
   };
 
   // ─── Home Dashboard View ────────────────────────────────
@@ -274,7 +283,7 @@ export default function Page() {
         <div className="space-y-5">
           <div className="flex gap-2 overflow-x-auto pb-1.5 custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
             {([
-              { id: 'report', label: 'Daily Market Report', icon: Newspaper, color: '#6366F1' },
+              { id: 'report', label: 'Daily Market Report', icon: Newspaper, color: '#CFA343' },
               { id: 'dividend', label: 'Best Dividend Paying Stocks', icon: Percent, color: '#10B981' },
               { id: 'growth', label: 'Fast Growing Companies', icon: TrendingUp, color: '#A855F7' },
               { id: 'analyst', label: 'Top Analyst Picks', icon: Award, color: '#00B8FF' },
@@ -461,7 +470,7 @@ export default function Page() {
                 <span>Watchlist is empty. Start tracking your first NGX stock!</span>
                 <button onClick={() => setView('markets')}
                   className="mt-3 block mx-auto px-4 py-2 rounded-xl text-[10px] font-bold text-bg-base focus:outline-none"
-                  style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 10px rgba(99,102,241,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 10px rgba(207,163,67,0.3)' }}>
                   Add stocks
                 </button>
               </div>
@@ -523,11 +532,11 @@ export default function Page() {
         style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
         <div className="flex items-center gap-4 pb-4 border-b border-border/50 mb-4">
           <div className="h-16 w-16 rounded-full flex items-center justify-center font-sora text-xl font-extrabold text-bg-base flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 20px rgba(99,102,241,0.35)' }}>
+            style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 20px rgba(207,163,67,0.35)' }}>
             {user?.name.slice(0, 2).toUpperCase()}
           </div>
           <div>
-            <h2 className="text-xl font-extrabold font-sora text-brand-primary" style={{ textShadow: '0 0 16px rgba(99,102,241,0.3)' }}>
+            <h2 className="text-xl font-extrabold font-sora text-brand-primary" style={{ textShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
               {user?.name}
             </h2>
             <p className="text-xs text-text-secondary">{user?.email}</p>
@@ -557,7 +566,7 @@ export default function Page() {
                   user?.experienceLevel === lvl ? 'text-bg-base' : 'text-text-secondary hover:text-text-primary'
                 }`}
                 style={user?.experienceLevel === lvl
-                  ? { background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 10px rgba(99,102,241,0.3)' }
+                  ? { background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 10px rgba(207,163,67,0.3)' }
                   : {}}>
                 {lvl}
               </button>
@@ -832,12 +841,12 @@ export default function Page() {
                     <input type="email" required placeholder="e.g. tunde@gmail.com" value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
                       className={inputCls} style={inputStyle}
-                      onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.4)')}
+                      onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.4)')}
                       onBlur={e => (e.target.style.borderColor = '#23214C')} />
                   </div>
                   <button type="submit"
                     className="w-full py-3 rounded-xl text-xs font-bold transition-all text-bg-base mt-2 focus:outline-none"
-                    style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 0 16px rgba(99,102,241,0.3)' }}>
+                    style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
                     {authMode === 'signup' ? 'Sign Up for Free' : 'Sign In Now'}
                   </button>
                 </form>
@@ -1119,7 +1128,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg-base font-dm-sans flex flex-col">
+    <div className="min-h-screen bg-bg-base font-dm-sans flex flex-col overflow-y-auto overflow-x-hidden">
 
       {/* ══════════════════════════════════════════════════════
           DESKTOP TOP NAVIGATION
@@ -1168,7 +1177,7 @@ export default function Page() {
                     {/* Live badge dot */}
                     {'badge' in item && item.badge && (
                       <span className="h-1.5 w-1.5 rounded-full bg-brand-primary"
-                        style={{ boxShadow: '0 0 4px rgba(99,102,241,0.8)' }} />
+                        style={{ boxShadow: '0 0 4px rgba(207,163,67,0.8)' }} />
                     )}
 
                     {/* Dropdown chevron — shown when item has children */}
@@ -1181,8 +1190,8 @@ export default function Page() {
                       <span
                         className="absolute bottom-0 left-0 right-0 h-px rounded-full"
                         style={{
-                          background: 'linear-gradient(90deg, transparent, #6366F1, transparent)',
-                          boxShadow: '0 0 8px rgba(0,230,118,0.6)',
+                          background: 'linear-gradient(90deg, transparent, #CFA343, transparent)',
+                          boxShadow: '0 0 8px rgba(207,163,67,0.6)',
                           bottom: '-9px',  // aligns to the bottom edge of the header
                         }}
                       />
@@ -1326,10 +1335,10 @@ export default function Page() {
               <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full"
                 style={{ background: '#10B981', boxShadow: '0 0 4px rgba(207,163,67,0.7)' }} />
             </button>
-            <button onClick={() => setView('profile')}
-              className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-extrabold font-sora text-bg-base flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 8px rgba(207,163,67,0.3)' }}>
-              {user?.name.slice(0, 2).toUpperCase()}
+            <button onClick={() => setIsMobileDrawerOpen(true)}
+              className="p-1.5 rounded-lg focus:outline-none ml-0.5"
+              style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <Menu className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -1339,7 +1348,7 @@ export default function Page() {
           MAIN CONTENT
           ══════════════════════════════════════════════════════ */}
       <main className="flex-grow flex flex-col">
-        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-28 lg:pb-10 ${
+        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-10 ${
           currentView === 'markets' || currentView === 'portfolio' || currentView === 'trade' ? 'max-w-7xl' : 'max-w-6xl'
         }`}>
           {renderViewContent()}
@@ -1349,50 +1358,102 @@ export default function Page() {
       {/* ══════════════════════════════════════════════════════
           MOBILE BOTTOM TAB BAR  (icons kept — essential at small sizes)
           ══════════════════════════════════════════════════════ */}
-      <nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-border/40"
-        style={{ background: 'rgba(7,6,21,0.96)', backdropFilter: 'blur(24px)' }}
-      >
-        <div className="flex items-center justify-around px-2 py-1.5">
-          {mobileNavItems.map((item) => {
-            const IconComp = item.icon;
-            const isActive =
-              currentView === item.id ||
-              (item.id === 'markets' && currentView === 'stock-detail');
+      {/* ── Mobile Navigation Drawer ── */}
+      {isMobileDrawerOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end lg:hidden animate-in fade-in duration-200"
+          style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)' }}
+          onClick={() => setIsMobileDrawerOpen(false)}>
+          
+          {/* Drawer Panel */}
+          <div className="w-[290px] h-full bg-[#081D38] border-l border-brand-primary/15 p-6 flex flex-col justify-between shadow-2xl relative animate-in slide-in-from-right duration-300"
+            style={{ boxShadow: '-10px 0 30px rgba(0,0,0,0.5)' }}
+            onClick={(e) => e.stopPropagation()}>
+            
+            <div>
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0"
+                    style={{ boxShadow: '0 0 10px rgba(207,163,67,0.35)' }}>
+                    <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
+                  </div>
+                  <span className="font-sora font-extrabold text-sm text-text-primary tracking-tight">EquityStack</span>
+                </div>
+                <button onClick={() => setIsMobileDrawerOpen(false)}
+                  className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors focus:outline-none">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
 
-            return (
+              {/* User Profile Card */}
+              {user && (
+                <div onClick={() => { setView('profile'); setIsMobileDrawerOpen(false); }}
+                  className="flex items-center gap-3 p-3 rounded-xl border border-brand-primary/10 bg-white/5 hover:bg-white/10 cursor-pointer transition-colors mb-6 group">
+                  <div className="h-9 w-9 rounded-full flex items-center justify-center text-xs font-extrabold text-bg-base flex-shrink-0"
+                    style={{
+                      background: 'linear-gradient(135deg, #CFA343, #B58C35)',
+                      boxShadow: '0 0 8px rgba(207, 163, 67, 0.3)',
+                    }}>
+                    {user.name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="text-left leading-none">
+                    <span className="block text-xs font-semibold text-text-primary group-hover:text-brand-primary transition-colors">
+                      {user.name}
+                    </span>
+                    <span className="block text-[9px] font-bold uppercase tracking-wider text-text-secondary mt-1">
+                      {user.experienceLevel}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Links */}
+              <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1 custom-scrollbar">
+                {mobileNavItems.map((item) => {
+                  const IconComp = item.icon;
+                  const isActive = currentView === item.id ||
+                    (item.id === 'markets' && currentView === 'stock-detail');
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setView(item.id);
+                        setIsMobileDrawerOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left font-bold text-xs transition-all duration-200 focus:outline-none relative"
+                      style={{
+                        background: isActive ? 'rgba(207,163,67,0.1)' : 'transparent',
+                        color: isActive ? '#CFA343' : 'rgba(255,255,255,0.6)',
+                        border: isActive ? '1px solid rgba(207,163,67,0.15)' : '1px solid transparent',
+                      }}
+                    >
+                      <IconComp className="h-4.5 w-4.5" />
+                      <span>{item.label}</span>
+                      {isActive && (
+                        <span className="absolute right-3.5 h-1.5 w-1.5 rounded-full bg-brand-primary" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Footer with Sign Out */}
+            <div className="pt-4 border-t border-border/40">
               <button
-                key={item.id}
-                onClick={() => setView(item.id)}
-                className="flex flex-col items-center gap-0.5 py-1.5 px-3 text-center focus:outline-none relative transition-all duration-200"
-                style={{ color: isActive ? '#CFA343' : 'rgba(255,255,255,0.35)' }}
+                onClick={() => {
+                  logoutUser();
+                  setIsMobileDrawerOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-danger/20 text-danger bg-danger/5 hover:bg-danger/10 font-bold text-xs transition-all focus:outline-none"
               >
-                {/* Active top glow pill */}
-                {isActive && (
-                  <span
-                    className="absolute -top-0.5 left-1/2 -translate-x-1/2 h-0.5 w-6 rounded-full"
-                    style={{ background: '#CFA343', boxShadow: '0 0 8px rgba(207,163,67,0.7)' }}
-                  />
-                )}
-
-                <IconComp
-                  className="h-5 w-5 transition-all duration-200"
-                  style={isActive ? { filter: 'drop-shadow(0 0 5px rgba(207,163,67,0.55))' } : {}}
-                />
-                <span className="text-[9px] font-bold tracking-tight font-dm-sans">{item.label}</span>
-
-                {/* Badge */}
-                {'badge' in item && item.badge && !isActive && (
-                  <span
-                    className="absolute top-1 right-2 h-1.5 w-1.5 rounded-full border border-bg-base"
-                    style={{ background: '#CFA343' }}
-                  />
-                )}
+                <LogOut className="h-4 w-4" />
+                Sign Out
               </button>
-            );
-          })}
+            </div>
+          </div>
         </div>
-      </nav>
+      )}
 
       {/* ── AI Chatbot ─────────────────────────────────────── */}
       <AIChatbot />

@@ -174,7 +174,7 @@ export default function Stock101() {
         <div className="w-full h-2.5 bg-bg-base border border-border/50 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 bg-brand-primary"
-            style={{ width: `${progressPercentage}%`, boxShadow: '0 0 12px #6366F1' }}
+            style={{ width: `${progressPercentage}%`, boxShadow: '0 0 12px #CFA343' }}
           />
         </div>
       </div>
@@ -322,8 +322,8 @@ export default function Stock101() {
                             Icon = X;
                           }
                         } else if (isSelected) {
-                          btnBorder = '#6366F1';
-                          btnBg = 'rgba(99,102,241,0.08)';
+                          btnBorder = '#CFA343';
+                          btnBg = 'rgba(207,163,67,0.08)';
                           textCls = 'text-brand-primary font-semibold';
                         }
 
@@ -366,7 +366,7 @@ export default function Stock101() {
                     onClick={calculateScore}
                     disabled={Object.keys(selectedAnswers).length < quizQuestions.length}
                     className="w-full py-2.5 rounded-xl font-bold text-xs bg-brand-primary text-bg-base hover:bg-brand-primary/95 disabled:opacity-50 transition-all flex items-center justify-center gap-1.5 focus:outline-none"
-                    style={{ boxShadow: '0 4px 12px rgba(99,102,241,0.2)' }}
+                    style={{ boxShadow: '0 4px 12px rgba(207,163,67,0.2)' }}
                   >
                     <span>Check Quiz Score</span>
                     <ArrowRight className="h-3.5 w-3.5" />
