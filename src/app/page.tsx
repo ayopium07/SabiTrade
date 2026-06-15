@@ -604,7 +604,7 @@ export default function Page() {
   // ══════════════════════════════════════════════════════════
   if (currentView === 'landing') {
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative overflow-y-auto overflow-x-hidden">
+      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative overflow-x-hidden">
         {/* ── Ambient Background Orbs ── */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.07) 0%, transparent 70%)' }} />
@@ -1128,7 +1128,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg-base font-dm-sans flex flex-col overflow-y-auto overflow-x-hidden">
+    <div className="min-h-screen bg-bg-base font-dm-sans flex flex-col overflow-x-hidden">
 
       {/* ══════════════════════════════════════════════════════
           DESKTOP TOP NAVIGATION
