@@ -31,13 +31,38 @@ const categories = ['Featured', 'Breaking', 'Most Popular', 'Cryptocurrency'] as
 
 export default function AINewsFeed() {
   const [activeCategory, setActiveCategory] = useState<typeof categories[number]>('Featured');
+  const [newsList, setNewsList] = useState<NewsItem[]>(mockNews);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
   const setView = useAppStore((s) => s.setView);
 
+  React.useEffect(() => {
+    let active = true;
+    async function fetchNews() {
+      setIsLoading(true);
+      try {
+        const res = await fetch('/api/ai/news');
+        if (!res.ok) throw new Error('Failed to fetch news');
+        const data = await res.json();
+        if (active && data.news && data.news.length > 0) {
+          setNewsList(data.news);
+        }
+      } catch (err) {
+        console.warn('Could not fetch real-time news, keeping mock data:', err);
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    }
+    fetchNews();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   // Filter news by active category
-  const filteredNews = mockNews.filter((item) => item.category === activeCategory);
+  const filteredNews = newsList.filter((item) => item.category === activeCategory);
 
   const handleStockClick = (ticker: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening news modal
@@ -83,7 +108,25 @@ export default function AINewsFeed() {
 
       {/* News Stack (High Density List) */}
       <div className="flex flex-col gap-3">
-        {filteredNews.length > 0 ? (
+        {isLoading ? (
+          // Premium Gold/Dark pulsing loading skeletons
+          Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="flex gap-4 p-3 rounded-2xl border border-border/20 bg-gradient-to-br from-bg-hover to-bg-base animate-pulse"
+            >
+              <div className="w-20 h-20 sm:w-24 sm:h-20 flex-shrink-0 rounded-xl bg-white/5 border border-white/5" />
+              <div className="flex-1 flex flex-col justify-between py-1">
+                <div className="space-y-2">
+                  <div className="h-2.5 w-16 bg-white/10 rounded" />
+                  <div className="h-4 w-5/6 bg-white/15 rounded" />
+                  <div className="h-3 w-2/3 bg-white/10 rounded" />
+                </div>
+                <div className="h-2.5 w-24 bg-white/5 rounded mt-2" />
+              </div>
+            </div>
+          ))
+        ) : filteredNews.length > 0 ? (
           filteredNews.map((news) => {
             const cfg = sentimentConfig[news.marketImpact];
             return (

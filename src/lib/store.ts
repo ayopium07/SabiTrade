@@ -1,6 +1,6 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getConceptExplanation } from './mockData';
 
 export interface PortfolioHolding {
   ticker: string;
@@ -251,37 +251,43 @@ export const useAppStore = create<AppState>()(
 
   toggleChat: () => set((state) => ({ isChatOpen: !state.isChatOpen })),
 
-  sendChatMessage: (text) => {
+  sendChatMessage: async (text) => {
     const userMessage: ChatMessage = {
       sender: 'user',
       text,
       timestamp: new Date()
     };
 
-    set((state) => ({
-      chatMessages: [...state.chatMessages, userMessage],
-      isChatTyping: true
-    }));
+    const currentMessages = get().chatMessages;
+    const nextMessages = [...currentMessages, userMessage];
 
-    // Generate simulated bot response based on user experience level
-    setTimeout(() => {
-      const userLevel = get().user?.experienceLevel || 'Beginner';
-      
-      // Determine what concept they asked about
-      let concept = 'default';
-      const lowercaseText = text.toLowerCase();
-      if (lowercaseText.includes('p/e') || lowercaseText.includes('pe ratio') || lowercaseText.includes('price to earnings') || lowercaseText.includes('earning')) {
-        concept = 'pe ratio';
-      } else if (lowercaseText.includes('how to invest') || lowercaseText.includes('how do i start') || lowercaseText.includes('start') || lowercaseText.includes('broker') || lowercaseText.includes('buy')) {
-        concept = 'how to invest';
-      } else if (lowercaseText.includes('ngx') || lowercaseText.includes('nigerian exchange') || lowercaseText.includes('stock market') || lowercaseText.includes('stock exchange')) {
-        concept = 'ngx';
+    set({
+      chatMessages: nextMessages,
+      isChatTyping: true
+    });
+
+    try {
+      const experienceLevel = get().user?.experienceLevel || 'Beginner';
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: nextMessages,
+          experienceLevel,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch AI response');
       }
 
-      const botText = getConceptExplanation(concept, userLevel);
+      const data = await response.json();
       const botMessage: ChatMessage = {
         sender: 'ai',
-        text: botText,
+        text: data.reply,
         timestamp: new Date()
       };
 
@@ -289,7 +295,19 @@ export const useAppStore = create<AppState>()(
         chatMessages: [...state.chatMessages, botMessage],
         isChatTyping: false
       }));
-    }, 1200);
+    } catch (err: unknown) {
+      console.error('AI chat failed:', err);
+      const errMsg = err instanceof Error ? err.message : 'Please check your connection or environment config.';
+      const errorMessage: ChatMessage = {
+        sender: 'ai',
+        text: `Sorry, I couldn't reach the intelligence engine. ${errMsg}`,
+        timestamp: new Date()
+      };
+      set((state) => ({
+        chatMessages: [...state.chatMessages, errorMessage],
+        isChatTyping: false
+      }));
+    }
   },
 
   clearChat: () => set((state) => ({

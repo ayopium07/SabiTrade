@@ -1374,8 +1374,7 @@ export default function Page() {
               <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1 custom-scrollbar">
                 {mobileNavItems.map((item) => {
                   const IconComp = item.icon;
-                  const isActive = currentView === item.id ||
-                    (item.id === 'markets' && currentView === 'stock-detail');
+                  const isActive = currentView === item.id;
                   return (
                     <button
                       key={item.id}
