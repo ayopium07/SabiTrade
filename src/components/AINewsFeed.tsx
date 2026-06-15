@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info } from 'lucide-react';
-import { mockNews, ngxStocks, NewsItem } from '@/lib/mockData';
+import { mockNews, NewsItem } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
 const sentimentConfig = {
@@ -37,6 +37,7 @@ export default function AINewsFeed() {
 
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
   const setView = useAppStore((s) => s.setView);
+  const stocks = useAppStore((s) => s.stocks);
 
   React.useEffect(() => {
     let active = true;
@@ -171,7 +172,7 @@ export default function AINewsFeed() {
                     {news.affectedStocks && news.affectedStocks.length > 0 && (
                       <div className="flex flex-wrap items-center gap-2">
                         {news.affectedStocks.map((ticker) => {
-                          const stock = ngxStocks.find((s) => s.ticker === ticker);
+                          const stock = stocks.find((s) => s.ticker === ticker);
                           if (!stock) return null;
                           const isPos = stock.change >= 0;
                           return (
@@ -333,7 +334,7 @@ export default function AINewsFeed() {
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {selectedNews.affectedStocks.map((ticker) => {
-                      const stock = ngxStocks.find((s) => s.ticker === ticker);
+                      const stock = stocks.find((s) => s.ticker === ticker);
                       const isPos = stock ? stock.change >= 0 : true;
                       const price = stock ? stock.price.toFixed(2) : '';
                       return (

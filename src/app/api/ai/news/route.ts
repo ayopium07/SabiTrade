@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const revalidate = 900; // Cache news page for 15 minutes (900 seconds)
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {

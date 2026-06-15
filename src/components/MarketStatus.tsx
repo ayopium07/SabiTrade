@@ -1,24 +1,22 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Clock, Zap } from 'lucide-react';
-import { ngxIndexData } from '@/lib/mockData';
-
-const tickerItems = [
-  { label: 'DANGCEM', value: '₦614.50', change: '+1.8%', up: true },
-  { label: 'MTNN',    value: '₦198.30', change: '+0.9%', up: true },
-  { label: 'ZENITHBANK', value: '₦36.45', change: '+3.2%', up: true },
-  { label: 'GTCO',   value: '₦46.20', change: '-0.4%', up: false },
-  { label: 'AIRTELAFRI', value: '₦1,940.00', change: '+2.1%', up: true },
-  { label: 'ACCESSCORP', value: '₦19.85', change: '-1.2%', up: false },
-  { label: 'UBA',    value: '₦22.60', change: '+0.5%', up: true },
-  { label: 'SEPLAT',  value: '₦4,200.00', change: '+0.7%', up: true },
-];
-
-// Duplicate for seamless loop
-const allTickers = [...tickerItems, ...tickerItems];
+import { useAppStore } from '@/lib/store';
 
 export default function MarketStatus() {
-  const data = ngxIndexData;
+  const data = useAppStore((state) => state.indexData);
+  const stocks = useAppStore((state) => state.stocks);
   const isPositive = data.change >= 0;
+
+  // Get marquee tickers dynamically from the active stocks list
+  const tickerItems = stocks.slice(0, 8).map(s => ({
+    label: s.ticker,
+    value: `₦${s.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`,
+    change: `${s.change >= 0 ? '+' : ''}${s.change.toFixed(1)}%`,
+    up: s.change >= 0
+  }));
+
+  // Duplicate for seamless loop
+  const allTickers = [...tickerItems, ...tickerItems];
   const today = new Date().toLocaleDateString('en-NG', {
     weekday: 'short',
     day: 'numeric',
@@ -88,11 +86,11 @@ export default function MarketStatus() {
             </div>
 
             <p className="text-xs text-text-secondary font-medium mt-1.5 font-dm-sans">
-              Market Cap: <span className="text-text-primary font-bold">₦58.7T</span>
+              Market Cap: <span className="text-text-primary font-bold">{data.marketCap}</span>
               <span className="mx-2 text-border">·</span>
-              Volume: <span className="text-text-primary font-bold">₦4.2B</span>
+              Volume: <span className="text-text-primary font-bold">{data.volume}</span>
               <span className="mx-2 text-border">·</span>
-              Deals: <span className="text-text-primary font-bold">14,382</span>
+              Deals: <span className="text-text-primary font-bold">{data.deals}</span>
             </p>
           </div>
 

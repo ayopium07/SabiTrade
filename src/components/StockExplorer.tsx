@@ -1,7 +1,6 @@
 // StockExplorer Component - Enhanced with Investment Metrics and Sorting
 import React, { useState } from 'react';
 import { Search, ChevronDown, Check, Star } from 'lucide-react';
-import { ngxStocks } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
 export default function StockExplorer() {
@@ -11,13 +10,14 @@ export default function StockExplorer() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
+  const stocks = useAppStore((state) => state.stocks);
   const setSelectedTicker = useAppStore((state) => state.setSelectedTicker);
   const toggleWatchlist = useAppStore((state) => state.toggleWatchlist);
   const watchlist = useAppStore((state) => state.watchlist);
 
   const sectors = ['All', 'Banking', 'Consumer Goods', 'Oil & Gas', 'Industrials'];
 
-  const filteredStocks = ngxStocks
+  const filteredStocks = stocks
     .filter((stock) => {
       const matchesSearch =
         stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||

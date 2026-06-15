@@ -7,7 +7,7 @@ import {
   RefreshCw 
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
-import { ngxStocks } from '@/lib/mockData';
+// ngxStocks is loaded dynamically from store
 
 const DONUT_COLORS = ['#CFA343', '#10B981', '#00B8FF', '#FFB800', '#FF4D4D', '#A855F7'];
 
@@ -15,6 +15,7 @@ export default function TradePage() {
   const demoPortfolio = useAppStore((state) => state.demoPortfolio);
   const cashBalance = useAppStore((state) => state.cashBalance);
   const addDemoTrade = useAppStore((state) => state.addDemoTrade);
+  const stocks = useAppStore((state) => state.stocks);
 
   // Form State
   const [selectedTickerState, setSelectedTickerState] = useState('GTCO');
@@ -24,14 +25,14 @@ export default function TradePage() {
   const [tradeError, setTradeError] = useState<string | null>(null);
   const [showAddSuccess, setShowAddSuccess] = useState(false);
 
-  const activeStock = ngxStocks.find((s) => s.ticker === selectedTickerState) || ngxStocks[0];
+  const activeStock = stocks.find((s) => s.ticker === selectedTickerState) || stocks[0];
 
   // Calculate Demo Portfolio Values
   let totalCostBasis = 0;
   let totalCurrentValue = 0;
 
   const holdingsDetails = demoPortfolio.map((holding) => {
-    const stock = ngxStocks.find((s) => s.ticker === holding.ticker) || ngxStocks[0];
+    const stock = stocks.find((s) => s.ticker === holding.ticker) || stocks[0];
     const costBasis = holding.shares * holding.buyPrice;
     const currentValue = holding.shares * stock.price;
     const pnl = currentValue - costBasis;
@@ -211,7 +212,7 @@ export default function TradePage() {
                   className="w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-text-primary"
                   style={inputStyle}
                 >
-                  {ngxStocks.map((s) => (
+                  {stocks.map((s) => (
                     <option key={s.ticker} value={s.ticker} style={{ background: '#0E0D25' }}>
                       {s.ticker} — {s.name} (₦{s.price.toFixed(2)})
                     </option>

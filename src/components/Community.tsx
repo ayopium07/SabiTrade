@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MessageSquare, ThumbsUp, Send, TrendingUp, Users, ShieldAlert } from 'lucide-react';
-import { ngxStocks } from '@/lib/mockData';
+// ngxStocks is loaded dynamically from store
 import { useAppStore } from '@/lib/store';
 
 interface Post {
@@ -80,6 +80,7 @@ export default function Community() {
   const user = useAppStore((s) => s.user);
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
   const setView = useAppStore((s) => s.setView);
+  const stocks = useAppStore((s) => s.stocks);
 
   const handleVote = (type: 'bullish' | 'bearish') => {
     if (hasVoted) return;
@@ -207,7 +208,7 @@ export default function Community() {
                     className="bg-bg-base border border-border/40 hover:border-brand-primary/45 rounded-lg px-2 py-1 text-[11px] font-bold text-brand-primary focus:outline-none focus:border-brand-primary transition-colors cursor-pointer"
                   >
                     <option value="">None</option>
-                    {ngxStocks.map((stock) => (
+                    {stocks.map((stock) => (
                       <option key={stock.ticker} value={stock.ticker}>
                         ${stock.ticker}
                       </option>
@@ -375,7 +376,7 @@ export default function Community() {
 
             <div className="space-y-3">
               {trendingTickers.map((item, idx) => {
-                const stock = ngxStocks.find((s) => s.ticker === item.ticker);
+                const stock = stocks.find((s) => s.ticker === item.ticker);
                 const isPos = stock ? stock.change >= 0 : true;
 
                 return (

@@ -49,6 +49,9 @@ export const ngxIndexData = {
   changeAmount: +1205.80,
   status: 'Open' as 'Open' | 'Closed',
   lastUpdated: 'Just now',
+  marketCap: '₦58.7T',
+  volume: '₦4.2B',
+  deals: '14,382',
 };
 
 // Generates 30 days of stock chart data with volatility

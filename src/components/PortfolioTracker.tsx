@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Briefcase, Plus, TrendingUp, TrendingDown, Trash2, LayoutGrid } from 'lucide-react';
-import { ngxStocks } from '@/lib/mockData';
+// ngxStocks is loaded dynamically from store
 import { useAppStore } from '@/lib/store';
 
 const DONUT_COLORS = ['#CFA343', '#10B981', '#00B8FF', '#FFB800', '#FF4D4D', '#A855F7'];
@@ -10,6 +10,7 @@ export default function PortfolioTracker() {
   const addHolding = useAppStore((state) => state.addHolding);
   const removeHolding = useAppStore((state) => state.removeHolding);
   const setSelectedTicker = useAppStore((state) => state.setSelectedTicker);
+  const stocks = useAppStore((state) => state.stocks);
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [tickerSelect, setTickerSelect] = useState('ZENITHBANK');
@@ -22,7 +23,7 @@ export default function PortfolioTracker() {
   let totalTodayChange = 0;
 
   const holdingsDetails = portfolio.map((holding) => {
-    const stock = ngxStocks.find((s) => s.ticker === holding.ticker) || ngxStocks[0];
+    const stock = stocks.find((s) => s.ticker === holding.ticker) || stocks[0];
     const costBasis = holding.shares * holding.buyPrice;
     const currentValue = holding.shares * stock.price;
     const pnl = currentValue - costBasis;
@@ -41,7 +42,7 @@ export default function PortfolioTracker() {
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     const shares = parseInt(sharesInput);
-    const selectedStock = ngxStocks.find(s => s.ticker === tickerSelect) || ngxStocks[0];
+    const selectedStock = stocks.find(s => s.ticker === tickerSelect) || stocks[0];
     const price = parseFloat(priceInput) || selectedStock.price;
     if (shares > 0) {
       addHolding(tickerSelect, shares, price);
@@ -309,7 +310,7 @@ export default function PortfolioTracker() {
                   <select value={tickerSelect} onChange={e => setTickerSelect(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-text-primary"
                     style={{ background: '#0E0D25', border: '1px solid #23214C' }}>
-                    {ngxStocks.map(s => (
+                    {stocks.map(s => (
                       <option key={s.ticker} value={s.ticker} style={{ background: '#0E0D25' }}>
                         {s.ticker} — {s.name} (₦{s.price.toFixed(2)})
                       </option>

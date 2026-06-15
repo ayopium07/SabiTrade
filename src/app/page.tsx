@@ -56,6 +56,7 @@ export default function Page() {
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
   const logoutUser      = useAppStore((s) => s.logoutUser);
   const watchlist       = useAppStore((s) => s.watchlist);
+  const fetchMarketData = useAppStore((s) => s.fetchMarketData);
 
   const [emailInput, setEmailInput]   = useState('');
   const [nameInput, setNameInput]     = useState('');
@@ -67,6 +68,10 @@ export default function Page() {
   const [headerSearchQuery, setHeaderSearchQuery]   = useState('');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+
+  React.useEffect(() => {
+    fetchMarketData();
+  }, [fetchMarketData]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

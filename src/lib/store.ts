@@ -1,6 +1,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Stock, ngxStocks, ngxIndexData } from '@/lib/mockData';
 
 export interface PortfolioHolding {
   ticker: string;
@@ -47,6 +48,11 @@ export interface AppState {
   isChatOpen: boolean;
   isChatTyping: boolean;
 
+  // Real-time market state
+  stocks: Stock[];
+  indexData: typeof ngxIndexData;
+  isLoadingMarketData: boolean;
+
   // Actions
   setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => void;
   setSelectedTicker: (ticker: string) => void;
@@ -63,6 +69,7 @@ export interface AppState {
   toggleChat: () => void;
   sendChatMessage: (text: string) => void;
   clearChat: () => void;
+  fetchMarketData: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -90,6 +97,9 @@ export const useAppStore = create<AppState>()(
   ],
   isChatOpen: false,
   isChatTyping: false,
+  stocks: ngxStocks,
+  indexData: ngxIndexData,
+  isLoadingMarketData: false,
 
   setView: (view) => set((state) => {
     // Save WHERE we currently are as previousView before navigating away.
@@ -318,11 +328,32 @@ export const useAppStore = create<AppState>()(
         timestamp: new Date()
       }
     ]
-  }))
+  })),
+
+  fetchMarketData: async () => {
+    if (get().isLoadingMarketData) return;
+    set({ isLoadingMarketData: true });
+    try {
+      const response = await fetch('/api/market/data');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.stocks && data.indexData) {
+          set({
+            stocks: data.stocks,
+            indexData: data.indexData
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch market data:', err);
+    } finally {
+      set({ isLoadingMarketData: false });
+    }
+  }
   }),
   {
     name: 'equitystack-session',
-    // Only persist the essential session state — not transient UI or chat history
+    // Only persist the essential session state — not transient UI, chat history, or real-time prices
     partialize: (state) => ({
       currentView: state.currentView,
       previousView: state.previousView,

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
-import { mockMovers } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
 export default function TopMovers() {
   const [activeTab, setActiveTab] = useState<'gainers' | 'losers'>('gainers');
   const setSelectedTicker = useAppStore((state) => state.setSelectedTicker);
+  const stocks = useAppStore((state) => state.stocks);
 
-  const movers = activeTab === 'gainers' ? mockMovers.gainers : mockMovers.losers;
+  const gainers = [...stocks].sort((a, b) => b.change - a.change).slice(0, 8);
+  const losers = [...stocks].sort((a, b) => a.change - b.change).slice(0, 8);
+  const movers = activeTab === 'gainers' ? gainers : losers;
   const isGainerTab = activeTab === 'gainers';
 
   return (

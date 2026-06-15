@@ -12,7 +12,7 @@ import {
   Layers, 
   Newspaper 
 } from 'lucide-react';
-import { ngxStocks, mockNews } from '@/lib/mockData';
+import { mockNews } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
 // ─── Management Mock Directory ─────────────────────────
@@ -146,6 +146,7 @@ export default function StockDetail() {
   const toggleWatchlist = useAppStore((state) => state.toggleWatchlist);
   const watchlist      = useAppStore((state) => state.watchlist);
   const user           = useAppStore((state) => state.user);
+  const stocks         = useAppStore((state) => state.stocks);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'financials' | 'dividend' | 'valuation' | 'management' | 'competitors' | 'news'>('overview');
   const [activeDuration, setActiveDuration] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1M');
@@ -155,7 +156,7 @@ export default function StockDetail() {
   const [hoverY, setHoverY] = useState<number | null>(null);
   const chartRef = useRef<SVGSVGElement | null>(null);
 
-  const stock      = ngxStocks.find((s) => s.ticker === selectedTicker) || ngxStocks[0];
+  const stock      = stocks.find((s) => s.ticker === selectedTicker) || stocks[0];
   const isPositive = stock.change >= 0;
   const isWatched  = watchlist.includes(stock.ticker);
   const color      = isPositive ? '#10B981' : '#FF4D4D';
@@ -739,8 +740,8 @@ export default function StockDetail() {
 
   // 6. Competitors Content
   const renderCompetitors = () => {
-    const competitors = ngxStocks.filter(s => s.sector === stock.sector && s.ticker !== stock.ticker);
-    const compList = competitors.length > 0 ? competitors : ngxStocks.filter(s => s.ticker !== stock.ticker).slice(0, 3);
+    const competitors = stocks.filter(s => s.sector === stock.sector && s.ticker !== stock.ticker);
+    const compList = competitors.length > 0 ? competitors : stocks.filter(s => s.ticker !== stock.ticker).slice(0, 3);
 
     return (
       <div className="p-5 rounded-3xl space-y-4" style={cardStyle}>
