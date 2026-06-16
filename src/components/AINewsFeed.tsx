@@ -27,43 +27,31 @@ const sentimentConfig = {
   },
 };
 
-const categories = ['Featured', 'Breaking', 'Most Popular', 'Cryptocurrency'] as const;
+const categories = ['All', 'Featured', 'Breaking', 'Most Popular', 'Cryptocurrency'] as const;
 
 export default function AINewsFeed() {
-  const [activeCategory, setActiveCategory] = useState<typeof categories[number]>('Featured');
-  const [newsList, setNewsList] = useState<NewsItem[]>(mockNews);
-  const [isLoading, setIsLoading] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<typeof categories[number]>('All');
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
   const setView = useAppStore((s) => s.setView);
   const stocks = useAppStore((s) => s.stocks);
+  const newsList = useAppStore((s) => s.news);
+  const isLoading = useAppStore((s) => s.isLoadingNews);
+  const fetchNews = useAppStore((s) => s.fetchNews);
 
   React.useEffect(() => {
-    let active = true;
-    async function fetchNews() {
-      setIsLoading(true);
-      try {
-        const res = await fetch('/api/ai/news');
-        if (!res.ok) throw new Error('Failed to fetch news');
-        const data = await res.json();
-        if (active && data.news && data.news.length > 0) {
-          setNewsList(data.news);
-        }
-      } catch (err) {
-        console.warn('Could not fetch real-time news, keeping mock data:', err);
-      } finally {
-        if (active) setIsLoading(false);
-      }
-    }
     fetchNews();
-    return () => {
-      active = false;
-    };
-  }, []);
+  }, [fetchNews]);
 
-  // Filter news by active category
-  const filteredNews = newsList.filter((item) => item.category === activeCategory);
+  // Filter news by active category (case-insensitive with "All" option fallback)
+  const filteredNews = activeCategory === 'All'
+    ? newsList
+    : newsList.filter((item) => {
+        const itemCat = (item.category || '').trim().toLowerCase();
+        const activeCat = activeCategory.trim().toLowerCase();
+        return itemCat === activeCat;
+      });
 
   const handleStockClick = (ticker: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening news modal

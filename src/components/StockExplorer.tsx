@@ -63,6 +63,7 @@ export default function StockExplorer() {
 
   const renderHeader = (field: typeof sortBy, label: string, align: 'left' | 'right' | 'center' = 'left') => {
     const isActive = sortBy === field;
+    const isTicker = field === 'ticker';
     return (
       <th
         onClick={(e) => {
@@ -71,7 +72,7 @@ export default function StockExplorer() {
         }}
         className={`px-4 py-3.5 cursor-pointer select-none text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans hover:text-text-primary transition-colors group/th ${
           align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
-        }`}
+        } ${isTicker ? 'sticky left-0 z-20 bg-[#0e0d25] border-r border-border/40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]' : ''}`}
       >
         <div className={`flex items-center gap-1 ${align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : 'justify-start'}`}>
           <span>{label}</span>
@@ -213,7 +214,7 @@ export default function StockExplorer() {
                       className="hover:bg-brand-primary/[0.02] transition-colors cursor-pointer group"
                     >
                       {/* Company */}
-                      <td className="px-4 py-3.5 align-middle">
+                      <td className="px-4 py-3.5 align-middle sticky left-0 z-10 bg-[#0c0b22] border-r border-border/20 group-hover:bg-[#12102e] transition-colors shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">
                         <div className="flex items-center gap-3 max-w-[240px]">
                           <button
                             onClick={(e) => { e.stopPropagation(); toggleWatchlist(stock.ticker); }}

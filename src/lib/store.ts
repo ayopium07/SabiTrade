@@ -1,7 +1,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Stock, ngxStocks, ngxIndexData } from '@/lib/mockData';
+import { Stock, ngxStocks, ngxIndexData, NewsItem, mockNews } from '@/lib/mockData';
 
 export interface PortfolioHolding {
   ticker: string;
@@ -53,6 +53,10 @@ export interface AppState {
   indexData: typeof ngxIndexData;
   isLoadingMarketData: boolean;
 
+  // Real-time news state
+  news: NewsItem[];
+  isLoadingNews: boolean;
+
   // Actions
   setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => void;
   setSelectedTicker: (ticker: string) => void;
@@ -70,6 +74,7 @@ export interface AppState {
   sendChatMessage: (text: string) => void;
   clearChat: () => void;
   fetchMarketData: () => Promise<void>;
+  fetchNews: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -100,6 +105,8 @@ export const useAppStore = create<AppState>()(
   stocks: ngxStocks,
   indexData: ngxIndexData,
   isLoadingMarketData: false,
+  news: mockNews,
+  isLoadingNews: false,
 
   setView: (view) => set((state) => {
     // Save WHERE we currently are as previousView before navigating away.
@@ -348,6 +355,24 @@ export const useAppStore = create<AppState>()(
       console.error('Failed to fetch market data:', err);
     } finally {
       set({ isLoadingMarketData: false });
+    }
+  },
+
+  fetchNews: async () => {
+    if (get().isLoadingNews) return;
+    set({ isLoadingNews: true });
+    try {
+      const response = await fetch('/api/ai/news');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.news && Array.isArray(data.news)) {
+          set({ news: data.news });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch news:', err);
+    } finally {
+      set({ isLoadingNews: false });
     }
   }
   }),

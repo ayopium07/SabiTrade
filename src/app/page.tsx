@@ -57,6 +57,9 @@ export default function Page() {
   const logoutUser      = useAppStore((s) => s.logoutUser);
   const watchlist       = useAppStore((s) => s.watchlist);
   const fetchMarketData = useAppStore((s) => s.fetchMarketData);
+  const stocks          = useAppStore((s) => s.stocks);
+  const news            = useAppStore((s) => s.news);
+  const fetchNews       = useAppStore((s) => s.fetchNews);
 
   const [emailInput, setEmailInput]   = useState('');
   const [nameInput, setNameInput]     = useState('');
@@ -71,7 +74,8 @@ export default function Page() {
 
   React.useEffect(() => {
     fetchMarketData();
-  }, [fetchMarketData]);
+    fetchNews();
+  }, [fetchMarketData, fetchNews]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -124,10 +128,10 @@ export default function Page() {
 
   // ─── Home Dashboard View ────────────────────────────────
   const renderHomeView = () => {
-    const watchStocks = ngxStocks.filter((s) => watchlist.includes(s.ticker)).slice(0, 4);
+    const watchStocks = stocks.filter((s) => watchlist.includes(s.ticker)).slice(0, 4);
 
     // ── Data Computations for Tabs ────────────────────────
-    const dividendStocks = [...ngxStocks]
+    const dividendStocks = [...stocks]
       .filter(s => parseFloat(s.dividendYield) > 0)
       .sort((a, b) => parseFloat(b.dividendYield) - parseFloat(a.dividendYield))
       .slice(0, 6);
@@ -140,13 +144,13 @@ export default function Page() {
       DANGCEM: 'Sub-Saharan Infrastructure Growth',
       ZENITHBANK: 'High Net Margin Yield & Tech Focus',
     };
-    const growthStocks = [...ngxStocks]
+    const growthStocks = [...stocks]
       .filter(s => catalysts[s.ticker])
       .sort((a, b) => b.change - a.change)
       .slice(0, 6)
       .map(s => ({ ...s, catalyst: catalysts[s.ticker] }));
 
-    const analystPicks = [...ngxStocks]
+    const analystPicks = [...stocks]
       .map(s => {
         const upside = ((s.targetPrice - s.price) / s.price) * 100;
         return { ...s, upside };
@@ -163,7 +167,7 @@ export default function Page() {
       ZENITHBANK: 'High Tier-1 Capital Buffers',
       GTCO: 'Industry-Best Cost Efficiency Ratio',
     };
-    const safeStocks = [...ngxStocks]
+    const safeStocks = [...stocks]
       .filter(s => safeStocksList.includes(s.ticker))
       .map(s => ({ ...s, safetyReason: safetyReasons[s.ticker] }))
       .slice(0, 6);
@@ -490,7 +494,7 @@ export default function Page() {
             AI News Snapshot
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {mockNews.slice(0, 2).map((news) => {
+            {news.slice(0, 2).map((news) => {
               const dotColors = { Positive: '#10B981', Negative: '#FF4D4D', Neutral: '#FFB800' };
               const dot = dotColors[news.marketImpact];
               return (
@@ -1455,7 +1459,7 @@ export default function Page() {
 
             {/* Results */}
             <div className="max-h-[360px] overflow-y-auto p-2">
-              {ngxStocks
+              {stocks
                 .filter((s) => 
                   s.ticker.toLowerCase().includes(headerSearchQuery.toLowerCase()) ||
                   s.name.toLowerCase().includes(headerSearchQuery.toLowerCase())
@@ -1492,7 +1496,7 @@ export default function Page() {
                     </button>
                   );
                 })}
-              {ngxStocks.filter((s) => 
+              {stocks.filter((s) => 
                 s.ticker.toLowerCase().includes(headerSearchQuery.toLowerCase()) ||
                 s.name.toLowerCase().includes(headerSearchQuery.toLowerCase())
               ).length === 0 && (
