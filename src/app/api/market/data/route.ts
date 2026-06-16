@@ -12,7 +12,11 @@ export async function GET() {
   const now = Date.now();
   
   if (cachedData && (now - lastFetchTime < CACHE_DURATION)) {
-    return NextResponse.json(cachedData);
+    return NextResponse.json(cachedData, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      }
+    });
   }
 
   try {
@@ -21,7 +25,7 @@ export async function GET() {
       headers: { 
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' 
       },
-      next: { revalidate: 600 }
+      cache: 'no-store'
     });
     
     const sectorMap: Record<string, string> = {};
@@ -44,7 +48,7 @@ export async function GET() {
       headers: { 
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' 
       },
-      next: { revalidate: 600 }
+      cache: 'no-store'
     });
 
     if (!homeRes.ok) {
@@ -212,7 +216,11 @@ export async function GET() {
     lastFetchTime = now;
 
     console.log(`Successfully scraped & updated market data cache. Total stocks: ${parsedStocks.length}`);
-    return NextResponse.json(cachedData);
+    return NextResponse.json(cachedData, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      }
+    });
 
   } catch (error: any) {
     console.error('Market data scrape failed, returning fallback mock data:', error.message || error);
@@ -220,6 +228,10 @@ export async function GET() {
     return NextResponse.json({
       indexData: ngxIndexData,
       stocks: ngxStocks
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      }
     });
   }
 }

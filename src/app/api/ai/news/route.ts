@@ -16,7 +16,7 @@ export async function GET() {
     let feedXml = '';
     try {
       const res = await fetch('https://punchng.com/category/business/feed/', {
-        next: { revalidate: 900 },
+        cache: 'no-store',
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
@@ -147,12 +147,21 @@ Return ONLY valid JSON. Do not include markdown code block wrappers (e.g., \`\`\
 
     const enrichedNews = JSON.parse(replyText);
 
-    return NextResponse.json({ news: enrichedNews });
+    return NextResponse.json({ news: enrichedNews }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      }
+    });
   } catch (error: any) {
     console.error('News route handler failed:', error);
     return NextResponse.json(
       { error: error.message || 'Internal Server Error' },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        }
+      }
     );
   }
 }
