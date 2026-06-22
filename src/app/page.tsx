@@ -24,6 +24,8 @@ import {
   Search,
   Menu,
   X,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
@@ -41,6 +43,72 @@ import AboutUs from '@/components/AboutUs';
 import Stock101 from '@/components/Stock101';
 import Community from '@/components/Community';
 import TradePage from '@/components/TradePage';
+
+// ─── SVG Step Illustrations ───────────────────────────
+const Pillar1Illustration = () => (
+  <svg className="w-40 h-40 mx-auto" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="60" fill="rgba(207,163,67,0.06)" />
+    <line x1="40" y1="150" x2="160" y2="150" stroke="rgba(255,255,255,0.2)" strokeWidth="4" strokeLinecap="round" />
+    <rect x="60" y="80" width="80" height="55" rx="3" fill="#041226" stroke="#CFA343" strokeWidth="2" />
+    <line x1="85" y1="135" x2="115" y2="135" stroke="#CFA343" strokeWidth="3" />
+    <line x1="75" y1="142" x2="125" y2="142" stroke="#CFA343" strokeWidth="3" />
+    <path d="M70 120 L90 100 L110 110 L130 90" stroke="#E5C06F" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="120" cy="95" r="14" fill="#081D38" stroke="#FFFFFF" strokeWidth="1.5" />
+    <line x1="130" y1="105" x2="142" y2="117" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" />
+    <path d="M120 87 L120 91 M116 95 L124 95" stroke="#E5C06F" strokeWidth="1.5" />
+  </svg>
+);
+
+const Pillar2Illustration = () => (
+  <svg className="w-40 h-40 mx-auto" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="60" fill="rgba(207,163,67,0.06)" />
+    <line x1="40" y1="150" x2="160" y2="150" stroke="rgba(255,255,255,0.2)" strokeWidth="4" strokeLinecap="round" />
+    <rect x="60" y="115" width="80" height="15" rx="2" fill="#081D38" stroke="#CFA343" strokeWidth="2" />
+    <rect x="65" y="98" width="70" height="15" rx="2" fill="#CFA343" stroke="#E5C06F" strokeWidth="1.5" />
+    <path d="M100 55 L140 70 L100 85 L60 70 Z" fill="#E5C06F" stroke="#FFFFFF" strokeWidth="1.5" />
+    <rect x="85" y="80" width="30" height="15" fill="#041226" stroke="#FFFFFF" strokeWidth="1.5" />
+    <path d="M125 73 L135 88 L133 92" stroke="#FFFFFF" strokeWidth="1.5" fill="none" />
+  </svg>
+);
+
+const Pillar3Illustration = ({ active }: { active: boolean }) => (
+  <svg className="w-40 h-40 mx-auto" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="60" fill={active ? "rgba(255,255,255,0.15)" : "rgba(207,163,67,0.06)"} />
+    <rect x="60" y="120" width="18" height="30" rx="2" fill={active ? "#041226" : "#CFA343"} />
+    <rect x="85" y="95" width="18" height="55" rx="2" fill={active ? "#041226" : "#E5C06F"} opacity="0.8" />
+    <rect x="110" y="70" width="18" height="80" rx="2" fill={active ? "#041226" : "#CFA343"} opacity="0.9" />
+    <g transform="translate(62, 30)">
+      <rect x="36" y="18" width="14" height="11" rx="1" fill={active ? "#FFFFFF" : "#E5C06F"} />
+      <path d="M50 20 L58 24" stroke={active ? "#FFFFFF" : "#E5C06F"} strokeWidth="2" />
+    </g>
+    <path d="M119 70 C119 64, 125 60, 125 60 C125 60, 119 64, 119 70 Z" fill={active ? "#FFFFFF" : "#E5C06F"} />
+  </svg>
+);
+
+const Pillar4Illustration = () => (
+  <svg className="w-40 h-40 mx-auto" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="60" fill="rgba(207,163,67,0.06)" />
+    <line x1="70" y1="80" x2="130" y2="80" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
+    <line x1="70" y1="80" x2="100" y2="130" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
+    <line x1="130" y1="80" x2="100" y2="130" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
+    <circle cx="70" cy="80" r="16" fill="#081D38" stroke="#CFA343" strokeWidth="2" />
+    <path d="M60 92 C60 84, 80 84, 80 92 Z" fill="#E5C06F" />
+    <circle cx="130" cy="80" r="16" fill="#081D38" stroke="#CFA343" strokeWidth="2" />
+    <path d="M120 92 C120 84, 140 84, 140 92 Z" fill="#E5C06F" />
+    <circle cx="100" cy="130" r="16" fill="#081D38" stroke="#CFA343" strokeWidth="2" />
+    <path d="M90 142 C90 134, 110 134, 110 142 Z" fill="#E5C06F" />
+    <path d="M90 62 L110 62 L105 72 Z" fill="#FFFFFF" />
+  </svg>
+);
+
+const Pillar5Illustration = () => (
+  <svg className="w-40 h-40 mx-auto" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="60" fill="rgba(207,163,67,0.06)" />
+    <path d="M100 50 C125 50, 140 60, 140 90 C140 120, 100 145, 100 145 C100 145, 60 120, 60 90 C60 60, 75 50, 100 50 Z" fill="#081D38" stroke="#CFA343" strokeWidth="3" />
+    <path d="M85 95 L95 105 L120 80" stroke="#10B981" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="100" cy="115" r="3" fill="#E5C06F" />
+  </svg>
+);
 
 // ─── Reusable dark input style ─────────────────────────
 const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none text-text-primary placeholder:text-text-secondary transition-all";
@@ -71,6 +139,8 @@ export default function Page() {
   const [headerSearchQuery, setHeaderSearchQuery]   = useState('');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [activeStep, setActiveStep] = useState(1);
+  const [isLandingMenuOpen, setIsLandingMenuOpen] = useState(false);
 
   React.useEffect(() => {
     fetchMarketData();
@@ -613,8 +683,44 @@ export default function Page() {
   // A. LANDING / SPLASH SCREEN
   // ══════════════════════════════════════════════════════════
   if (currentView === 'landing') {
+    const handleGuestNav = (targetView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => {
+      if (!user) {
+        loginUser('Nigerian Investor', 'investor@equitystack.ng');
+        completeOnboarding();
+      }
+      setView(targetView);
+    };
+
+    const steps = [
+      {
+        title: 'Financial Intelligence',
+        desc: 'Transform market data into understandable insights.',
+        illustration: <Pillar1Illustration />
+      },
+      {
+        title: 'Education',
+        desc: 'Help users continuously improve their investing knowledge.',
+        illustration: <Pillar2Illustration />
+      },
+      {
+        title: 'Practice',
+        desc: 'Allow users to learn through risk-free simulated investing.',
+        illustration: <Pillar3Illustration active={activeStep === 2} />
+      },
+      {
+        title: 'Community',
+        desc: 'Create a social environment where investors learn from each other.',
+        illustration: <Pillar4Illustration />
+      },
+      {
+        title: 'Trust',
+        desc: 'Provide transparent, source-backed, explainable intelligence.',
+        illustration: <Pillar5Illustration />
+      }
+    ];
+
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative">
+      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative overflow-x-hidden">
         {/* ── Ambient Background Orbs ── */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.07) 0%, transparent 70%)' }} />
@@ -624,73 +730,193 @@ export default function Page() {
           style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.04) 0%, transparent 70%)' }} />
 
         {/* ── Top Nav ── */}
-        <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-5 sm:px-8 py-5 z-10 relative">
-          <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"
-              style={{ boxShadow: '0 0 16px rgba(207,163,67,0.4)' }}>
+        <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-5 sm:px-8 py-6 z-30 relative">
+          {/* Brand Logo & Name */}
+          <button 
+            onClick={() => { setView('landing'); setIsLandingMenuOpen(false); }}
+            className="flex items-center gap-2.5 text-left focus:outline-none group z-40"
+          >
+            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-200"
+              style={{ boxShadow: '0 0 10px rgba(207,163,67,0.35)' }}>
               <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
-            <div>
-              <span className="font-sora font-extrabold text-lg text-text-primary tracking-tight block leading-tight">EquityStack</span>
-              <span className="text-[9px] font-bold text-brand-primary uppercase tracking-widest leading-none">Market Pulse 🇳🇬</span>
+            <div className="leading-none">
+              <span className="font-sora font-extrabold text-sm tracking-tight text-text-primary block group-hover:text-brand-primary transition-colors">EquityStack</span>
+              <span className="text-[8px] font-bold text-brand-primary uppercase tracking-[0.15em] block mt-0.5">NGX Intelligence</span>
             </div>
+          </button>
+
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-6">
+            <button onClick={() => setView('landing')}
+              className="text-xs font-bold text-text-primary hover:text-brand-primary transition-all focus:outline-none">
+              Home
+            </button>
+            <button onClick={() => handleGuestNav('about')}
+              className="text-xs font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none">
+              About Us
+            </button>
+            <button onClick={() => handleGuestNav('markets')}
+              className="text-xs font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none">
+              Markets
+            </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Desktop/Tablet Action Buttons */}
+          <div className="hidden sm:flex items-center gap-3">
             <button onClick={() => { setAuthMode('login'); setIsAuthModalOpen(true); }}
-              className="text-xs font-bold text-text-secondary hover:text-brand-primary px-4 py-2.5 rounded-xl transition-all focus:outline-none">
+              className="text-xs font-extrabold px-6 py-2.5 rounded-full border border-brand-primary text-brand-primary bg-transparent hover:bg-brand-primary/10 transition-all focus:outline-none">
               Sign In
             </button>
             <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
-              className="text-xs font-extrabold px-5 py-2.5 rounded-xl transition-all focus:outline-none text-bg-base"
+              className="text-xs font-extrabold px-6 py-2.5 rounded-full text-bg-base transition-all focus:outline-none"
               style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 14px rgba(207,163,67,0.35)' }}>
               Create Account
             </button>
           </div>
-        </nav>
 
-        {/* ── Hero Section ── */}
-        <div className="max-w-7xl mx-auto w-full flex flex-col items-center text-center z-10 px-5 sm:px-8 pt-8 pb-16 sm:pt-16 sm:pb-24 flex-grow">
-          {/* Pill badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-xs font-extrabold tracking-wide border"
-            style={{ background: 'rgba(207,163,67,0.08)', borderColor: 'rgba(207,163,67,0.2)', color: '#E5C06F' }}>
-            <Zap className="h-3.5 w-3.5" />
-            <span>Next-Gen NGX Investment Intelligence</span>
+          {/* Mobile Actions and Hamburger Toggle */}
+          <div className="flex sm:hidden items-center gap-3 z-40">
+            <button 
+              onClick={() => setIsLandingMenuOpen(!isLandingMenuOpen)}
+              className="p-1.5 text-text-primary hover:text-brand-primary transition-colors focus:outline-none"
+            >
+              {isLandingMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-text-primary font-sora tracking-tight leading-[1.05] max-w-3xl mx-auto mb-6">
-            Your Nigerian market{' '}
-            <span className="relative inline-block" style={{ color: '#E5C06F', textShadow: '0 0 40px rgba(207,163,67,0.4)' }}>
-              intelligence
-            </span>
-            {', simplified.'}
-          </h1>
-
-          <p className="text-base sm:text-lg text-text-secondary leading-relaxed font-medium max-w-xl mx-auto mb-10">
-            EquityStack translates raw NGX data and complex financial metrics into clear, AI-powered summaries. Built for the modern Nigerian retail investor.
-          </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-16">
-            <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
-              className="px-8 py-3.5 rounded-xl text-sm font-extrabold transition-all text-bg-base focus:outline-none"
-              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 24px rgba(207,163,67,0.4)' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 40px rgba(0,230,118,0.6)')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px rgba(207,163,67,0.4)')}>
-              Create Free Account
+          {/* Tablet Hamburger Toggle (when width is between sm and md) */}
+          <div className="hidden sm:flex md:hidden items-center z-40">
+            <button 
+              onClick={() => setIsLandingMenuOpen(!isLandingMenuOpen)}
+              className="p-1.5 text-text-primary hover:text-brand-primary transition-colors focus:outline-none"
+            >
+              {isLandingMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
-            <button onClick={() => loginUser('Nigerian Investor', 'investor@equitystack.ng')}
-              className="px-8 py-3.5 rounded-xl text-sm font-extrabold transition-all border text-text-primary focus:outline-none"
-              style={{ borderColor: '#11325D', background: 'rgba(8,29,56,0.6)' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(207,163,67,0.3)')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#11325D')}>
-              ⚡ Interactive Quick-Demo
-            </button>
+          </div>
+        </nav>
+
+        {/* Mobile / Tablet Dropdown Menu Drawer */}
+        {isLandingMenuOpen && (
+          <div className="md:hidden absolute top-[76px] left-0 right-0 z-30 px-5 pb-6 bg-[#041226]/95 backdrop-blur-md border-b border-border/40 flex flex-col gap-4 py-4 animate-in slide-in-from-top duration-200">
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => { setView('landing'); setIsLandingMenuOpen(false); }}
+                className="w-full text-left py-2.5 text-sm font-bold text-text-primary hover:text-brand-primary transition-all focus:outline-none border-b border-border/10"
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => { handleGuestNav('about'); setIsLandingMenuOpen(false); }}
+                className="w-full text-left py-2.5 text-sm font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none border-b border-border/10"
+              >
+                About Us
+              </button>
+              <button 
+                onClick={() => { handleGuestNav('markets'); setIsLandingMenuOpen(false); }}
+                className="w-full text-left py-2.5 text-sm font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none border-b border-border/10"
+              >
+                Markets
+              </button>
+            </div>
+            
+            {/* Mobile-only menu action buttons */}
+            <div className="flex sm:hidden flex-col gap-2 pt-2">
+              <button 
+                onClick={() => { setAuthMode('login'); setIsAuthModalOpen(true); setIsLandingMenuOpen(false); }}
+                className="w-full py-3 rounded-full border border-brand-primary text-brand-primary bg-transparent text-xs font-bold text-center focus:outline-none"
+              >
+                Sign In
+              </button>
+              <button 
+                onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); setIsLandingMenuOpen(false); }}
+                className="w-full py-3 rounded-full text-bg-base text-xs font-bold text-center focus:outline-none"
+                style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}
+              >
+                Create Account
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Hero Section ── */}
+        <div className="max-w-7xl mx-auto w-full flex flex-col z-10 px-5 sm:px-8 pt-8 pb-16 sm:pt-12 sm:pb-20 flex-grow">
+          
+          {/* Main Grid: Text Left, Portrait Right */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center text-left mb-20">
+            {/* Left Info Column */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Brand Logo with Interlocking Rings */}
+              <div className="relative inline-flex items-center mb-2">
+                <span className="font-sora font-extrabold text-4xl sm:text-7xl md:text-8xl tracking-tight text-white select-none relative z-10 leading-none">
+                  equitystack
+                </span>
+                <div className="absolute -left-2 -bottom-2 flex items-center pointer-events-none z-0">
+                  <div className="logo-interlock-1 opacity-85" />
+                  <div className="logo-interlock-2 opacity-85" />
+                </div>
+              </div>
+
+              {/* Tagline */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-text-primary font-sora tracking-tight leading-[1.1] max-w-2xl">
+                Invest with <span className="text-brand-primary text-glow-indigo">Intelligence</span> not Hype
+              </h1>
+
+              {/* Description */}
+              <p className="text-sm sm:text-base text-text-secondary leading-relaxed font-medium max-w-xl">
+                At EquityStack, we bridge education and opportunity equipping you with the right knowledge, tools, and community to grow confidently. Whether you're starting out or scaling up, we're here to guide your journey toward meaningful and sustainable wealth.
+              </p>
+
+              {/* Action buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-2 w-full sm:w-auto">
+                <button onClick={() => handleGuestNav('markets')}
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-extrabold text-center transition-all text-bg-base focus:outline-none"
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 24px rgba(207,163,67,0.3)' }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 40px rgba(207,163,67,0.5)')}
+                  onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px rgba(207,163,67,0.3)')}>
+                  Explore Markets
+                </button>
+                <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-extrabold text-center transition-all border border-brand-primary text-text-primary bg-transparent hover:bg-brand-primary/10 focus:outline-none">
+                  Join Beta Testing
+                </button>
+              </div>
+
+              {/* Floating Pill Badge (Bottom Left) */}
+              <div className="pt-6">
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-gain bg-gain/8 border border-gain/20">
+                  Don't invest with us, invest through us
+                </span>
+              </div>
+            </div>
+
+            {/* Right Portrait Column */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end">
+              <div className="hero-blob-container relative select-none">
+                {/* Floating Outline Rings */}
+                {/* Teal Ring */}
+                <div className="absolute -top-6 -left-6 w-28 h-28 rounded-full border-2 border-[#10B981]/40 pointer-events-none" />
+                {/* White Ring */}
+                <div className="absolute -bottom-8 -right-8 w-40 h-40 rounded-full border border-white/10 pointer-events-none" />
+                {/* Outer concentric rings */}
+                <div className="absolute -bottom-12 -left-4 w-72 h-72 rounded-full border-2 border-brand-primary/20 pointer-events-none" />
+
+                {/* Organic Background Blob */}
+                <div className="hero-blob-bg" />
+
+                {/* Headshot Image */}
+                <img
+                  src="/nigerian-investor.png"
+                  alt="Nigerian Investor Portrait"
+                  className="hero-portrait-img"
+                />
+
+              </div>
+            </div>
           </div>
 
           {/* ── Dashboard Mock Terminal ── */}
-          <div className="w-full max-w-4xl rounded-2xl overflow-hidden border border-border shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
+          <div className="w-full max-w-4xl mx-auto rounded-2xl overflow-hidden border border-border shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
             style={{ background: 'linear-gradient(145deg, #081D38, #041226)' }}>
             {/* Window controls */}
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/50"
@@ -772,22 +998,103 @@ export default function Page() {
             </div>
           </div>
 
-          {/* ── Value Props Grid ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-12 max-w-4xl w-full text-left">
-            {[
-              { title: 'NGX Top 50 Stocks', desc: 'Detailed metrics, sparkline indices, and historical datasets covering the most active companies on the Nigerian Exchange.' },
-              { title: 'Sora AI Interpretations', desc: 'Say goodbye to financial jargon. We simplify complex indicators using local analogies and plain-English briefs.' },
-              { title: 'Manual Portfolio Ledger', desc: 'Log stock purchases, track cost bases, calculate real-time gains, and visualize asset allocations with SVG donut charts.' },
-            ].map(({ title, desc }) => (
-              <div key={title} className="rounded-2xl p-5 border border-border transition-all duration-300 group"
-                style={{ background: 'linear-gradient(145deg, #081D38, #041226)' }}
-                onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0,230,118,0.25)')}
-                onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(30,48,40,0.6)')}>
-                <div className="h-1 w-8 rounded-full mb-3" style={{ background: 'linear-gradient(90deg, #CFA343, transparent)' }} />
-                <span className="block text-sm font-extrabold text-text-primary font-sora mb-2 group-hover:text-brand-primary transition-colors">{title}</span>
-                <span className="text-xs text-text-secondary leading-relaxed font-medium font-dm-sans">{desc}</span>
+          {/* ── How It Works / Steps Section ── */}
+          <div className="w-full mt-24 text-left relative">
+            {/* Dotted grid decorative background on bottom left */}
+            <div className="absolute -bottom-10 -left-10 w-24 h-24 opacity-25 pointer-events-none z-0">
+              <svg className="w-full h-full text-brand-primary" viewBox="0 0 100 100" fill="currentColor">
+                <pattern id="dot-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <circle cx="2" cy="2" r="2" />
+                </pattern>
+                <rect width="100" height="100" fill="url(#dot-grid)" />
+              </svg>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start relative z-10">
+              {/* Left Title Column */}
+              <div className="lg:col-span-4 space-y-6">
+                <div>
+                  <span className="text-[10px] font-extrabold tracking-widest text-brand-primary uppercase block mb-2">
+                    Product Pillars
+                  </span>
+                  <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora leading-tight">
+                    Our Five Foundation Pillars
+                  </h2>
+                </div>
+
+                {/* Arrow Controls */}
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    onClick={() => setActiveStep((prev) => (prev === 0 ? 4 : prev - 1))}
+                    className="w-11 h-11 rounded-lg border border-border/60 flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-brand-primary/50 transition-all bg-bg-surface/40 backdrop-blur-sm focus:outline-none"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveStep((prev) => (prev === 4 ? 0 : prev + 1))}
+                    className="w-11 h-11 rounded-lg border border-border/60 flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-brand-primary/50 transition-all bg-bg-surface/40 backdrop-blur-sm focus:outline-none"
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
-            ))}
+
+              {/* Right Cards Column */}
+              <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+                {[
+                  { ...steps[activeStep % 5], idx: activeStep % 5, visibilityClass: 'flex' },
+                  { ...steps[(activeStep + 1) % 5], idx: (activeStep + 1) % 5, visibilityClass: 'hidden md:flex' },
+                  { ...steps[(activeStep + 2) % 5], idx: (activeStep + 2) % 5, visibilityClass: 'hidden lg:flex' }
+                ].map((item) => {
+                  const isActive = activeStep % 5 === item.idx;
+                  return (
+                    <div
+                      key={item.title}
+                      onClick={() => setActiveStep(item.idx)}
+                      className={`cursor-pointer rounded-2xl p-6 transition-all duration-500 flex flex-col items-center text-center relative overflow-hidden group ${item.visibilityClass} ${
+                        isActive
+                          ? 'shadow-[0_20px_40px_rgba(207,163,67,0.25)] border border-brand-primary translate-y-[-8px]'
+                          : 'border border-border/40 hover:border-border hover:translate-y-[-4px]'
+                      }`}
+                      style={{
+                        background: isActive
+                          ? 'linear-gradient(180deg, #E5C06F 0%, #B58C35 100%)'
+                          : 'linear-gradient(145deg, #081D38, #041226)',
+                        minHeight: '340px'
+                      }}
+                    >
+                      {/* Active highlight glow orb */}
+                      {isActive && (
+                        <div className="absolute -top-16 -left-16 w-32 h-32 rounded-full bg-white/20 blur-2xl pointer-events-none" />
+                      )}
+
+                      {/* Illustration Container */}
+                      <div className="h-40 flex items-center justify-center w-full mb-4">
+                        {item.illustration}
+                      </div>
+
+                      {/* Text */}
+                      <div className="space-y-2 mt-auto">
+                        <h3
+                          className={`text-base font-extrabold font-sora ${
+                            isActive ? 'text-bg-base' : 'text-text-primary group-hover:text-brand-primary transition-colors'
+                          }`}
+                        >
+                          {item.title}
+                        </h3>
+                        <p
+                          className={`text-xs leading-relaxed font-medium font-dm-sans ${
+                            isActive ? 'text-bg-base/80' : 'text-text-secondary'
+                          }`}
+                        >
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1134,16 +1441,19 @@ export default function Page() {
         <div className="max-w-7xl mx-auto px-8 flex items-center justify-between" style={{ height: '56px' }}>
 
           {/* ── Brand ───────────────────────────────────────── */}
-          <div className="flex items-center gap-3 flex-shrink-0 pr-8 border-r border-border/40">
-            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0"
+          <button 
+            onClick={() => setView('landing')}
+            className="flex items-center gap-3 flex-shrink-0 pr-8 border-r border-border/40 text-left focus:outline-none group"
+          >
+            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
               style={{ boxShadow: '0 0 12px rgba(207,163,67,0.35)' }}>
               <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
             <div className="leading-none">
-              <span className="font-sora font-extrabold text-sm tracking-tight text-text-primary block">EquityStack</span>
+              <span className="font-sora font-extrabold text-sm tracking-tight text-text-primary block group-hover:text-brand-primary transition-colors">EquityStack</span>
               <span className="text-[8px] font-bold text-brand-primary uppercase tracking-[0.15em] block mt-0.5">NGX Intelligence</span>
             </div>
-          </div>
+          </button>
 
           {/* ── Nav Links ── */}
           <nav className="flex items-center flex-1 px-6">
@@ -1264,13 +1574,16 @@ export default function Page() {
           ══════════════════════════════════════════════════════ */}
       <div className="lg:hidden sticky top-0 z-30 glass-nav">
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setView('landing')}
+            className="flex items-center gap-2 text-left focus:outline-none"
+          >
             <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center"
               style={{ boxShadow: '0 0 10px rgba(207,163,67,0.35)' }}>
               <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
             <span className="font-sora font-extrabold text-sm text-text-primary">EquityStack</span>
-          </div>
+          </button>
           <div className="flex items-center gap-2">
             <button onClick={() => setIsHeaderSearchOpen(true)}
               className="p-1.5 rounded-lg focus:outline-none"
@@ -1344,13 +1657,16 @@ export default function Page() {
             <div>
               {/* Drawer Header */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0"
+                <button 
+                  onClick={() => { setView('landing'); setIsMobileDrawerOpen(false); }}
+                  className="flex items-center gap-2.5 text-left focus:outline-none group"
+                >
+                  <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
                     style={{ boxShadow: '0 0 10px rgba(207,163,67,0.35)' }}>
                     <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
                   </div>
-                  <span className="font-sora font-extrabold text-sm text-text-primary tracking-tight">EquityStack</span>
-                </div>
+                  <span className="font-sora font-extrabold text-sm text-text-primary tracking-tight group-hover:text-brand-primary transition-colors">EquityStack</span>
+                </button>
                 <button onClick={() => setIsMobileDrawerOpen(false)}
                   className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors focus:outline-none">
                   <X className="h-4 w-4" />
