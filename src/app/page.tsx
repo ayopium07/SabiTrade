@@ -43,6 +43,7 @@ import AboutUs from '@/components/AboutUs';
 import Stock101 from '@/components/Stock101';
 import Community from '@/components/Community';
 import TradePage from '@/components/TradePage';
+import FeatureCards from '@/components/FeatureCards';
 
 // ─── SVG Step Illustrations ───────────────────────────
 const Pillar1Illustration = () => (
@@ -685,16 +686,122 @@ export default function Page() {
     </div>
   );
 
+
+  const renderAuthModal = () => (
+    <>
+        {/* ── Auth Modal ── */}
+        {isAuthModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+            style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
+            <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden animate-in zoom-in-95 duration-300"
+              style={{ background: 'rgba(8,29,56,0.97)', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
+              {/* Top border */}
+              <div className="absolute top-0 left-0 right-0 h-px"
+                style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
+              {/* Ambient glow */}
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.12) 0%, transparent 70%)' }} />
+
+              {/* Close */}
+              <button onClick={() => setIsAuthModalOpen(false)}
+                className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 rounded-full transition-colors focus:outline-none"
+                style={{ background: 'rgba(8,29,56,0.8)' }}>
+                ✕
+              </button>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center"
+                    style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
+                    <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
+                  </div>
+                  <span className="font-sora font-extrabold text-text-primary text-sm">EquityStack</span>
+                </div>
+
+                <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
+                  style={{ textShadow: '0 0 20px rgba(207,163,67,0.3)' }}>
+                  {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back'}
+                </h2>
+                <p className="text-xs text-text-secondary font-medium mb-6 font-dm-sans">
+                  {authMode === 'signup'
+                    ? 'Join thousands of retail investors compounding wealth on the NGX.'
+                    : 'Enter your credentials to access your intelligence dashboard.'}
+                </p>
+
+                <form onSubmit={handleAuthSubmit} className="space-y-4">
+                  {authMode === 'signup' && (
+                    <div>
+                      <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Full Name</label>
+                      <input type="text" required placeholder="e.g. Tunde Balogun" value={nameInput}
+                        onChange={(e) => setNameInput(e.target.value)}
+                        className={inputCls} style={inputStyle}
+                        onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.4)')}
+                        onBlur={e => (e.target.style.borderColor = '#23214C')} />
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Email Address</label>
+                    <input type="email" required placeholder="e.g. tunde@gmail.com" value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      className={inputCls} style={inputStyle}
+                      onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.4)')}
+                      onBlur={e => (e.target.style.borderColor = '#23214C')} />
+                  </div>
+                  <button type="submit"
+                    className="w-full py-3 rounded-xl text-xs font-bold transition-all text-bg-base mt-2 focus:outline-none"
+                    style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
+                    {authMode === 'signup' ? 'Sign Up for Free' : 'Sign In Now'}
+                  </button>
+                </form>
+
+                {/* Divider */}
+                <div className="relative my-5 flex items-center">
+                  <div className="flex-grow border-t border-border/50" />
+                  <span className="mx-3 text-[10px] font-bold text-text-secondary uppercase px-1"
+                    style={{ background: 'transparent' }}>Or</span>
+                  <div className="flex-grow border-t border-border/50" />
+                </div>
+
+                {/* Google Auth */}
+                <button onClick={() => loginUser('Mock User', 'user@gmail.com')}
+                  className="w-full py-2.5 rounded-xl text-xs font-bold text-text-primary flex items-center justify-center gap-2 transition-all focus:outline-none border border-border/50"
+                  style={{ background: 'rgba(14,13,37,0.6)' }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,230,118,0.2)')}
+                  onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(35,33,76,0.5)')}>
+                  <svg className="h-4 w-4" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  </svg>
+                  Connect via Google Account
+                </button>
+
+                <p className="mt-5 text-center text-[11px] font-medium text-text-secondary">
+                  {authMode === 'signup' ? 'Already have an account?' : 'Need to register?'}
+                  <button onClick={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')}
+                    className="ml-1 text-brand-primary font-bold hover:underline focus:outline-none">
+                    {authMode === 'signup' ? 'Sign In' : 'Sign Up'}
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+    </>
+  );
+
   // ══════════════════════════════════════════════════════════
   // A. LANDING / SPLASH SCREEN
   // ══════════════════════════════════════════════════════════
-  if (currentView === 'landing') {
-    const handleGuestNav = (targetView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => {
-      if (!user) {
-        loginUser('Nigerian Investor', 'investor@equitystack.ng');
-        completeOnboarding();
+  if (!user || currentView === 'landing' || currentView === 'about') {
+        const handleGuestNav = (targetView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => {
+      if (targetView === 'about') {
+        setView('about');
+      } else {
+        setAuthMode('signup');
+        setIsAuthModalOpen(true);
       }
-      setView(targetView);
     };
 
     const steps = [
@@ -845,7 +952,11 @@ export default function Page() {
           </div>
         )}
 
-        {/* ── Hero Section ── */}
+        {currentView === 'about' ? (
+          <AboutUs onJoinClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }} />
+        ) : (
+          <>
+            {/* ── Hero Section ── */}
         <div className="max-w-7xl mx-auto w-full flex flex-col z-10 px-5 sm:px-8 pt-8 pb-16 sm:pt-12 sm:pb-20 flex-grow">
           
           {/* Main Grid: Text Left, Portrait Right */}
@@ -1004,6 +1115,9 @@ export default function Page() {
             </div>
           </div>
 
+          {/* ── Feature Cards ── */}
+          <FeatureCards />
+
           {/* ── How It Works / Steps Section ── */}
           <div className="w-full mt-24 text-left relative">
             {/* Dotted grid decorative background on bottom left */}
@@ -1105,109 +1219,16 @@ export default function Page() {
         </div>
 
         {/* Footer */}
+                  </>
+        )}
+
         <div className="max-w-7xl mx-auto w-full z-10 text-center text-[10px] text-text-secondary font-medium font-dm-sans border-t border-border/40 py-5 px-5">
           © {new Date().getFullYear()} EquityStack · Nigerian Financial Intelligence Platform · MVP v1.0 · Strictly Confidential
         </div>
 
-        {/* ── Auth Modal ── */}
-        {isAuthModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
-            style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
-            <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden animate-in zoom-in-95 duration-300"
-              style={{ background: 'rgba(8,29,56,0.97)', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
-              {/* Top border */}
-              <div className="absolute top-0 left-0 right-0 h-px"
-                style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
-              {/* Ambient glow */}
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none"
-                style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.12) 0%, transparent 70%)' }} />
+        {renderAuthModal()}
 
-              {/* Close */}
-              <button onClick={() => setIsAuthModalOpen(false)}
-                className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 rounded-full transition-colors focus:outline-none"
-                style={{ background: 'rgba(8,29,56,0.8)' }}>
-                ✕
-              </button>
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center"
-                    style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
-                    <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
-                  </div>
-                  <span className="font-sora font-extrabold text-text-primary text-sm">EquityStack</span>
-                </div>
-
-                <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-                  style={{ textShadow: '0 0 20px rgba(207,163,67,0.3)' }}>
-                  {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back'}
-                </h2>
-                <p className="text-xs text-text-secondary font-medium mb-6 font-dm-sans">
-                  {authMode === 'signup'
-                    ? 'Join thousands of retail investors compounding wealth on the NGX.'
-                    : 'Enter your credentials to access your intelligence dashboard.'}
-                </p>
-
-                <form onSubmit={handleAuthSubmit} className="space-y-4">
-                  {authMode === 'signup' && (
-                    <div>
-                      <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Full Name</label>
-                      <input type="text" required placeholder="e.g. Tunde Balogun" value={nameInput}
-                        onChange={(e) => setNameInput(e.target.value)}
-                        className={inputCls} style={inputStyle}
-                        onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.4)')}
-                        onBlur={e => (e.target.style.borderColor = '#23214C')} />
-                    </div>
-                  )}
-                  <div>
-                    <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Email Address</label>
-                    <input type="email" required placeholder="e.g. tunde@gmail.com" value={emailInput}
-                      onChange={(e) => setEmailInput(e.target.value)}
-                      className={inputCls} style={inputStyle}
-                      onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.4)')}
-                      onBlur={e => (e.target.style.borderColor = '#23214C')} />
-                  </div>
-                  <button type="submit"
-                    className="w-full py-3 rounded-xl text-xs font-bold transition-all text-bg-base mt-2 focus:outline-none"
-                    style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
-                    {authMode === 'signup' ? 'Sign Up for Free' : 'Sign In Now'}
-                  </button>
-                </form>
-
-                {/* Divider */}
-                <div className="relative my-5 flex items-center">
-                  <div className="flex-grow border-t border-border/50" />
-                  <span className="mx-3 text-[10px] font-bold text-text-secondary uppercase px-1"
-                    style={{ background: 'transparent' }}>Or</span>
-                  <div className="flex-grow border-t border-border/50" />
-                </div>
-
-                {/* Google Auth */}
-                <button onClick={() => loginUser('Mock User', 'user@gmail.com')}
-                  className="w-full py-2.5 rounded-xl text-xs font-bold text-text-primary flex items-center justify-center gap-2 transition-all focus:outline-none border border-border/50"
-                  style={{ background: 'rgba(14,13,37,0.6)' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,230,118,0.2)')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(35,33,76,0.5)')}>
-                  <svg className="h-4 w-4" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6.16-4.53z" />
-                  </svg>
-                  Connect via Google Account
-                </button>
-
-                <p className="mt-5 text-center text-[11px] font-medium text-text-secondary">
-                  {authMode === 'signup' ? 'Already have an account?' : 'Need to register?'}
-                  <button onClick={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')}
-                    className="ml-1 text-brand-primary font-bold hover:underline focus:outline-none">
-                    {authMode === 'signup' ? 'Sign In' : 'Sign Up'}
-                  </button>
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        
       </div>
     );
   }
@@ -1750,6 +1771,8 @@ export default function Page() {
 
       {/* ── AI Chatbot ─────────────────────────────────────── */}
       <AIChatbot />
+
+      {renderAuthModal()}
 
       {/* ── Header Search Modal ── */}
       {isHeaderSearchOpen && (
