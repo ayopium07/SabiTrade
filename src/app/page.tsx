@@ -157,6 +157,12 @@ export default function Page() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  React.useEffect(() => {
+    if (!user) {
+      setView('landing');
+    }
+  }, [user, setView]);
+
   const availableInterests = ['Banking', 'Consumer Goods', 'Oil & Gas', 'Industrials', 'Agriculture', 'Technology'];
 
   const handleAuthSubmit = (e: React.FormEvent) => {
