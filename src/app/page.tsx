@@ -26,6 +26,8 @@ import {
   X,
   ArrowLeft,
   ArrowRight,
+  ArrowUpRight,
+  FileText,
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
@@ -44,6 +46,546 @@ import Stock101 from '@/components/Stock101';
 import Community from '@/components/Community';
 import TradePage from '@/components/TradePage';
 import FeatureCards from '@/components/FeatureCards';
+
+// ─── NGX Ticker Carousel ──────────────────────────────
+const ngxTickerData = [
+  { id: 'GTCO', name: 'GTCO', badge: 'GTCO', price: '₦56,623.54', change: '1.41%', up: true, initials: 'GT', bg: '#C0392B', sparkPath: 'M0 22 C15 17,25 20,40 13 S60 9,75 11 S90 7,100 9' },
+  { id: 'SEPLAT', name: 'SEPLAT', badge: 'SEPLAT', price: '₦4,267.90', change: '2.22%', up: true, initials: 'SP', bg: '#E67E22', sparkPath: 'M0 24 C12 19,22 22,38 15 S58 11,72 13 S88 9,100 11' },
+  { id: 'MTNN', name: 'MTNN', badge: 'MTNN', price: '₦587.74', change: '0.82%', up: true, initials: 'MT', bg: '#F39C12', sparkPath: 'M0 20 C14 17,24 20,40 15 S60 13,76 14 S90 11,100 13' },
+  { id: 'ARADEL', name: 'ARADEL', badge: 'ARADEL', price: '₦0.9998', change: '0.03%', up: true, initials: 'AR', bg: '#C0392B', sparkPath: 'M0 22 C16 19,26 21,42 17 S62 15,78 16 S92 13,100 15' },
+  { id: 'DANGCEM', name: 'DANGCEM', badge: 'DANG', price: '₦312.50', change: '0.48%', up: false, initials: 'DC', bg: '#2980B9', sparkPath: 'M0 10 C12 13,22 12,38 16 S58 18,74 17 S90 21,100 20' },
+  { id: 'ZENITH', name: 'ZENITHBANK', badge: 'ZENITH', price: '₦42,780.00', change: '3.20%', up: true, initials: 'ZB', bg: '#7D3C98', sparkPath: 'M0 24 C10 18,22 21,38 13 S58 9,74 11 S90 7,100 9' },
+];
+
+function NGXTickerCarousel() {
+  const [offset, setOffset] = React.useState(0);
+  const visible = 4;
+  const max = ngxTickerData.length - visible;
+  const cards = ngxTickerData.slice(offset, offset + visible);
+
+  return (
+    <div className="w-full max-w-5xl mx-auto space-y-4">
+
+      {/* ── Section heading ── */}
+      <div>
+        <h2 className="text-2xl font-bold text-white font-sora leading-tight">
+          Nigerian Exchange
+        </h2>
+        <p className="text-[12px] font-medium mt-0.5" style={{ color: '#CFA343' }}>
+          150+ equities · Lagos
+        </p>
+      </div>
+
+      {/* ── Carousel wrapper with outer nav arrows ── */}
+      <div className="relative">
+
+        {/* Left arrow */}
+        <button
+          onClick={() => setOffset(o => Math.max(0, o - 1))}
+          disabled={offset === 0}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 hover:border-white/25 transition-all disabled:opacity-20 focus:outline-none"
+          style={{ background: 'rgba(0,0,0,0.3)' }}
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+        </button>
+
+        {/* Right arrow */}
+        <button
+          onClick={() => setOffset(o => Math.min(max, o + 1))}
+          disabled={offset >= max}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 hover:border-white/25 transition-all disabled:opacity-20 focus:outline-none"
+          style={{ background: 'rgba(0,0,0,0.3)' }}
+        >
+          <ArrowRight className="h-3.5 w-3.5" />
+        </button>
+
+        {/* Card row — no outer container style, cards float freely */}
+        <div className="w-full flex gap-3">
+
+          {cards.map((s) => (
+            <div
+              key={s.id}
+              className="relative flex-1 flex flex-col gap-4 px-5 py-6 cursor-pointer rounded-xl"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.15s' }}
+              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.055)'}
+              onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
+            >
+              {/* Row 1: logo circle + name + badge + ↗ */}
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-black"
+                  style={{ background: s.bg, boxShadow: `0 0 14px ${s.bg}60` }}
+                >
+                  {s.initials}
+                </div>
+                <span className="text-[12px] font-extrabold text-white font-sora flex-1 truncate">{s.name}</span>
+                <span
+                  className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
+                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.35)' }}
+                >
+                  {s.badge}
+                </span>
+                <div
+                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                >
+                  <ArrowUpRight className="h-3 w-3 text-white/50" />
+                </div>
+              </div>
+
+              {/* Row 2: Price */}
+              <p className="text-[16px] font-extrabold font-sora text-white leading-none">{s.price}</p>
+
+              {/* Row 3: Sparkline */}
+              <div className="h-7 w-full">
+                <svg className="w-full h-full" viewBox="0 0 100 24" preserveAspectRatio="none">
+                  <path
+                    d={`${s.sparkPath} L100 24 L0 24 Z`}
+                    fill={s.up ? 'rgba(16,185,129,0.10)' : 'rgba(255,77,77,0.08)'}
+                  />
+                  <path
+                    d={s.sparkPath}
+                    fill="none"
+                    stroke={s.up ? '#10B981' : '#FF4D4D'}
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+
+              {/* Row 4: Change % */}
+              <p className="text-[12px] font-semibold text-white/75">{s.change}%</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── US Markets Carousel ─────────────────────────────
+const usStockData = [
+  { id: 'AAPL', name: 'Apple',     badge: 'AAPL', price: '$142.7', change: '+0.66%', up: true,  bg: '#555555', sparkPath: 'M0 20 C14 17,24 18,40 13 S60 10,76 12 S90 9,100 11' },
+  { id: 'TSLA', name: 'Tesla',     badge: 'TSLA', price: '$245.9', change: '-1.22%', up: false, bg: '#CC0000', sparkPath: 'M0 8 C12 11,22 10,38 15 S58 18,74 16 S90 20,100 19' },
+  { id: 'MSFT', name: 'Microsoft', badge: 'MSFT', price: '$378.5', change: '+0.44%', up: true,  bg: '#00A4EF', sparkPath: 'M0 18 C14 15,24 17,40 12 S60 9,76 11 S90 8,100 10' },
+  { id: 'META', name: 'Meta',      badge: 'META', price: '$528.3', change: '+1.84%', up: true,  bg: '#0082FB', sparkPath: 'M0 22 C12 18,22 20,38 14 S58 10,74 12 S90 9,100 11' },
+  { id: 'AMZN', name: 'Amazon',    badge: 'AMZN', price: '$192.7', change: '+2.11%', up: true,  bg: '#FF9900', sparkPath: 'M0 22 C10 17,22 19,38 12 S58 8,74 10 S90 7,100 9'  },
+  { id: 'NVDA', name: 'Nvidia',    badge: 'NVDA', price: '$875.4', change: '+3.56%', up: true,  bg: '#76B900', sparkPath: 'M0 23 C10 18,22 20,38 13 S58 9,74 11 S90 7,100 9'  },
+];
+
+function USMarketsCarousel() {
+  const [offset, setOffset] = React.useState(0);
+  const visible = 4;
+  const max = usStockData.length - visible;
+  const cards = usStockData.slice(offset, offset + visible);
+
+  return (
+    <div className="w-full max-w-5xl mx-auto space-y-4">
+      <div>
+        <h2 className="text-2xl font-bold text-white font-sora leading-tight">US Markets (NYSE &amp; NASDAQ)</h2>
+        <p className="text-[12px] font-medium mt-0.5" style={{ color: '#CFA343' }}>8,000+ equities &middot; New York</p>
+      </div>
+
+      <div className="relative">
+        <button onClick={() => setOffset(o => Math.max(0, o - 1))} disabled={offset === 0}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 transition-all disabled:opacity-20 focus:outline-none"
+          style={{ background: 'rgba(0,0,0,0.3)' }}>
+          <ArrowLeft className="h-3.5 w-3.5" />
+        </button>
+        <button onClick={() => setOffset(o => Math.min(max, o + 1))} disabled={offset >= max}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 transition-all disabled:opacity-20 focus:outline-none"
+          style={{ background: 'rgba(0,0,0,0.3)' }}>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </button>
+
+        <div className="flex gap-3">
+          {cards.map((s) => (
+            <div key={s.id}
+              className="flex-1 flex flex-col gap-4 px-5 py-6 rounded-xl cursor-pointer"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', transition: 'background 0.15s' }}
+              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.055)'}
+              onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[9px] font-black"
+                  style={{ background: s.bg, boxShadow: `0 0 12px ${s.bg}55` }}>
+                  {s.id.slice(0, 2)}
+                </div>
+                <span className="text-[12px] font-extrabold text-white font-sora flex-1 truncate">{s.name}</span>
+                <span className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
+                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.35)' }}>{s.badge}</span>
+                <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}>
+                  <ArrowUpRight className="h-3 w-3 text-white/50" />
+                </div>
+              </div>
+              <p className="text-[16px] font-extrabold font-sora text-white leading-none">{s.price}</p>
+              <div className="h-7 w-full">
+                <svg className="w-full h-full" viewBox="0 0 100 24" preserveAspectRatio="none">
+                  <path d={`${s.sparkPath} L100 24 L0 24 Z`} fill={s.up ? 'rgba(16,185,129,0.10)' : 'rgba(255,77,77,0.08)'} />
+                  <path d={s.sparkPath} fill="none" stroke={s.up ? '#10B981' : '#FF4D4D'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <p className="text-[12px] font-semibold" style={{ color: s.up ? '#10B981' : '#FF4D4D' }}>{s.change}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Rating System Deep Dive ─────────────────────────
+function RatingSystemDeepDive() {
+  const sentiments = [
+    { name: 'BULLISH', bg: '#071F1A', desc: 'Strong fundamentals & attractive valuation. Company worth more than current price.' },
+    { name: 'NEUTRAL', bg: '#271911', desc: 'Mixed signals. Warrants monitoring. Neither a clear buy nor a red flag.' },
+    { name: 'BEARISH', bg: '#231114', desc: 'Deteriorating fundamentals or overvaluation. Caution advised.' },
+    { name: 'WATCH', bg: '#111A24', desc: 'Something is changing. Could become Bullish or Bearish - track development.' }
+  ];
+
+  const pillars = [
+    { title: 'Valuation', desc: 'P/E, P/B, EV/EBITDA vs sector & history' },
+    { title: 'Revenue Growth', desc: '3-years CAGR and trend direction' },
+    { title: 'Earnings Performance', desc: 'EPS trend, earning surprises, forecast accuracy' },
+    { title: 'Dividend Strength', desc: 'Yield, payout ratio, dividend consistency' },
+    { title: 'Balance Sheet Quality', desc: 'Debt/equity, current ratio, interest coverage' },
+    { title: 'Market Momentum', desc: 'Price vs 52-week range, volume, relative strength' },
+    { title: 'Profitability', desc: 'ROE, ROA, EBITDA margins' }
+  ];
+
+  return (
+    <div className="w-full mt-24 text-left max-w-7xl mx-auto px-5 sm:px-8">
+      {/* Header */}
+      <div className="mb-8">
+        <span className="text-[12px] font-semibold text-[#CFA343] block mb-2">
+          Product Deep Dive
+        </span>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-sora mb-2">
+          The EquityStack Rating System
+        </h2>
+        <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          Every rating is drive by 7 measurable pillars - fully transparent, locally calibrated
+        </p>
+      </div>
+
+      {/* 4 Sentiments */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+        {sentiments.map((s) => (
+          <div key={s.name} className="rounded-xl p-6 flex flex-col items-center justify-start text-center" style={{ background: s.bg }}>
+            <h3 className="text-[14px] font-bold text-white font-sora tracking-wide mb-3">{s.name}</h3>
+            <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              {s.desc}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* 7 Pillars Grid */}
+      <div>
+        <p className="text-[13px] font-semibold text-white mb-6">
+          The 7 scoring pillars behind every ratings:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pillars.map((p, idx) => (
+            <div 
+              key={p.title} 
+              className={`rounded-xl p-5 flex items-center gap-4 ${idx === 6 ? 'lg:col-start-2' : ''}`}
+              style={{ background: '#111116', border: '1px solid rgba(255,255,255,0.03)' }}
+            >
+              <div className="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center bg-[#2B273A] relative">
+                <span className="text-white font-bold text-xl italic font-serif">e</span>
+                <span className="absolute bottom-2.5 right-2 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#2B273A] flex items-center justify-center">
+                  <span className="w-1 h-1 rounded-full bg-[#2B273A]"></span>
+                </span>
+              </div>
+              <div>
+                <h4 className="text-[13px] font-bold text-white font-sora mb-1">{p.title}</h4>
+                <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.45)' }}>{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Market Report Section ─────────────────────────────
+function MarketReportSection() {
+  return (
+    <div className="w-full mt-24 max-w-7xl mx-auto px-5 sm:px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        {/* Left Side: Content */}
+        <div className="text-left">
+          <span className="text-[12px] font-semibold text-[#CFA343] uppercase tracking-wider block mb-3">
+            Market Report
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-sora leading-tight mb-6">
+            Every Saturday, the market comes to your inbox.
+          </h2>
+          <p className="text-[14px] leading-relaxed text-white/70 mb-6">
+            The EquityStack Weekly Market Report is a comprehensive briefing on Nigerian stock market performance &mdash; sector highlights, notable price movements, volume leaders, and economic analysis. Delivered every Saturday so you're ready when Monday opens.
+          </p>
+          <ul className="space-y-3 mb-8">
+            {[
+              'Full NGX weekly performance summary',
+              'Sector-by-sector breakdown',
+              'Notable movers and volume leaders',
+              'Economic developments and macro impact analysis',
+              'Delivered to every subscriber\'s inbox, every Saturday'
+            ].map((item, idx) => (
+              <li key={idx} className="flex items-center gap-3 text-[13px] text-white/80">
+                <span className="w-1.5 h-1.5 rounded-full bg-white/70 flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <button className="bg-[#CFA343] hover:bg-[#B58C35] text-[#111] font-bold py-3 px-6 rounded-full text-sm transition-colors focus:outline-none">
+            Subscribe for Free
+          </button>
+        </div>
+
+        {/* Right Side: Card Mockup */}
+        <div className="rounded-2xl border border-white/5" style={{ background: '#111116' }}>
+          {/* Card Header */}
+          <div className="p-6 sm:p-8 flex items-start justify-between">
+            <div>
+              <h4 className="text-white font-bold text-[15px] font-sora mb-1.5">EquityStack Weekly Market Report</h4>
+              <p className="text-[11px] text-white/40">Week ended 21 June 2026 &middot; Delivered Saturday</p>
+            </div>
+            <div className="px-3 py-1 rounded-md text-[10px] font-bold text-[#CFA343] border border-[#CFA343]/20" style={{ background: 'rgba(207,163,67,0.05)' }}>
+              Issue #24
+            </div>
+          </div>
+          
+          <div className="w-full border-t border-white/5" />
+
+          {/* Card Data */}
+          <div className="p-6 sm:p-8 space-y-5">
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-white/50">NGX All-Share Index</span>
+              <span className="text-[13px] font-semibold text-[#10B981]">104,256.80 <span className="text-[10px]">▲</span>1.4%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-white/50">Market Cap</span>
+              <span className="text-[13px] font-semibold text-white">₦58.3tn</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-white/50">Weekly Volume</span>
+              <span className="text-[13px] font-semibold text-white">2.14bn shares</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-white/50">Top Gainer</span>
+              <span className="text-[13px] font-semibold text-[#10B981]">DANGCEM +8.2%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-white/50">Top Loser</span>
+              <span className="text-[13px] font-semibold text-[#FF4D4D]">STANBIC -3.4%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-white/50">Sector Leader</span>
+              <span className="text-[13px] font-semibold text-white">Banking +3.1%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-white/50">MPR (CBN)</span>
+              <span className="text-[13px] font-semibold text-white">26.75% &mdash; Unchanged</span>
+            </div>
+          </div>
+
+          <div className="w-full border-t border-white/5" />
+
+          {/* Card Footer */}
+          <div className="p-5 sm:px-8 text-[11px] text-white/30 text-center sm:text-left rounded-b-2xl" style={{ background: 'rgba(255,255,255,0.01)' }}>
+            Next report: Saturday, 28 June 2026 &middot; Delivered 8:00 AM WAT
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── News Section ───────────────────────────────────────
+function NewsSection() {
+  const newsItems = [
+    {
+      title: 'What is the stock market? all you need to know',
+      badge: 'MARKET BASIC',
+      desc: 'Equities represent fractional ownership in companies. They are traded securely on the exchange.',
+      gradient: 'linear-gradient(135deg, #1c2b39, #0f171e)',
+    },
+    {
+      title: 'Can dividend investing build long-term wealth?',
+      badge: 'INVESTING 101',
+      desc: 'From capital appreciation to earning yield, key ways stocks can help you build wealth over time.',
+      gradient: 'linear-gradient(135deg, #162447, #0b1224)',
+    },
+    {
+      title: 'How to set up a brokerage account for trading',
+      badge: 'TIPS & TRICKS',
+      desc: 'A brokerage account is essential for securely buying, selling, and holding your stock portfolio.',
+      gradient: 'linear-gradient(135deg, #3d2c23, #1e1511)',
+    },
+    {
+      title: 'The facts about blue-chip stocks you must know',
+      badge: 'MARKET BASIC',
+      desc: 'Blue-chip companies are large, established, and financially sound market leaders with a history of reliable growth.',
+      gradient: 'linear-gradient(135deg, #4d3a19, #261d0c)',
+    },
+    {
+      title: 'When is the best time to invest in equities?',
+      badge: 'TIPS & TRICKS',
+      desc: 'When market prices are fluctuating, how do you determine the optimal entry point for your portfolio?',
+      gradient: 'linear-gradient(135deg, #091c33, #040d1a)',
+    },
+    {
+      title: 'What is a Bear Market? Inside market corrections.',
+      badge: 'TIPS & TRICKS',
+      desc: 'Welcome to market cycles. Understanding economic downturns is the key to long-term success.',
+      gradient: 'linear-gradient(135deg, #2b2b2b, #151515)',
+    }
+  ];
+
+  return (
+    <div className="w-full mt-32 max-w-7xl mx-auto px-5 sm:px-8 mb-24">
+      {/* Header */}
+      <div className="text-center max-w-3xl mx-auto mb-16">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-sora mb-6">
+          News
+        </h2>
+        <p className="text-[13px] leading-relaxed text-white/60">
+          Stay current with a curated feed of Nigerian financial news. From corporate announcements and regulatory updates to macroeconomic developments, the News section ensures you're always working with the latest information relevant to your investment decisions.
+        </p>
+      </div>
+
+      {/* Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        
+        {/* Large Feature Card (Spans 2 columns) */}
+        <div className="col-span-1 md:col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative flex flex-col justify-end p-8" style={{ background: 'linear-gradient(135deg, #2d184a, #150a24)', minHeight: '320px' }}>
+          <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
+          
+          <div className="relative z-10 space-y-4">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white font-sora leading-tight group-hover:text-[#CFA343] transition-colors">
+              All about Investing in NGX Equities and related risks
+            </h3>
+            <span className="inline-block px-3 py-1.5 text-[9px] font-bold text-white/70 uppercase tracking-widest rounded bg-white/5 border border-white/10">
+              EQUITY BASIC
+            </span>
+          </div>
+        </div>
+
+        {/* Regular Cards */}
+        {newsItems.map((item, idx) => (
+          <div key={idx} className="col-span-1 rounded-2xl overflow-hidden cursor-pointer group flex flex-col" style={{ background: '#111116', border: '1px solid rgba(255,255,255,0.03)' }}>
+            <div className="h-32 w-full" style={{ background: item.gradient }}></div>
+            <div className="p-6 space-y-3 flex-1 flex flex-col items-start">
+              <span className="inline-block px-2.5 py-1 text-[8px] font-bold text-white/60 uppercase tracking-widest rounded bg-white/5 border border-white/10">
+                {item.badge}
+              </span>
+              <h4 className="text-[14px] font-bold text-white font-sora leading-tight group-hover:text-[#CFA343] transition-colors">
+                {item.title}
+              </h4>
+              <p className="text-[11px] text-white/50 leading-relaxed mt-auto">
+                {item.desc}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer Link */}
+      <div className="text-left mt-2">
+        <a href="#" className="text-[13px] font-bold text-[#10B981] hover:underline">
+          See All Articles
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ─── Footer Section ───────────────────────────────────────
+function FooterSection() {
+  return (
+    <div className="w-full bg-[#0B0C10] pt-20 pb-8 mt-12 border-t border-white/5 relative z-10">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+          
+          {/* Brand Column */}
+          <div className="col-span-1 md:col-span-4 lg:col-span-5">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(207,163,67,0.2)' }}>
+                <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
+              </div>
+              <span className="font-sora font-medium text-white tracking-tight">EquityStack</span>
+            </div>
+            <p className="text-[12px] leading-relaxed text-white/50 mb-8 max-w-sm">
+              Africa's intelligence layer for capital markets. Built for Nigerian investors, by people who care about the market.
+            </p>
+            <div className="flex items-center gap-4 text-white/40">
+              <a href="#" className="hover:text-white transition-colors" aria-label="Instagram">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              </a>
+              <a href="#" className="hover:text-white transition-colors" aria-label="Facebook">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+              </a>
+              <a href="#" className="hover:text-white transition-colors" aria-label="Twitter">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+              </a>
+              <a href="#" className="hover:text-white transition-colors" aria-label="YouTube">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Links Columns */}
+          <div className="col-span-1 md:col-span-8 lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            {/* Platform */}
+            <div>
+              <h4 className="text-[13px] font-bold text-white mb-6">Platform</h4>
+              <ul className="space-y-4 text-[12px] text-white/50">
+                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Legal & privacy</a></li>
+              </ul>
+            </div>
+            
+            {/* Markets */}
+            <div>
+              <h4 className="text-[13px] font-bold text-white mb-6">Markets</h4>
+              <ul className="space-y-4 text-[12px] text-white/50">
+                <li><a href="#" className="hover:text-white transition-colors">Applications</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Buy Equities</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Affiliate</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Institutional Services</a></li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h4 className="text-[13px] font-bold text-white mb-6">Company</h4>
+              <ul className="space-y-4 text-[12px] text-white/50">
+                <li><a href="#" className="hover:text-white transition-colors">What is the Stock Market?</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Market Basic</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Tips and Tutorials</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Market Update</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider & Copyright */}
+        <div className="w-full border-t border-white/5 pt-8 text-center">
+          <p className="text-[10px] font-medium text-white/40">
+            &copy; {new Date().getFullYear()} EquityStack &middot; Nigerian Financial Intelligence Platform &middot; MVP v1.0 &middot; Strictly Confidential
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ─── SVG Step Illustrations ───────────────────────────
 const Pillar1Illustration = () => (
@@ -116,28 +658,28 @@ const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:ri
 const inputStyle = { background: 'rgba(14,13,37,0.8)', border: '1px solid #23214C' };
 
 export default function Page() {
-  const currentView     = useAppStore((s) => s.currentView);
-  const setView         = useAppStore((s) => s.setView);
+  const currentView = useAppStore((s) => s.currentView);
+  const setView = useAppStore((s) => s.setView);
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
-  const user            = useAppStore((s) => s.user);
-  const loginUser       = useAppStore((s) => s.loginUser);
-  const setOnboarding   = useAppStore((s) => s.setOnboarding);
+  const user = useAppStore((s) => s.user);
+  const loginUser = useAppStore((s) => s.loginUser);
+  const setOnboarding = useAppStore((s) => s.setOnboarding);
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
-  const logoutUser      = useAppStore((s) => s.logoutUser);
-  const watchlist       = useAppStore((s) => s.watchlist);
+  const logoutUser = useAppStore((s) => s.logoutUser);
+  const watchlist = useAppStore((s) => s.watchlist);
   const fetchMarketData = useAppStore((s) => s.fetchMarketData);
-  const stocks          = useAppStore((s) => s.stocks);
-  const news            = useAppStore((s) => s.news);
-  const fetchNews       = useAppStore((s) => s.fetchNews);
+  const stocks = useAppStore((s) => s.stocks);
+  const news = useAppStore((s) => s.news);
+  const fetchNews = useAppStore((s) => s.fetchNews);
 
-  const [emailInput, setEmailInput]   = useState('');
-  const [nameInput, setNameInput]     = useState('');
-  const [authMode, setAuthMode]       = useState<'login' | 'signup'>('signup');
+  const [emailInput, setEmailInput] = useState('');
+  const [nameInput, setNameInput] = useState('');
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [onboardingStep, setOnboardingStep]   = useState(1);
-  const [activeHomeTab, setActiveHomeTab]     = useState<'report' | 'dividend' | 'growth' | 'analyst' | 'safe'>('report');
+  const [onboardingStep, setOnboardingStep] = useState(1);
+  const [activeHomeTab, setActiveHomeTab] = useState<'report' | 'dividend' | 'growth' | 'analyst' | 'safe'>('report');
   const [isHeaderSearchOpen, setIsHeaderSearchOpen] = useState(false);
-  const [headerSearchQuery, setHeaderSearchQuery]   = useState('');
+  const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
@@ -171,12 +713,14 @@ export default function Page() {
     if (emailInput.trim()) loginUser(nameInput.trim() || 'Investor', emailInput.trim());
   };
 
-  const handleOnboardingNext = () => {
+  const handleOnboardingNext = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
     if (onboardingStep < 3) setOnboardingStep(onboardingStep + 1);
     else completeOnboarding();
   };
 
-  const handleOnboardingSkip = () => {
+  const handleOnboardingSkip = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
     setOnboarding({ experienceLevel: 'Beginner', interests: [] });
     completeOnboarding();
   };
@@ -184,17 +728,17 @@ export default function Page() {
   const renderViewContent = () => {
     let content;
     switch (currentView) {
-      case 'home':         content = renderHomeView(); break;
-      case 'markets':      content = <StockExplorer />; break;
-      case 'news':         content = <AINewsFeed />; break;
-      case 'portfolio':    content = <PortfolioTracker />; break;
-      case 'profile':      content = renderProfileView(); break;
+      case 'home': content = renderHomeView(); break;
+      case 'markets': content = <StockExplorer />; break;
+      case 'news': content = <AINewsFeed />; break;
+      case 'portfolio': content = <PortfolioTracker />; break;
+      case 'profile': content = renderProfileView(); break;
       case 'stock-detail': content = <StockDetail />; break;
-      case 'about':        content = <AboutUs />; break;
-      case 'learn':        content = <Stock101 />; break;
-      case 'community':    content = <Community />; break;
-      case 'trade':        content = <TradePage />; break;
-      default:             content = renderHomeView();
+      case 'about': content = <AboutUs />; break;
+      case 'learn': content = <Stock101 />; break;
+      case 'community': content = <Community />; break;
+      case 'trade': content = <TradePage />; break;
+      default: content = renderHomeView();
     }
     return (
       <div key={currentView} className="animate-slide-up">
@@ -365,7 +909,7 @@ export default function Page() {
 
     return (
       <div className="space-y-6">
-        
+
         {/* ─── Premium Tab Switched Navigation ─── */}
         <div className="space-y-5">
           <div className="flex gap-2 overflow-x-auto pb-1.5 custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -469,7 +1013,7 @@ export default function Page() {
                     color: '#00B8FF',
                     badge: (
                       <span className="px-1.5 py-0.5 bg-bg-base border border-brand-primary/20 text-[#00B8FF] rounded-md text-[9px] font-extrabold uppercase">
-                        {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string,string>)[stock.rating] ?? stock.rating}
+                        {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string, string>)[stock.rating] ?? stock.rating}
                       </span>
                     ),
                   })
@@ -542,9 +1086,8 @@ export default function Page() {
                       <span className="text-sm font-extrabold text-text-primary font-sora block mb-1.5">
                         ₦{stock.price.toFixed(2)}
                       </span>
-                      <span className={`inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-lg ${
-                        isPos ? 'bg-brand-primary/10 text-brand-primary' : 'bg-danger/10 text-danger'
-                      }`}>
+                      <span className={`inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-lg ${isPos ? 'bg-brand-primary/10 text-brand-primary' : 'bg-danger/10 text-danger'
+                        }`}>
                         {isPos ? '+' : ''}{stock.change.toFixed(1)}%
                       </span>
                     </button>
@@ -649,9 +1192,8 @@ export default function Page() {
             style={{ background: '#070615' }}>
             {(['Beginner', 'Intermediate', 'Experienced'] as const).map((lvl) => (
               <button key={lvl} onClick={() => setOnboarding({ experienceLevel: lvl })}
-                className={`py-2 rounded-lg text-xs font-bold font-dm-sans transition-all duration-200 focus:outline-none ${
-                  user?.experienceLevel === lvl ? 'text-bg-base' : 'text-text-secondary hover:text-text-primary'
-                }`}
+                className={`py-2 rounded-lg text-xs font-bold font-dm-sans transition-all duration-200 focus:outline-none ${user?.experienceLevel === lvl ? 'text-bg-base' : 'text-text-secondary hover:text-text-primary'
+                  }`}
                 style={user?.experienceLevel === lvl
                   ? { background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 10px rgba(207,163,67,0.3)' }
                   : {}}>
@@ -689,105 +1231,105 @@ export default function Page() {
 
   const renderAuthModal = () => (
     <>
-        {/* ── Auth Modal ── */}
-        {isAuthModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
-            style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
-            <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden animate-in zoom-in-95 duration-300"
-              style={{ background: 'rgba(8,29,56,0.97)', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
-              {/* Top border */}
-              <div className="absolute top-0 left-0 right-0 h-px"
-                style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
-              {/* Ambient glow */}
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none"
-                style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.12) 0%, transparent 70%)' }} />
+      {/* ── Auth Modal ── */}
+      {isAuthModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+          style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
+          <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden animate-in zoom-in-95 duration-300"
+            style={{ background: 'rgba(8,29,56,0.97)', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
+            {/* Top border */}
+            <div className="absolute top-0 left-0 right-0 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
+            {/* Ambient glow */}
+            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.12) 0%, transparent 70%)' }} />
 
-              {/* Close */}
-              <button onClick={() => setIsAuthModalOpen(false)}
-                className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 rounded-full transition-colors focus:outline-none"
-                style={{ background: 'rgba(8,29,56,0.8)' }}>
-                ✕
-              </button>
+            {/* Close */}
+            <button onClick={() => setIsAuthModalOpen(false)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 rounded-full transition-colors focus:outline-none"
+              style={{ background: 'rgba(8,29,56,0.8)' }}>
+              ✕
+            </button>
 
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center"
-                    style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
-                    <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
-                  </div>
-                  <span className="font-sora font-extrabold text-text-primary text-sm">EquityStack</span>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center"
+                  style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
+                  <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
                 </div>
+                <span className="font-sora font-extrabold text-text-primary text-sm">EquityStack</span>
+              </div>
 
-                <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-                  style={{ textShadow: '0 0 20px rgba(207,163,67,0.3)' }}>
-                  {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back'}
-                </h2>
-                <p className="text-xs text-text-secondary font-medium mb-6 font-dm-sans">
-                  {authMode === 'signup'
-                    ? 'Join thousands of retail investors compounding wealth on the NGX.'
-                    : 'Enter your credentials to access your intelligence dashboard.'}
-                </p>
+              <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
+                style={{ textShadow: '0 0 20px rgba(207,163,67,0.3)' }}>
+                {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back'}
+              </h2>
+              <p className="text-xs text-text-secondary font-medium mb-6 font-dm-sans">
+                {authMode === 'signup'
+                  ? 'Join thousands of retail investors compounding wealth on the NGX.'
+                  : 'Enter your credentials to access your intelligence dashboard.'}
+              </p>
 
-                <form onSubmit={handleAuthSubmit} className="space-y-4">
-                  {authMode === 'signup' && (
-                    <div>
-                      <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Full Name</label>
-                      <input type="text" required placeholder="e.g. Tunde Balogun" value={nameInput}
-                        onChange={(e) => setNameInput(e.target.value)}
-                        className={inputCls} style={inputStyle}
-                        onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.4)')}
-                        onBlur={e => (e.target.style.borderColor = '#23214C')} />
-                    </div>
-                  )}
+              <form onSubmit={handleAuthSubmit} className="space-y-4">
+                {authMode === 'signup' && (
                   <div>
-                    <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Email Address</label>
-                    <input type="email" required placeholder="e.g. tunde@gmail.com" value={emailInput}
-                      onChange={(e) => setEmailInput(e.target.value)}
+                    <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Full Name</label>
+                    <input type="text" required placeholder="e.g. Tunde Balogun" value={nameInput}
+                      onChange={(e) => setNameInput(e.target.value)}
                       className={inputCls} style={inputStyle}
-                      onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.4)')}
+                      onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.4)')}
                       onBlur={e => (e.target.style.borderColor = '#23214C')} />
                   </div>
-                  <button type="submit"
-                    className="w-full py-3 rounded-xl text-xs font-bold transition-all text-bg-base mt-2 focus:outline-none"
-                    style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
-                    {authMode === 'signup' ? 'Sign Up for Free' : 'Sign In Now'}
-                  </button>
-                </form>
-
-                {/* Divider */}
-                <div className="relative my-5 flex items-center">
-                  <div className="flex-grow border-t border-border/50" />
-                  <span className="mx-3 text-[10px] font-bold text-text-secondary uppercase px-1"
-                    style={{ background: 'transparent' }}>Or</span>
-                  <div className="flex-grow border-t border-border/50" />
+                )}
+                <div>
+                  <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Email Address</label>
+                  <input type="email" required placeholder="e.g. tunde@gmail.com" value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className={inputCls} style={inputStyle}
+                    onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.4)')}
+                    onBlur={e => (e.target.style.borderColor = '#23214C')} />
                 </div>
-
-                {/* Google Auth */}
-                <button onClick={() => loginUser('Mock User', 'user@gmail.com')}
-                  className="w-full py-2.5 rounded-xl text-xs font-bold text-text-primary flex items-center justify-center gap-2 transition-all focus:outline-none border border-border/50"
-                  style={{ background: 'rgba(14,13,37,0.6)' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,230,118,0.2)')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(35,33,76,0.5)')}>
-                  <svg className="h-4 w-4" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6.16-4.53z" />
-                  </svg>
-                  Connect via Google Account
+                <button type="submit"
+                  className="w-full py-3 rounded-xl text-xs font-bold transition-all text-bg-base mt-2 focus:outline-none"
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
+                  {authMode === 'signup' ? 'Sign Up for Free' : 'Sign In Now'}
                 </button>
+              </form>
 
-                <p className="mt-5 text-center text-[11px] font-medium text-text-secondary">
-                  {authMode === 'signup' ? 'Already have an account?' : 'Need to register?'}
-                  <button onClick={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')}
-                    className="ml-1 text-brand-primary font-bold hover:underline focus:outline-none">
-                    {authMode === 'signup' ? 'Sign In' : 'Sign Up'}
-                  </button>
-                </p>
+              {/* Divider */}
+              <div className="relative my-5 flex items-center">
+                <div className="flex-grow border-t border-border/50" />
+                <span className="mx-3 text-[10px] font-bold text-text-secondary uppercase px-1"
+                  style={{ background: 'transparent' }}>Or</span>
+                <div className="flex-grow border-t border-border/50" />
               </div>
+
+              {/* Google Auth */}
+              <button onClick={() => loginUser('Mock User', 'user@gmail.com')}
+                className="w-full py-2.5 rounded-xl text-xs font-bold text-text-primary flex items-center justify-center gap-2 transition-all focus:outline-none border border-border/50"
+                style={{ background: 'rgba(14,13,37,0.6)' }}
+                onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,230,118,0.2)')}
+                onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(35,33,76,0.5)')}>
+                <svg className="h-4 w-4" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Connect via Google Account
+              </button>
+
+              <p className="mt-5 text-center text-[11px] font-medium text-text-secondary">
+                {authMode === 'signup' ? 'Already have an account?' : 'Need to register?'}
+                <button onClick={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')}
+                  className="ml-1 text-brand-primary font-bold hover:underline focus:outline-none">
+                  {authMode === 'signup' ? 'Sign In' : 'Sign Up'}
+                </button>
+              </p>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </>
   );
 
@@ -795,7 +1337,7 @@ export default function Page() {
   // A. LANDING / SPLASH SCREEN
   // ══════════════════════════════════════════════════════════
   if (!user || currentView === 'landing' || currentView === 'about') {
-        const handleGuestNav = (targetView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => {
+    const handleGuestNav = (targetView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => {
       if (targetView === 'about') {
         setView('about');
       } else {
@@ -833,115 +1375,106 @@ export default function Page() {
     ];
 
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col font-dm-sans relative overflow-x-hidden">
+      <div className="min-h-screen bg-[#0E0B14] flex flex-col font-dm-sans relative overflow-x-hidden">
         {/* ── Ambient Background Orbs ── */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.07) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(0,184,255,0.03) 0%, transparent 70%)' }} />
-        <div className="absolute top-1/3 left-0 w-[300px] h-[300px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.04) 0%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse, rgba(62,39,89,0.4) 0%, transparent 70%)' }} />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[800px] pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(168,85,39,0.15) 0%, transparent 70%)' }} />
 
         {/* ── Top Nav ── */}
-        <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-5 sm:px-8 py-6 z-30 relative">
-          {/* Brand Logo & Name */}
-          <button 
-            onClick={() => { setView('landing'); setIsLandingMenuOpen(false); }}
-            className="flex items-center gap-2.5 text-left focus:outline-none group z-40"
-          >
-            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-200"
-              style={{ boxShadow: '0 0 10px rgba(207,163,67,0.35)' }}>
-              <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
-            </div>
-            <div className="leading-none">
-              <span className="font-sora font-extrabold text-sm tracking-tight text-text-primary block group-hover:text-brand-primary transition-colors">EquityStack</span>
-              <span className="text-[8px] font-bold text-brand-primary uppercase tracking-[0.15em] block mt-0.5">NGX Intelligence</span>
-            </div>
-          </button>
+        <div className="flex justify-center pt-8 w-full z-30 relative px-4">
+          <nav className="max-w-5xl w-full flex items-center justify-between px-8 py-3.5 rounded-[32px]"
+            style={{ background: 'linear-gradient(90deg, #221D32, #181720, #221D32)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => setView('landing')}
-              className="text-xs font-bold text-text-primary hover:text-brand-primary transition-all focus:outline-none">
-              Home
-            </button>
-            <button onClick={() => handleGuestNav('about')}
-              className="text-xs font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none">
-              About Us
-            </button>
-            <button onClick={() => handleGuestNav('markets')}
-              className="text-xs font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none">
-              Markets
-            </button>
-          </div>
-
-          {/* Desktop/Tablet Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3">
-            <button onClick={() => { setAuthMode('login'); setIsAuthModalOpen(true); }}
-              className="text-xs font-extrabold px-6 py-2.5 rounded-full border border-brand-primary text-brand-primary bg-transparent hover:bg-brand-primary/10 transition-all focus:outline-none">
-              Sign In
-            </button>
-            <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
-              className="text-xs font-extrabold px-6 py-2.5 rounded-full text-bg-base transition-all focus:outline-none"
-              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 14px rgba(207,163,67,0.35)' }}>
-              Create Account
-            </button>
-          </div>
-
-          {/* Mobile Actions and Hamburger Toggle */}
-          <div className="flex sm:hidden items-center gap-3 z-40">
-            <button 
-              onClick={() => setIsLandingMenuOpen(!isLandingMenuOpen)}
-              className="p-1.5 text-text-primary hover:text-brand-primary transition-colors focus:outline-none"
+            {/* Brand Logo & Name */}
+            <button
+              onClick={() => { setView('landing'); setIsLandingMenuOpen(false); }}
+              className="flex items-center gap-3 text-left focus:outline-none group z-40"
             >
-              {isLandingMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <div className="h-10 w-10 overflow-hidden flex items-center justify-center">
+                <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover mix-blend-screen rounded-full" />
+              </div>
+              <div className="leading-none">
+                <span className="font-sora font-medium text-[15px] tracking-tight text-white block">EquityStack</span>
+                <span className="text-[9px] text-[#A39EBA] block mt-0.5">NGX Intelligence</span>
+              </div>
             </button>
-          </div>
 
-          {/* Tablet Hamburger Toggle (when width is between sm and md) */}
-          <div className="hidden sm:flex md:hidden items-center z-40">
-            <button 
-              onClick={() => setIsLandingMenuOpen(!isLandingMenuOpen)}
-              className="p-1.5 text-text-primary hover:text-brand-primary transition-colors focus:outline-none"
-            >
-              {isLandingMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </nav>
+            {/* Desktop Navigation Links */}
+            <div className="hidden md:flex items-center gap-8">
+              <button onClick={() => setView('landing')}
+                className="text-sm font-medium text-[#CFA343] transition-all focus:outline-none">
+                Home
+              </button>
+              <button onClick={() => handleGuestNav('about')}
+                className="text-sm font-medium text-white hover:text-[#CFA343] transition-all focus:outline-none">
+                About Us
+              </button>
+              <button onClick={() => handleGuestNav('markets')}
+                className="text-sm font-medium text-white hover:text-[#CFA343] transition-all focus:outline-none">
+                Markets
+              </button>
+            </div>
+
+            {/* Desktop/Tablet Action Buttons */}
+            <div className="hidden sm:flex items-center gap-4">
+              <button onClick={() => { setAuthMode('login'); setIsAuthModalOpen(true); }}
+                className="text-sm font-medium px-6 py-2.5 rounded-full border border-[#443E55] text-[#CFA343] bg-transparent hover:bg-[#CFA343]/10 transition-all focus:outline-none">
+                Sign In
+              </button>
+              <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
+                className="text-sm font-medium px-6 py-2.5 rounded-full text-[#14131A] transition-all focus:outline-none"
+                style={{ background: '#CFA343' }}>
+                Create Account
+              </button>
+            </div>
+
+            {/* Mobile Actions and Hamburger Toggle */}
+            <div className="flex sm:hidden items-center gap-3 z-40">
+              <button
+                onClick={() => setIsLandingMenuOpen(!isLandingMenuOpen)}
+                className="p-1.5 text-white hover:text-[#CFA343] transition-colors focus:outline-none"
+              >
+                {isLandingMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
+          </nav>
+        </div>
 
         {/* Mobile / Tablet Dropdown Menu Drawer */}
         {isLandingMenuOpen && (
           <div className="md:hidden absolute top-[76px] left-0 right-0 z-30 px-5 pb-6 bg-[#041226]/95 backdrop-blur-md border-b border-border/40 flex flex-col gap-4 py-4 animate-in slide-in-from-top duration-200">
             <div className="flex flex-col gap-3">
-              <button 
+              <button
                 onClick={() => { setView('landing'); setIsLandingMenuOpen(false); }}
                 className="w-full text-left py-2.5 text-sm font-bold text-text-primary hover:text-brand-primary transition-all focus:outline-none border-b border-border/10"
               >
                 Home
               </button>
-              <button 
+              <button
                 onClick={() => { handleGuestNav('about'); setIsLandingMenuOpen(false); }}
                 className="w-full text-left py-2.5 text-sm font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none border-b border-border/10"
               >
                 About Us
               </button>
-              <button 
+              <button
                 onClick={() => { handleGuestNav('markets'); setIsLandingMenuOpen(false); }}
                 className="w-full text-left py-2.5 text-sm font-bold text-text-secondary hover:text-text-primary transition-all focus:outline-none border-b border-border/10"
               >
                 Markets
               </button>
             </div>
-            
+
             {/* Mobile-only menu action buttons */}
             <div className="flex sm:hidden flex-col gap-2 pt-2">
-              <button 
+              <button
                 onClick={() => { setAuthMode('login'); setIsAuthModalOpen(true); setIsLandingMenuOpen(false); }}
                 className="w-full py-3 rounded-full border border-brand-primary text-brand-primary bg-transparent text-xs font-bold text-center focus:outline-none"
               >
                 Sign In
               </button>
-              <button 
+              <button
                 onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); setIsLandingMenuOpen(false); }}
                 className="w-full py-3 rounded-full text-bg-base text-xs font-bold text-center focus:outline-none"
                 style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}
@@ -957,278 +1490,174 @@ export default function Page() {
         ) : (
           <>
             {/* ── Hero Section ── */}
-        <div className="max-w-7xl mx-auto w-full flex flex-col z-10 px-5 sm:px-8 pt-8 pb-16 sm:pt-12 sm:pb-20 flex-grow">
-          
-          {/* Main Grid: Text Left, Portrait Right */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center text-left mb-20">
-            {/* Left Info Column */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Brand Logo with Interlocking Rings */}
-              <div className="relative inline-flex items-center mb-2">
-                <span className="font-sora font-extrabold text-4xl sm:text-7xl md:text-8xl tracking-tight text-white select-none relative z-10 leading-none">
-                  equitystack
-                </span>
-                <div className="absolute -left-2 -bottom-2 flex items-center pointer-events-none z-0">
-                  <div className="logo-interlock-1 opacity-85" />
-                  <div className="logo-interlock-2 opacity-85" />
+            <div className="max-w-4xl mx-auto w-full flex flex-col items-center text-center z-10 px-5 sm:px-8 pt-24 pb-16 sm:pt-32 sm:pb-20 flex-grow">
+
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-sora tracking-tight leading-[1.3] mb-6"
+                style={{ background: 'linear-gradient(90deg, #B275FF 0%, #FF7EB3 30%, #FFB067 60%, #FF9551 80%, #FF645A 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                See like an OWL. View the market CLEARLY.{' '}
+                <span style={{ background: 'linear-gradient(90deg, #E2DCE8, #FF9551)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Invest with CONFIDENCE</span>
+              </h1>
+
+              <p className="text-[#A39EBA] text-sm sm:text-base leading-relaxed max-w-3xl mb-12">
+                EquityStack provides investors with personalized dashboards and powerful analytical tools to model portfolios, evaluate risk, and estimate potential returns. The platform combines financial data, visual infographics, and AI-driven insights to deliver tailored portfolio analysis and stock recommendations based on each investor's goals and preferences.
+              </p>
+
+              {/* Company Logos Grid */}
+              <div className="flex flex-col items-center gap-4 mb-14">
+                {/* Row 1 */}
+                <div className="flex items-center justify-center gap-4 flex-wrap">
+                  {[
+                    { id: 1, name: 'Apple', icon: <span className="font-extrabold text-3xl" style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #A2AAAD 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></span> },
+                    { id: 2, name: 'Zenith', icon: <div className="font-extrabold text-2xl flex items-center gap-1"><div className="w-2.5 h-2.5 bg-[#E84142]" /><span className="text-white">Z</span></div> },
+                    { id: 3, name: 'Nvidia', icon: <span className="font-black text-xl italic tracking-tighter" style={{ color: '#76B900' }}>NVIDIA</span> },
+                    { id: 4, name: 'SpaceX', icon: <span className="font-medium text-[11px] tracking-[0.3em] text-white uppercase">SpaceX</span> },
+                    { id: 5, name: 'Tesla', icon: <span className="font-black text-3xl" style={{ color: '#E31937', fontFamily: 'serif' }}>T</span> },
+                    { id: 6, name: 'Dangote Food', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[13px] text-white uppercase">Dangote</span><span className="text-[9px] text-[#CFA343] font-bold">FOOD</span></div> },
+                  ].map(item => (
+                    <div key={item.id} className="w-16 h-16 sm:w-20 sm:h-20 rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-110 hover:bg-white/5 transition-all duration-300">
+                      {item.icon}
+                    </div>
+                  ))}
+                </div>
+                {/* Row 2 */}
+                <div className="flex items-center justify-center gap-4 flex-wrap">
+                  {[
+                    { id: 7, name: 'Buafood', icon: <span className="font-black text-2xl tracking-tighter" style={{ background: 'linear-gradient(to right, #00B4C9, #00E4FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUA</span> },
+                    { id: 8, name: 'Airtel', icon: <span className="font-black text-xl italic" style={{ color: '#E84142' }}>airtel</span> },
+                    { id: 9, name: 'FIRSTHOLDCO', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[14px] text-white">FIRST</span><span className="text-[8px] text-[#CFA343] font-bold tracking-widest uppercase">Holdco</span></div> },
+                    { id: 10, name: 'Meta', icon: <span className="font-black text-2xl tracking-tight" style={{ color: '#2764FF' }}>Meta</span> },
+                    { id: 11, name: 'Alphabet', icon: <span className="font-bold text-[14px] font-sora text-white tracking-tight">Alphabet</span> },
+                  ].map(item => (
+                    <div key={item.id} className="w-16 h-16 sm:w-20 sm:h-20 rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-110 hover:bg-white/5 transition-all duration-300">
+                      {item.icon}
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Tagline */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-text-primary font-sora tracking-tight leading-[1.1] max-w-2xl">
-                Invest with <span className="text-brand-primary text-glow-indigo">Intelligence</span> not Hype
-              </h1>
-
-              {/* Description */}
-              <p className="text-sm sm:text-base text-text-secondary leading-relaxed font-medium max-w-xl">
-                At EquityStack, we bridge education and opportunity equipping you with the right knowledge, tools, and community to grow confidently. Whether you're starting out or scaling up, we're here to guide your journey toward meaningful and sustainable wealth.
-              </p>
-
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-2 w-full sm:w-auto">
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <button onClick={() => handleGuestNav('markets')}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-extrabold text-center transition-all text-bg-base focus:outline-none"
-                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 24px rgba(207,163,67,0.3)' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 40px rgba(207,163,67,0.5)')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px rgba(207,163,67,0.3)')}>
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-bold text-[#14131A] transition-all focus:outline-none"
+                  style={{ background: '#CFA343' }}>
                   Explore Markets
                 </button>
                 <button onClick={() => { setAuthMode('signup'); setIsAuthModalOpen(true); }}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-extrabold text-center transition-all border border-brand-primary text-text-primary bg-transparent hover:bg-brand-primary/10 focus:outline-none">
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-bold text-white transition-all border border-[#443E55] hover:bg-white/5 focus:outline-none">
                   Join Beta Testing
                 </button>
               </div>
-
-              {/* Floating Pill Badge (Bottom Left) */}
-              <div className="pt-6">
-                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-gain bg-gain/8 border border-gain/20">
-                  Don't invest with us, invest through us
-                </span>
-              </div>
             </div>
 
-            {/* Right Portrait Column */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="hero-blob-container relative select-none">
-                {/* Floating Outline Rings */}
-                {/* Teal Ring */}
-                <div className="absolute -top-6 -left-6 w-28 h-28 rounded-full border-2 border-[#10B981]/40 pointer-events-none" />
-                {/* White Ring */}
-                <div className="absolute -bottom-8 -right-8 w-40 h-40 rounded-full border border-white/10 pointer-events-none" />
-                {/* Outer concentric rings */}
-                <div className="absolute -bottom-12 -left-4 w-72 h-72 rounded-full border-2 border-brand-primary/20 pointer-events-none" />
+            <div className="max-w-7xl mx-auto w-full flex flex-col z-10 px-5 sm:px-8 pb-16 sm:pb-20 flex-grow">
+              {/* ── NGX Ticker Carousel ── */}
+              <NGXTickerCarousel />
 
-                {/* Organic Background Blob */}
-                <div className="hero-blob-bg" />
+              {/* ── Feature Cards ── */}
+              <FeatureCards />
 
-                {/* Headshot Image */}
-                <img
-                  src="/nigerian-investor.png"
-                  alt="Nigerian Investor Portrait"
-                  className="hero-portrait-img"
-                />
+              {/* ── US Markets Carousel ── */}
+              <USMarketsCarousel />
 
-              </div>
-            </div>
-          </div>
-
-          {/* ── Dashboard Mock Terminal ── */}
-          <div className="w-full max-w-4xl mx-auto rounded-2xl overflow-hidden border border-border shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
-            style={{ background: 'linear-gradient(145deg, #081D38, #041226)' }}>
-            {/* Window controls */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/50"
-              style={{ background: 'rgba(0,0,0,0.3)' }}>
-              <div className="flex gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-primary/70" />
-              </div>
-              <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">
-                EquityStack Intelligence Terminal
-              </span>
-              <div className="w-12" />
-            </div>
-
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 text-left">
-              {/* ASI Index */}
-              <div className="md:col-span-8 p-4 rounded-xl border border-border"
-                style={{ background: 'rgba(0,0,0,0.3)' }}>
-                <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-text-secondary mb-2">
-                  <span>Nigerian Exchange · All-Share Index</span>
-                  <span className="text-brand-primary flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-brand-primary animate-pulse" />
-                    LIVE
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-3 mb-2">
-                  <span className="text-2xl font-extrabold font-sora text-brand-primary"
-                    style={{ textShadow: '0 0 20px rgba(207,163,67,0.4)' }}>
-                    ₦104,256.80
-                  </span>
-                  <span className="text-xs font-bold text-brand-primary px-2 py-0.5 rounded-lg bg-brand-primary/10 border border-brand-primary/20">
-                    +1.4%
-                  </span>
-                </div>
-                <div className="h-8 w-full opacity-70">
-                  <svg className="w-full h-full" viewBox="0 0 400 32" preserveAspectRatio="none">
-                    <defs>
-                      <linearGradient id="hero-area" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 0 20 Q 40 14, 80 18 T 160 10 T 240 16 T 320 6 T 400 12 L 400 32 L 0 32 Z"
-                      fill="url(#hero-area)" />
-                    <path d="M 0 20 Q 40 14, 80 18 T 160 10 T 240 16 T 320 6 T 400 12"
-                      fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Movers */}
-              <div className="md:col-span-4 p-4 rounded-xl border border-border space-y-2.5"
-                style={{ background: 'rgba(0,0,0,0.3)' }}>
-                <span className="text-[9px] font-bold uppercase tracking-wider text-text-secondary block"></span>
-                {[
-                  { t: 'ZENITHBANK', ch: '+3.2%', up: true },
-                  { t: 'DANGCEM', ch: '+2.5%', up: true },
-                  { t: 'GTCO', ch: '-0.8%', up: false },
-                ].map((s) => (
-                  <div key={s.t} className="flex items-center justify-between border-t border-border/30 pt-2">
-                    <span className="text-xs font-extrabold font-sora" style={{ color: s.up ? '#10B981' : '#FF4D4D' }}>{s.t}</span>
-                    <span className="text-xs font-extrabold" style={{ color: s.up ? '#10B981' : '#FF4D4D' }}>{s.ch}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* AI Brief */}
-              <div className="md:col-span-12 p-4 rounded-xl border border-brand-primary/15"
-                style={{ background: 'rgba(207,163,67,0.03)' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="h-3.5 w-3.5 text-brand-primary animate-pulse" />
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-brand-primary">Sora AI Market Summary</span>
-                </div>
-                <p className="text-xs text-text-primary/80 leading-relaxed font-medium">
-                  &ldquo;The market is riding high on local investor confidence. Dangote Cement led the charge today like an anchor tenant in Balogun Market, pulling secondary real estate and manufacturing equities up behind it. Watch bank stocks closely as liquidity reserves expand...&rdquo;
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Feature Cards ── */}
-          <FeatureCards />
-
-          {/* ── How It Works / Steps Section ── */}
-          <div className="w-full mt-24 text-left relative">
-            {/* Dotted grid decorative background on bottom left */}
-            <div className="absolute -bottom-10 -left-10 w-24 h-24 opacity-25 pointer-events-none z-0">
-              <svg className="w-full h-full text-brand-primary" viewBox="0 0 100 100" fill="currentColor">
-                <pattern id="dot-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <circle cx="2" cy="2" r="2" />
-                </pattern>
-                <rect width="100" height="100" fill="url(#dot-grid)" />
-              </svg>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start relative z-10">
-              {/* Left Title Column */}
-              <div className="lg:col-span-4 space-y-6">
-                <div>
-                  <span className="text-[10px] font-extrabold tracking-widest text-brand-primary uppercase block mb-2">
+              {/* ── How It Works / Steps Section ── */}
+              <div className="w-full mt-24 text-left relative max-w-7xl mx-auto">
+                <div className="mb-8">
+                  <span className="text-[12px] font-semibold text-[#CFA343] block mb-2">
                     Product Pillars
                   </span>
-                  <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora leading-tight">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-sora">
                     Our Five Foundation Pillars
                   </h2>
                 </div>
 
-                {/* Arrow Controls */}
-                <div className="flex items-center gap-3 pt-2">
+                <div className="relative">
+                  {/* Left Arrow */}
                   <button
                     onClick={() => setActiveStep((prev) => (prev === 0 ? 4 : prev - 1))}
-                    className="w-11 h-11 rounded-lg border border-border/60 flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-brand-primary/50 transition-all bg-bg-surface/40 backdrop-blur-sm focus:outline-none"
+                    className="absolute -left-6 sm:-left-12 top-1/2 -translate-y-1/2 z-10 text-white/50 hover:text-white transition-colors focus:outline-none"
                   >
-                    <ArrowLeft className="h-5 w-5" />
+                    <ArrowLeft className="w-5 h-5" />
                   </button>
+
+                  {/* Cards */}
+                  <div className="flex gap-4 overflow-hidden">
+                    {[
+                      steps[activeStep % 5],
+                      steps[(activeStep + 1) % 5],
+                      steps[(activeStep + 2) % 5],
+                      steps[(activeStep + 3) % 5],
+                    ].map((item, localIdx) => {
+                      const isActive = localIdx === 0;
+                      
+                      // Fallback icons
+                      let IconObj = FileText;
+                      if (item.title === 'Education') IconObj = GraduationCap;
+                      if (item.title === 'Practice') IconObj = Shield;
+                      if (item.title === 'Community') IconObj = Users;
+                      if (item.title === 'Trust') IconObj = Check;
+                      if (item.title === 'Financial Intelligence') IconObj = BarChart2;
+
+                      return (
+                        <div
+                          key={item.title}
+                          onClick={() => setActiveStep(steps.indexOf(item))}
+                          className={`flex-1 rounded-2xl p-6 sm:p-8 cursor-pointer transition-all duration-300 flex flex-col items-start min-w-[240px] ${
+                            isActive
+                              ? 'bg-[#CFA343]'
+                              : 'bg-[#111116]'
+                          }`}
+                          style={!isActive ? { background: '#111116' } : {}}
+                        >
+                          {/* Icon */}
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-12 ${isActive ? 'bg-[#2B273A]' : 'bg-[#2B273A]'}`}>
+                             <IconObj className="w-6 h-6 text-white" />
+                          </div>
+                          
+                          {/* Text */}
+                          <h3 className={`text-lg font-bold mb-3 font-sora ${isActive ? 'text-[#111]' : 'text-white'}`}>
+                            {item.title}
+                          </h3>
+                          <p className={`text-xs leading-relaxed font-medium flex-1 ${isActive ? 'text-[#333]' : 'text-white/60'}`}>
+                            {item.desc}
+                          </p>
+                          
+                          <div className={`mt-6 text-[11px] font-bold flex items-center gap-1 ${isActive ? 'text-[#111]' : 'text-[#CFA343]'}`}>
+                            See Explained <ArrowRight className="w-3 h-3 inline" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Right Arrow */}
                   <button
                     onClick={() => setActiveStep((prev) => (prev === 4 ? 0 : prev + 1))}
-                    className="w-11 h-11 rounded-lg border border-border/60 flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-brand-primary/50 transition-all bg-bg-surface/40 backdrop-blur-sm focus:outline-none"
+                    className="absolute -right-6 sm:-right-12 top-1/2 -translate-y-1/2 z-10 text-white/50 hover:text-white transition-colors focus:outline-none"
                   >
-                    <ArrowRight className="h-5 w-5" />
+                    <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
               </div>
 
-              {/* Right Cards Column */}
-              <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-                {[
-                  { ...steps[activeStep % 5], idx: activeStep % 5, visibilityClass: 'flex' },
-                  { ...steps[(activeStep + 1) % 5], idx: (activeStep + 1) % 5, visibilityClass: 'hidden md:flex' },
-                  { ...steps[(activeStep + 2) % 5], idx: (activeStep + 2) % 5, visibilityClass: 'hidden lg:flex' }
-                ].map((item) => {
-                  const isActive = activeStep % 5 === item.idx;
-                  return (
-                    <div
-                      key={item.title}
-                      onClick={() => setActiveStep(item.idx)}
-                      className={`cursor-pointer rounded-2xl p-6 transition-all duration-500 flex flex-col items-center text-center relative overflow-hidden group ${item.visibilityClass} ${
-                        isActive
-                          ? 'shadow-[0_20px_40px_rgba(207,163,67,0.25)] border border-brand-primary translate-y-[-8px]'
-                          : 'border border-border/40 hover:border-border hover:translate-y-[-4px]'
-                      }`}
-                      style={{
-                        background: isActive
-                          ? 'linear-gradient(180deg, #E5C06F 0%, #B58C35 100%)'
-                          : 'linear-gradient(145deg, #081D38, #041226)',
-                        minHeight: '340px'
-                      }}
-                    >
-                      {/* Active highlight glow orb */}
-                      {isActive && (
-                        <div className="absolute -top-16 -left-16 w-32 h-32 rounded-full bg-white/20 blur-2xl pointer-events-none" />
-                      )}
+              {/* ── Rating System Deep Dive ── */}
+              <RatingSystemDeepDive />
 
-                      {/* Illustration Container */}
-                      <div className="h-40 flex items-center justify-center w-full mb-4">
-                        {item.illustration}
-                      </div>
+              {/* ── Market Report Section ── */}
+              <MarketReportSection />
 
-                      {/* Text */}
-                      <div className="space-y-2 mt-auto">
-                        <h3
-                          className={`text-base font-extrabold font-sora ${
-                            isActive ? 'text-bg-base' : 'text-text-primary group-hover:text-brand-primary transition-colors'
-                          }`}
-                        >
-                          {item.title}
-                        </h3>
-                        <p
-                          className={`text-xs leading-relaxed font-medium font-dm-sans ${
-                            isActive ? 'text-bg-base/80' : 'text-text-secondary'
-                          }`}
-                        >
-                          {item.desc}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              {/* ── News Section ── */}
+              <NewsSection />
             </div>
-          </div>
-        </div>
 
-        {/* Footer */}
-                  </>
+            {/* Footer */}
+          </>
         )}
 
-        <div className="max-w-7xl mx-auto w-full z-10 text-center text-[10px] text-text-secondary font-medium font-dm-sans border-t border-border/40 py-5 px-5">
-          © {new Date().getFullYear()} EquityStack · Nigerian Financial Intelligence Platform · MVP v1.0 · Strictly Confidential
-        </div>
+        <FooterSection />
 
         {renderAuthModal()}
 
-        
+
       </div>
     );
   }
@@ -1252,7 +1681,7 @@ export default function Page() {
             </div>
             <span className="font-sora font-extrabold text-sm text-brand-primary">EquityStack Onboarding</span>
           </div>
-          <button onClick={handleOnboardingSkip}
+          <button type="button" onClick={handleOnboardingSkip}
             className="text-xs font-bold text-text-secondary hover:text-text-primary focus:outline-none">
             Skip →
           </button>
@@ -1271,9 +1700,8 @@ export default function Page() {
             </span>
             <div className="flex gap-2">
               {[1, 2, 3].map((s) => (
-                <span key={s} className={`h-1.5 rounded-full transition-all duration-300 ${
-                  onboardingStep === s ? 'w-6' : 'w-1.5 bg-border'
-                }`} style={onboardingStep === s ? { background: '#10B981', boxShadow: '0 0 8px rgba(207,163,67,0.5)' } : {}} />
+                <span key={s} className={`h-1.5 rounded-full transition-all duration-300 ${onboardingStep === s ? 'w-6' : 'w-1.5 bg-border'
+                  }`} style={onboardingStep === s ? { background: '#10B981', boxShadow: '0 0 8px rgba(207,163,67,0.5)' } : {}} />
               ))}
             </div>
           </div>
@@ -1393,12 +1821,12 @@ export default function Page() {
           {/* Navigation */}
           <div className="pt-2 flex items-center justify-end gap-2.5">
             {onboardingStep > 1 && (
-              <button onClick={() => setOnboardingStep(onboardingStep - 1)}
+              <button type="button" onClick={() => setOnboardingStep(onboardingStep - 1)}
                 className="px-4 py-2 rounded-xl text-xs font-bold text-text-secondary hover:text-text-primary border border-border/40 transition-colors focus:outline-none">
                 Back
               </button>
             )}
-            <button onClick={handleOnboardingNext}
+            <button type="button" onClick={handleOnboardingNext}
               className="px-5 py-2.5 rounded-xl text-xs font-extrabold text-bg-base flex items-center gap-1.5 transition-all focus:outline-none"
               style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 14px rgba(207,163,67,0.35)' }}>
               <span>{onboardingStep === 3 ? 'Launch Dashboard' : 'Next Step'}</span>
@@ -1422,40 +1850,40 @@ export default function Page() {
   // When `children` is present, a ChevronDown is rendered and the item becomes a dropdown trigger.
   // Desktop nav — all items as flat links
   const allNavItems = [
-    { id: 'home',      label: 'Overview' },
-    { id: 'markets',  label: 'Markets' },
-    { id: 'portfolio',label: 'Portfolio' },
-    { id: 'news',     label: 'News & Insights', badge: true },
-    { id: 'trade',    label: 'Trade' },
-    { id: 'community',label: 'Marketplace' },
-    { id: 'learn',    label: 'Learn' },
-    { id: 'about',    label: 'About us' },
+    { id: 'home', label: 'Overview' },
+    { id: 'markets', label: 'Markets' },
+    { id: 'portfolio', label: 'Portfolio' },
+    { id: 'news', label: 'News & Insights', badge: true },
+    { id: 'trade', label: 'Trade' },
+    { id: 'community', label: 'Marketplace' },
+    { id: 'learn', label: 'Learn' },
+    { id: 'about', label: 'About us' },
   ] as const;
 
   // Items hidden inside the "More" dropdown
   const moreNavItems = [
-    { id: 'trade',     label: 'Trade',       icon: TrendingUp },
+    { id: 'trade', label: 'Trade', icon: TrendingUp },
     { id: 'community', label: 'Marketplace', icon: Users },
-    { id: 'learn',     label: 'Learn',       icon: GraduationCap },
-    { id: 'about',     label: 'About us',    icon: Info },
-    { id: 'profile',   label: 'Profile',     icon: User },
+    { id: 'learn', label: 'Learn', icon: GraduationCap },
+    { id: 'about', label: 'About us', icon: Info },
+    { id: 'profile', label: 'Profile', icon: User },
   ] as const;
 
   // Mobile bottom 5-tab bar
   const mobileBottomTabs = [
-    { id: 'home' as const,      label: 'Home',     icon: HomeIcon },
-    { id: 'markets' as const,   label: 'Markets',  icon: BarChart2 },
-    { id: 'portfolio' as const, label: 'Portfolio',icon: Briefcase },
-    { id: 'news' as const,      label: 'News',     icon: Newspaper, badge: true },
+    { id: 'home' as const, label: 'Home', icon: HomeIcon },
+    { id: 'markets' as const, label: 'Markets', icon: BarChart2 },
+    { id: 'portfolio' as const, label: 'Portfolio', icon: Briefcase },
+    { id: 'news' as const, label: 'News', icon: Newspaper, badge: true },
   ] as const;
 
   // Drawer items (More panel) — all overflow items
   const mobileNavItems = [
-    { id: 'trade' as const,     label: 'Trade',       icon: TrendingUp },
+    { id: 'trade' as const, label: 'Trade', icon: TrendingUp },
     { id: 'community' as const, label: 'Marketplace', icon: Users },
-    { id: 'learn' as const,     label: 'Learn',       icon: GraduationCap },
-    { id: 'about' as const,     label: 'About',       icon: Info },
-    { id: 'profile' as const,   label: 'Profile',     icon: User },
+    { id: 'learn' as const, label: 'Learn', icon: GraduationCap },
+    { id: 'about' as const, label: 'About', icon: Info },
+    { id: 'profile' as const, label: 'Profile', icon: User },
   ];
 
   return (
@@ -1468,7 +1896,7 @@ export default function Page() {
         <div className="max-w-7xl mx-auto px-8 flex items-center justify-between" style={{ height: '56px' }}>
 
           {/* ── Brand ───────────────────────────────────────── */}
-          <button 
+          <button
             onClick={() => setView('landing')}
             className="flex items-center gap-3 flex-shrink-0 pr-8 border-r border-border/40 text-left focus:outline-none group"
           >
@@ -1601,7 +2029,7 @@ export default function Page() {
           ══════════════════════════════════════════════════════ */}
       <div className="lg:hidden sticky top-0 z-30 glass-nav">
         <div className="flex items-center justify-between px-4 py-3">
-          <button 
+          <button
             onClick={() => setView('landing')}
             className="flex items-center gap-2 text-left focus:outline-none"
           >
@@ -1631,9 +2059,8 @@ export default function Page() {
           MAIN CONTENT
           ══════════════════════════════════════════════════════ */}
       <main className="flex-grow flex flex-col">
-        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 ${
-          currentView === 'markets' || currentView === 'portfolio' || currentView === 'trade' ? 'max-w-7xl' : 'max-w-6xl'
-        }`}>
+        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 ${currentView === 'markets' || currentView === 'portfolio' || currentView === 'trade' ? 'max-w-7xl' : 'max-w-6xl'
+          }`}>
           {renderViewContent()}
         </div>
       </main>
@@ -1675,16 +2102,16 @@ export default function Page() {
         <div className="fixed inset-0 z-50 flex justify-end lg:hidden animate-in fade-in duration-200"
           style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)' }}
           onClick={() => setIsMobileDrawerOpen(false)}>
-          
+
           {/* Drawer Panel */}
           <div className="w-[290px] h-full bg-[#081D38] border-l border-brand-primary/15 p-6 flex flex-col justify-between shadow-2xl relative animate-in slide-in-from-right duration-300"
             style={{ boxShadow: '-10px 0 30px rgba(0,0,0,0.5)' }}
             onClick={(e) => e.stopPropagation()}>
-            
+
             <div>
               {/* Drawer Header */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
-                <button 
+                <button
                   onClick={() => { setView('landing'); setIsMobileDrawerOpen(false); }}
                   className="flex items-center gap-2.5 text-left focus:outline-none group"
                 >
@@ -1782,7 +2209,7 @@ export default function Page() {
           <div className="w-full max-w-lg rounded-2xl border border-brand-primary/20 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-250"
             style={{ background: 'rgba(8, 29, 56, 0.98)' }}
             onClick={(e) => e.stopPropagation()}>
-            
+
             {/* Input row */}
             <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/40">
               <Search className="h-5 w-5 text-text-secondary" />
@@ -1805,7 +2232,7 @@ export default function Page() {
             {/* Results */}
             <div className="max-h-[360px] overflow-y-auto p-2">
               {stocks
-                .filter((s) => 
+                .filter((s) =>
                   s.ticker.toLowerCase().includes(headerSearchQuery.toLowerCase()) ||
                   s.name.toLowerCase().includes(headerSearchQuery.toLowerCase())
                 )
@@ -1841,14 +2268,14 @@ export default function Page() {
                     </button>
                   );
                 })}
-              {stocks.filter((s) => 
+              {stocks.filter((s) =>
                 s.ticker.toLowerCase().includes(headerSearchQuery.toLowerCase()) ||
                 s.name.toLowerCase().includes(headerSearchQuery.toLowerCase())
               ).length === 0 && (
-                <div className="p-8 text-center text-xs font-bold text-text-secondary">
-                  No matching stocks found. Try searching for {"DANGCEM"} or {"Banking"}.
-                </div>
-              )}
+                  <div className="p-8 text-center text-xs font-bold text-text-secondary">
+                    No matching stocks found. Try searching for {"DANGCEM"} or {"Banking"}.
+                  </div>
+                )}
             </div>
           </div>
         </div>

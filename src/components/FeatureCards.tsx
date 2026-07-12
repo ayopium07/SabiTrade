@@ -1,91 +1,130 @@
 import React from 'react';
-import { GraduationCap, MessageSquare, Bot, Sliders, FileText, Newspaper } from 'lucide-react';
+import { GraduationCap, MessageSquare, Bot, BarChart2, FileText, Newspaper } from 'lucide-react';
 
-const features = [
+const services = [
   {
-    title: 'Learn',
-    badge: 'EDUCATION',
-    badgeColor: 'text-[#00B8FF] bg-[#00B8FF]/10 border-[#00B8FF]/20', // Blue
+    num: '01',
     icon: GraduationCap,
-    desc: "A structured knowledge base for every type of investor. Whether you're stepping into the stock market for the first time or sharpening your existing skills, Learn equips you with the fundamentals of stock market investing and practical frameworks for conducting your own equity analysis."
+    iconBg: '#1A6B3A',
+    title: 'Learn',
+    desc: 'A structured knowledge base for every type of investor. Equips you with the fundamentals of stock market investing and practical frameworks for conducting your own equity analysis — built specifically for the NGX.',
+    tag: 'EDUCATION',
+    tagColor: '#10B981',
   },
   {
-    title: 'Community',
-    badge: 'DISCUSSION',
-    badgeColor: 'text-[#10B981] bg-[#10B981]/10 border-[#10B981]/20', // Green
+    num: '02',
     icon: MessageSquare,
-    desc: "A forum built for informed market conversation. Share your views on any NGX-listed stock or broader economic developments affecting the market, and engage with perspectives from other subscribers. Every opinion is open for discussion — agree, challenge, or build on it."
+    iconBg: '#1A4A6B',
+    title: 'Community',
+    desc: 'A forum built for informed market conversation. Share your views on any NGX-listed stock or broader economic developments, and engage with fellow subscribers. Every opinion is open for discussion — agree, challenge, or build on it.',
+    tag: 'DISCUSSION',
+    tagColor: '#10B981',
   },
   {
-    title: 'EquityStack Assistant',
-    badge: 'AI-POWERED',
-    badgeColor: 'text-[#8B5CF6] bg-[#8B5CF6]/10 border-[#8B5CF6]/20', // Purple
+    num: '03',
     icon: Bot,
-    desc: "Your always-on market intelligence companion. Powered by AI, the EquityStack Assistant answers any question about the Nigerian stock market — from how a specific stock is performing, to how macroeconomic shifts may affect your portfolio. Fast, contextual, and built for local market nuance."
+    iconBg: '#3B1F6B',
+    title: 'EquityStack Assistant',
+    desc: 'Your always-on market intelligence companion. Powered by AI, the EquityStack Assistant answers any question about the Nigerian stock market — fast, contextual, and built for local market nuance.',
+    tag: 'AI-POWERED',
+    tagColor: '#8B5CF6',
   },
   {
+    num: '04',
+    icon: BarChart2,
+    iconBg: '#6B1F1F',
     title: 'Portfolio & Demo Trade',
-    badge: 'SIMULATION',
-    badgeColor: 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20', // Orange
-    icon: Sliders,
-    desc: "Practice investing without financial risk. Upon signup, you receive a virtual portfolio funded with ₦10,000,000 to simulate buying and selling NGX-listed stocks. Track your positions, monitor performance, and build the confidence and discipline needed for real-market decisions."
+    desc: 'Practice investing without financial risk. Upon signup, receive a virtual portfolio funded with ₦10,000,000 to simulate buying and selling NGX-listed stocks. Build the confidence and discipline needed for real-market decisions.',
+    tag: 'SIMULATION',
+    tagColor: '#EF4444',
   },
   {
-    title: 'Market Report',
-    badge: 'WEEKLY DIGEST',
-    badgeColor: 'text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/20', // Red
+    num: '05',
     icon: FileText,
-    desc: "A comprehensive weekly briefing delivered to your inbox every Saturday. The EquityStack Market Report covers Nigerian stock market performance, sector highlights, notable price movements, and economic developments — everything you need to stay fully informed before the next trading week."
+    iconBg: '#1A5050',
+    title: 'Market Report',
+    desc: 'A comprehensive weekly briefing delivered to your inbox every Saturday. Covers NGX performance, sector highlights, notable price movements, and economic developments — everything you need before the next trading week opens.',
+    tag: 'WEEKLY GET',
+    tagColor: '#06B6D4',
   },
   {
-    title: 'News',
-    badge: 'LIVE FEED',
-    badgeColor: 'text-[#10B981] bg-[#10B981]/10 border-[#10B981]/20', // Green
+    num: '06',
     icon: Newspaper,
-    desc: "Stay current with a curated feed of Nigerian financial news. From corporate announcements and regulatory updates to macroeconomic developments, the News section ensures you're always working with the latest information relevant to your investment decisions."
-  }
+    iconBg: '#1A3A6B',
+    title: 'News',
+    desc: 'Stay current with a curated feed of Nigerian financial news. From corporate announcements and regulatory updates to macroeconomic developments — always working with the latest information relevant to your investment decisions.',
+    tag: 'LIVE FEED',
+    tagColor: '#10B981',
+  },
 ];
 
 export default function FeatureCards() {
   return (
-    <div className="w-full max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24 font-dm-sans relative z-10">
-      <div className="mb-12 sm:mb-16 text-left">
-        <span className="text-[10px] font-extrabold tracking-widest text-brand-primary uppercase block mb-2">
-          What We Offer
+    <div className="w-full max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24 font-dm-sans">
+
+      {/* Section header */}
+      <div className="mb-10 text-left">
+        <span className="text-[11px] font-semibold tracking-widest uppercase block mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          Platform Services
         </span>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora leading-tight">
-          Our Services
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-sora leading-tight mb-3">
+          Everything you need to invest smarter.
         </h2>
+        <p className="text-sm text-white/50 font-medium max-w-sm leading-relaxed">
+          Six integrated tools designed to take you from first-time investor to confident market participant.
+        </p>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-        {features.map((feature, idx) => (
-          <div key={idx} className="p-6 sm:p-8 rounded-[24px] sm:rounded-[32px] border transition-all duration-300 hover:-translate-y-1 group"
-            style={{ 
-              background: 'linear-gradient(145deg, rgba(8,29,56,0.6), rgba(4,18,38,0.8))', 
-              borderColor: 'rgba(255,255,255,0.08)',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.2)'
+
+      {/* 3-column grid */}
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+        style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', overflow: 'hidden' }}
+      >
+        {services.map((s, i) => (
+          <div
+            key={s.num}
+            className="flex flex-col gap-4 p-7 transition-colors duration-200 hover:bg-white/[0.02]"
+            style={{
+              borderRight: (i + 1) % 3 !== 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+              borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none',
             }}
-            onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(207,163,67,0.3)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.08)')}>
-            
-            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5 mb-5 sm:mb-6">
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 group-hover:scale-105 group-hover:bg-brand-primary/10 transition-all duration-300">
-                <feature.icon className="w-7 h-7 text-text-primary group-hover:text-brand-primary transition-colors" />
-              </div>
-              
-              <div className="pt-1">
-                <h3 className="text-xl sm:text-2xl font-extrabold font-sora text-text-primary mb-2.5">
-                  {feature.title}
-                </h3>
-                <span className={`inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider uppercase border ${feature.badgeColor}`}>
-                  {feature.badge}
-                </span>
-              </div>
+          >
+            {/* Number */}
+            <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              {s.num}
+            </span>
+
+            {/* Icon */}
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{ background: s.iconBg }}
+            >
+              <s.icon className="w-5 h-5 text-white" />
             </div>
-            
-            <p className="text-sm sm:text-base leading-[1.7] text-text-secondary font-medium">
-              {feature.desc}
+
+            {/* Title */}
+            <h3 className="text-[15px] font-extrabold text-white font-sora leading-snug">
+              {s.title}
+            </h3>
+
+            {/* Description */}
+            <p className="text-[12px] leading-relaxed flex-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              {s.desc}
             </p>
+
+            {/* Tag badge */}
+            <div>
+              <span
+                className="inline-block text-[9px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded"
+                style={{
+                  background: `${s.tagColor}18`,
+                  color: s.tagColor,
+                  border: `1px solid ${s.tagColor}30`,
+                }}
+              >
+                {s.tag}
+              </span>
+            </div>
           </div>
         ))}
       </div>
