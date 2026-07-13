@@ -59,16 +59,16 @@ const generateChartData = (basePrice: number, volatility: number = 0.02) => {
   const data = [];
   let price = basePrice * 0.95; // start slightly lower to trend upwards
   const today = new Date();
-  
+
   for (let i = 30; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
     const dateStr = date.toLocaleDateString('en-NG', { day: 'numeric', month: 'short' });
-    
+
     // Random walk with a slight upward drift
     const change = price * (Math.random() - 0.48) * volatility;
     price += change;
-    
+
     const volume = Math.floor(100000 + Math.random() * 5000000);
     data.push({
       date: dateStr,
@@ -357,10 +357,10 @@ export const mockMovers = {
   losers: ngxStocks.filter(s => s.change < 0).sort((a, b) => a.change - b.change).slice(0, 5),
 };
 
-export const aiDailyBrief = {
-  Beginner: "Today on the Nigerian Stock Exchange (NGX), stocks went up! Banks like Zenith and GTBank made a lot of money for investors because the Central Bank is raising interest rates, which helps banks profit. On the flip side, popular food companies like Nestle had a tough day because it's getting more expensive to buy imported ingredients in dollars. If you are starting, focusing on big banks or stable builders like Dangote Cement is a great way to stay safe.",
-  Intermediate: "The NGX closed in green today, driven by heavy buying in the Tier-1 Banking sector (+4.8% average) after positive earnings expectations under the CBN's hawkish monetary policy stance. High-yield deposit capture is boosting banking net interest margins. Meanwhile, currency headwinds continue to impact consumer goods manufacturers, as seen in Nestle's 5.7% price dip. Focus on companies with strong local supply chains to weather FX volatility.",
-  Experienced: "A strong bid in banking equities (GTCO, Zenith, UBA) propelled the NGX ASI upwards by 1.24% to close at 98,425.10 points. Institutional investors are positioning in dividend-paying financial stocks, absorbing the minor sell-side pressures from consumer goods due to balance-sheet FX exposure. Sector rotation from consumer goods to banks and indigenous oil/gas (Oando +9.8% on NAOC asset sign-off) is the dominant theme of this week's trading cycle."
+export const equityStackAIBrief = {
+  morning: "Morning Market Update: The NGX opened today with robust buying interest in the Tier-1 Banking sector, as institutional investors position ahead of the upcoming MPC meeting. Expect heightened volatility in consumer goods as FX revaluation fears weigh on early trading volumes. Keep an eye on ZENITHBANK and GTCO as primary volume drivers today.",
+  afternoon: "Mid-Day Market Update: Trading volumes have surged past ₦4B as the banking rally sustains momentum into the afternoon session. The All Share Index (ASI) is trending upwards, while the oil & gas sector sees selective buying (OANDO up +9.8% following NAOC regulatory clearance). Consumer goods continue to experience minor sell-side pressure.",
+  night: "Daily Market Recap: The NGX ASI closed strong today (+1.24%), primarily driven by a heavy morning bid in banking equities that sustained through the afternoon. The Central Bank's hawkish stance favored financial stocks, masking the steep declines in consumer manufacturers who face rising dollar-denominated input costs. Oando's upstream acquisition approval also injected significant optimism into the energy sector today."
 };
 
 export const mockNews: NewsItem[] = [

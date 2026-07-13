@@ -1,12 +1,22 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { Sparkles, ShieldAlert } from 'lucide-react';
-import { aiDailyBrief } from '@/lib/mockData';
-import { useAppStore } from '@/lib/store';
+import { equityStackAIBrief } from '@/lib/mockData';
 
 export default function AIDailyBrief() {
-  const user = useAppStore((state) => state.user);
-  const experienceLevel = user?.experienceLevel || 'Beginner';
-  const briefText = aiDailyBrief[experienceLevel];
+  const [briefText, setBriefText] = useState(equityStackAIBrief.morning);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setBriefText(equityStackAIBrief.morning);
+    } else if (hour < 17) {
+      setBriefText(equityStackAIBrief.afternoon);
+    } else {
+      setBriefText(equityStackAIBrief.night);
+    }
+  }, []);
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-brand-primary/10"
@@ -24,43 +34,38 @@ export default function AIDailyBrief() {
 
       <div className="p-5 sm:p-6 relative z-10">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="absolute inset-0 rounded-xl animate-pulse-glow" 
+              <div className="absolute inset-0 rounded-[14px] animate-pulse-glow" 
                 style={{ background: 'rgba(207,163,67,0.2)', filter: 'blur(8px)' }} />
-              <div className="relative bg-brand-primary/15 border border-brand-primary/25 p-2.5 rounded-xl">
-                <Sparkles className="h-4 w-4 text-brand-primary" />
+              <div className="relative bg-[#1A1829] border border-[#CFA343]/30 p-3 rounded-[14px]">
+                <Sparkles className="h-5 w-5 text-[#CFA343]" />
               </div>
             </div>
-            <div>
-              <h4 className="text-sm font-extrabold text-text-primary font-sora">
-                AI Market Brief
+            <div className="flex flex-col gap-1">
+              <h4 className="text-[20px] font-bold text-white font-sora">
+                EquityStack AI Brief
               </h4>
-              <span className="block text-[9px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans">
-                Sora Intelligence · Real-time
+              <span className="block text-[11px] font-bold text-white/60 uppercase tracking-widest font-sora">
+                LIVE MARKET INTELLIGENCE
               </span>
             </div>
-          </div>
-
-          <div className="flex items-center gap-1.5 bg-brand-primary/8 border border-brand-primary/15 text-brand-primary px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold font-dm-sans">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-primary animate-pulse" />
-            <span>{experienceLevel} Mode</span>
           </div>
         </div>
 
         {/* Brief text */}
-        <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full"
-            style={{ background: 'linear-gradient(180deg, #CFA343, transparent)' }} />
-          <p className="pl-4 text-sm leading-relaxed text-text-primary/90 font-dm-sans font-medium">
+        <div className="relative pl-5 py-1">
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full"
+            style={{ background: 'linear-gradient(180deg, #CFA343 0%, rgba(207,163,67,0.1) 100%)' }} />
+          <p className="text-[14px] leading-[1.6] text-white/90 font-sora font-medium">
             {briefText}
           </p>
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-4 pt-3.5 border-t border-border/50 flex items-center gap-2 text-[10px] text-text-secondary font-dm-sans text-left">
-          <ShieldAlert className="h-3.5 w-3.5 text-warning/70 flex-shrink-0" />
+        <div className="mt-8 pt-5 border-t border-white/10 flex items-start sm:items-center gap-3 text-[12px] text-white/50 font-sora text-left">
+          <ShieldAlert className="h-4 w-4 text-[#CFA343] flex-shrink-0" />
           <span>This information is for educational and research purposes only and should not be considered financial advice.</span>
         </div>
       </div>

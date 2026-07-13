@@ -72,10 +72,10 @@ export default function StockExplorer() {
         }}
         className={`px-4 py-3.5 cursor-pointer select-none text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans hover:text-text-primary transition-colors group/th ${
           align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
-        } ${isTicker ? 'sticky left-0 z-20 bg-[#0e0d25] border-r border-border/40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]' : ''}`}
+        } ${isTicker ? 'sticky left-0 z-40 bg-[#0e0d25] border-r border-border/40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]' : 'bg-[#0e0d25]'}`}
       >
         <div className={`flex items-center gap-1 ${align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : 'justify-start'}`}>
-          <span>{label}</span>
+          <span className="whitespace-pre-line">{label}</span>
           <span className="inline-flex w-3 h-3 items-center justify-center">
             {isActive ? (
               sortOrder === 'desc' ? '↓' : '↑'
@@ -161,23 +161,23 @@ export default function StockExplorer() {
       </div>      {/* ── Stock Table ───────────────────────────────────── */}
       <div className="rounded-2xl border border-border overflow-hidden"
         style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
-        <div className="overflow-x-auto custom-scrollbar">
+        <div className="overflow-x-auto overflow-y-auto max-h-[600px] custom-scrollbar">
           <table className="w-full border-collapse text-left min-w-[1200px]">
             {/* Table header */}
-            <thead>
-              <tr className="bg-bg-base/60 border-b border-border">
+            <thead className="sticky top-0 z-30 shadow-md">
+              <tr className="bg-[#0e0d25] border-b border-border">
                 {renderHeader('ticker', 'Company', 'left')}
-                {renderHeader('price', 'Close Price', 'right')}
-                {renderHeader('change', 'Daily Change', 'right')}
-                {renderHeader('high', '52 Weeks High', 'right')}
-                {renderHeader('low', '52 Weeks Low', 'right')}
+                {renderHeader('price', 'Close\nPrice', 'right')}
+                {renderHeader('change', 'Daily\nChange', 'right')}
+                {renderHeader('high', '52 Weeks\nHigh', 'right')}
+                {renderHeader('low', '52 Weeks\nLow', 'right')}
                 {renderHeader('eps', 'EPS', 'right')}
                 {renderHeader('bvps', 'BVPS', 'right')}
-                {renderHeader('peRatio', 'PE Ratio', 'right')}
-                {renderHeader('target', 'Our Target', 'right')}
-                {renderHeader('upside', 'Upside/Downside', 'right')}
-                {renderHeader('rating', 'Consensus Rating', 'center')}
-                <th className="px-4 py-3.5 text-center text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans w-[100px]">7D Chart</th>
+                {renderHeader('peRatio', 'PE\nRatio', 'right')}
+                {renderHeader('target', 'Our\nTarget', 'right')}
+                {renderHeader('upside', 'Upside\nDownside', 'right')}
+                {renderHeader('rating', 'Consensus\nRating', 'center')}
+                <th className="px-4 py-3.5 text-center text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans w-[100px] whitespace-pre-line bg-[#0e0d25]">7D\nChart</th>
               </tr>
             </thead>
 
@@ -234,7 +234,7 @@ export default function StockExplorer() {
                                 {stock.sector}
                               </span>
                             </div>
-                            <p className="text-xs text-text-secondary font-medium font-dm-sans truncate">{stock.name}</p>
+                            <p className="text-[10px] text-text-secondary font-medium font-dm-sans truncate">{stock.name}</p>
                           </div>
                         </div>
                       </td>

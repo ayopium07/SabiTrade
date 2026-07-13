@@ -908,37 +908,141 @@ export default function Page() {
     };
 
     return (
-      <div className="space-y-6">
-
-        {/* ─── Premium Tab Switched Navigation ─── */}
-        <div className="space-y-5">
-          <div className="flex gap-2 overflow-x-auto pb-1.5 custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-            {([
-              { id: 'report', label: 'Daily Market Report', icon: Newspaper, color: '#CFA343' },
-              { id: 'dividend', label: 'Best Dividend Paying Stocks', icon: Percent, color: '#10B981' },
-              { id: 'growth', label: 'Fast Growing Companies', icon: TrendingUp, color: '#A855F7' },
-              { id: 'analyst', label: 'Top Analyst Picks', icon: Award, color: '#00B8FF' },
-              { id: 'safe', label: 'Play Safe Stocks', icon: Shield, color: '#FFB800' }
-            ] as const).map((tab) => {
-              const TabIcon = tab.icon;
-              const isSelected = activeHomeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveHomeTab(tab.id)}
-                  className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-300 border focus:outline-none"
-                  style={isSelected
-                    ? { backgroundColor: tab.color, borderColor: tab.color, color: '#070615', boxShadow: `0 0 16px ${tab.color}35` }
-                    : { backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
-                >
-                  <TabIcon className="h-3.5 w-3.5" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+        {/* ─── Left Sidebar ─── */}
+        <div className="w-full lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6" style={{ background: '#121212' }}>
+          {/* Menu Navigation */}
+          <div className="p-5 pb-6 border-b border-[#2C2D30]">
+            <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans mb-5">
+              Menu
+            </h3>
+            <div className="flex flex-col gap-2">
+              {([
+                { id: 'report', label: 'Daily Market Report', color: '#D4AF37' },
+                { id: 'dividend', label: 'Best Dividend Paying Stocks', color: '#EC4899' },
+                { id: 'growth', label: 'Fast Growing Companies', color: '#A855F7' },
+                { id: 'analyst', label: 'Top Analyst Picks', color: '#FCD34D' },
+                { id: 'safe', label: 'Play Safe Stocks', color: '#F87171' }
+              ] as const).map((tab) => {
+                const isSelected = activeHomeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveHomeTab(tab.id)}
+                    className="flex items-center justify-between px-3 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 focus:outline-none"
+                    style={isSelected
+                      ? { backgroundColor: '#2D2619', color: '#FFFFFF' }
+                      : { color: '#8B95A5' }}
+                  >
+                    <div className="flex items-center gap-3 w-full">
+                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: tab.color }} />
+                      <span className="flex-1 text-left">{tab.label}</span>
+                      {!isSelected && <ChevronDown className="h-4 w-4 text-[#8B95A5]/70 flex-shrink-0" />}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* ─── Tab Content ─── */}
+          {/* Watchlist Preview Sidebar */}
+          <div className="p-5 pt-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans">
+                Watchlist Preview
+              </h3>
+            </div>
+            
+            <div className="flex flex-col gap-1">
+              {watchStocks.slice(0, 6).map((stock) => {
+                const getCryptoIcon = (ticker: string) => {
+                  switch (ticker.toUpperCase()) {
+                    case 'MTNN':
+                      return (
+                        <div className="w-7 h-7 rounded-full bg-[#F7931A] flex items-center justify-center text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16.624 10.648c.84-1.282.884-2.828.118-4.047-1.026-1.636-3.136-2.072-5.143-1.666V2.368h-1.57v2.441c-.428.082-.86.177-1.293.284V2.368H7.166v2.966c-.958.256-1.888.55-2.775.877l.676 1.832c.571-.21 1.157-.406 1.748-.588v7.925c-.53.125-1.055.263-1.57.412l.628 1.954c.954-.265 1.954-.537 2.973-.787v3.08h1.57v-3.355c.446-.091.895-.182 1.346-.269v3.614h1.57v-3.878c2.408-.344 4.708-1.266 5.617-3.523.63-1.558.117-2.915-.65-3.921zm-4.321 4.542c-1.391.31-2.996.55-4.225.772v-3.79c1.196-.242 2.723-.526 4.015-.815 1.488-.333 2.502.164 2.766 1.134.256.945-.63 2.302-2.556 2.699zm.507-4.831c-1.229.288-2.593.53-3.729.743v-3.327c1.077-.22 2.348-.445 3.468-.674 1.258-.258 2.075.147 2.296.88.22.735-.41 1.996-2.035 2.378z"/>
+                          </svg>
+                        </div>
+                      );
+                    case 'DANGCEM':
+                      return (
+                        <div className="w-7 h-7 rounded-full bg-[#10B981] flex items-center justify-center text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" transform="rotate(-15)">
+                            <path d="M16.624 10.648c.84-1.282.884-2.828.118-4.047-1.026-1.636-3.136-2.072-5.143-1.666V2.368h-1.57v2.441c-.428.082-.86.177-1.293.284V2.368H7.166v2.966c-.958.256-1.888.55-2.775.877l.676 1.832c.571-.21 1.157-.406 1.748-.588v7.925c-.53.125-1.055.263-1.57.412l.628 1.954c.954-.265 1.954-.537 2.973-.787v3.08h1.57v-3.355c.446-.091.895-.182 1.346-.269v3.614h1.57v-3.878c2.408-.344 4.708-1.266 5.617-3.523.63-1.558.117-2.915-.65-3.921zm-4.321 4.542c-1.391.31-2.996.55-4.225.772v-3.79c1.196-.242 2.723-.526 4.015-.815 1.488-.333 2.502.164 2.766 1.134.256.945-.63 2.302-2.556 2.699zm.507-4.831c-1.229.288-2.593.53-3.729.743v-3.327c1.077-.22 2.348-.445 3.468-.674 1.258-.258 2.075.147 2.296.88.22.735-.41 1.996-2.035 2.378z"/>
+                          </svg>
+                        </div>
+                      );
+                    case 'ZENITHBANK':
+                      return (
+                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center overflow-hidden">
+                          <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                            <path fill="#E15132" d="M12 21.6A9.6 9.6 0 1012 2.4a9.6 9.6 0 000 19.2z"/>
+                            <path fill="#FFF" d="M9 13.5c1.5-1.5 4.5-1.5 6 0l2 2a7 7 0 01-10 0l2-2z"/>
+                            <circle fill="#000" cx="10" cy="11" r="1.5"/>
+                            <circle fill="#000" cx="14" cy="11" r="1.5"/>
+                            <path fill="#000" d="M11 13.5h2l-1 1.5z"/>
+                          </svg>
+                        </div>
+                      );
+                    case 'GTCO':
+                      return (
+                        <div className="w-7 h-7 rounded-full bg-[#EF4444] flex items-center justify-center">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 2L2 21h20L12 2zm0 4.5l6.5 12.5h-13L12 6.5z"/>
+                          </svg>
+                        </div>
+                      );
+                    default:
+                      return (
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: stock.change >= 0 ? '#10B981' : '#EF4444' }}>
+                          {stock.ticker.charAt(0)}
+                        </div>
+                      );
+                  }
+                };
+
+                const min = Math.min(...stock.sparkline);
+                const max = Math.max(...stock.sparkline);
+                const range = max - min || 1;
+                const W = 60;
+                const H = 20;
+
+                const points = stock.sparkline.map((val, idx) => ({
+                  x: (idx / (stock.sparkline.length - 1)) * W,
+                  y: H - 2 - ((val - min) / range) * (H - 4),
+                }));
+                const linePath = points.reduce((d, p, i) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
+                const lineColor = stock.change >= 0 ? '#10B981' : '#EF4444';
+
+                return (
+                  <button key={stock.ticker} onClick={() => setSelectedTicker(stock.ticker)}
+                    className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors focus:outline-none text-left w-full group gap-4">
+                    <div className="flex items-center gap-4">
+                      {getCryptoIcon(stock.ticker)}
+                      <span className="text-[14px] font-bold text-[#8B95A5]">
+                        {stock.ticker}
+                      </span>
+                    </div>
+                    <div className="flex-1 h-6 opacity-80 group-hover:opacity-100 transition-opacity">
+                      <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+                        <path d={linePath} fill="none" stroke={lineColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <button onClick={() => setView('markets')}
+              className="mt-6 text-[12px] font-bold text-[#D4AF37] hover:underline font-dm-sans focus:outline-none w-full text-left px-2">
+              Manage all stocks &gt;
+            </button>
+          </div>
+        </div>
+
+        {/* ─── Main Content Area ─── */}
+        <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
           {activeHomeTab === 'report' && (
             <div className="space-y-6 animate-in fade-in duration-300 text-left">
               <MarketStatus />
@@ -1046,110 +1150,8 @@ export default function Page() {
               </div>
             </div>
           )}
-        </div>
 
-        {/* Watchlist Preview */}
-        <div className="rounded-2xl border border-border overflow-hidden"
-          style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
-            <h3 className="text-[10px] font-extrabold text-text-secondary uppercase tracking-widest font-dm-sans">
-              Watchlist Preview
-            </h3>
-            <button onClick={() => setView('markets')}
-              className="text-[10px] font-bold text-brand-primary hover:underline font-dm-sans focus:outline-none">
-              Manage all stocks →
-            </button>
-          </div>
-
-          <div className="p-4 sm:p-5">
-            {watchStocks.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {watchStocks.map((stock) => {
-                  const isPos = stock.change >= 0;
-                  const color = isPos ? '#10B981' : '#FF4D4D';
-                  return (
-                    <button key={stock.ticker} onClick={() => setSelectedTicker(stock.ticker)}
-                      className="p-4 rounded-xl text-left transition-all duration-200 border group focus:outline-none animate-in fade-in"
-                      style={{ background: '#070615', borderColor: '#23214C' }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = color;
-                        (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 16px ${color}20`;
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = '#23214C';
-                        (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
-                      }}>
-                      <span className="text-xs font-extrabold font-sora block mb-0.5"
-                        style={{ color, textShadow: `0 0 8px ${color}50` }}>
-                        {stock.ticker}
-                      </span>
-                      <span className="text-sm font-extrabold text-text-primary font-sora block mb-1.5">
-                        ₦{stock.price.toFixed(2)}
-                      </span>
-                      <span className={`inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-lg ${isPos ? 'bg-brand-primary/10 text-brand-primary' : 'bg-danger/10 text-danger'
-                        }`}>
-                        {isPos ? '+' : ''}{stock.change.toFixed(1)}%
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="p-8 border border-dashed border-border/50 rounded-xl text-center text-xs text-text-secondary font-medium font-dm-sans">
-                <span className="text-2xl block mb-2">⭐️</span>
-                <span>Watchlist is empty. Start tracking your first NGX stock!</span>
-                <button onClick={() => setView('markets')}
-                  className="mt-3 block mx-auto px-4 py-2 rounded-xl text-[10px] font-bold text-bg-base focus:outline-none"
-                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 10px rgba(207,163,67,0.3)' }}>
-                  Add stocks
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* News Feed Snippet */}
-        <div className="space-y-3">
-          <h3 className="text-[10px] font-extrabold text-text-secondary uppercase tracking-widest font-dm-sans">
-            AI News Snapshot
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {news.slice(0, 2).map((news) => {
-              const dotColors = { Positive: '#10B981', Negative: '#FF4D4D', Neutral: '#FFB800' };
-              const dot = dotColors[news.marketImpact];
-              return (
-                <div key={news.id} onClick={() => setView('news')}
-                  className="rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-300 group border text-left"
-                  style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)', borderColor: '#23214C', borderLeft: `3px solid ${dot}` }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = `${dot}50`;
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px ${dot}12`;
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = '#23214C';
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-                  }}>
-                  <div className="flex items-center justify-between text-[8px] font-bold text-text-secondary uppercase tracking-wider font-dm-sans mb-2">
-                    <span>{news.source} · {news.timeAgo}</span>
-                    <span className="px-1.5 py-0.5 rounded-lg border text-[9px]"
-                      style={{ color: dot, borderColor: `${dot}30`, background: `${dot}10` }}>
-                      {news.marketImpact}
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-text-primary line-clamp-2 group-hover:text-brand-primary transition-colors mb-1.5">
-                    {news.originalHeadline}
-                  </h4>
-                  <p className="text-xs text-text-secondary font-medium line-clamp-2 leading-relaxed font-dm-sans">
-                    {news.aiSummary}
-                  </p>
-                  <div className="flex items-center gap-1 mt-3 pt-2.5 border-t border-border/40 text-[9px] text-brand-primary font-bold uppercase tracking-wider">
-                    <span>Read analysis</span>
-                    <span>→</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {/* AI News Snapshot (only show on report tab for cleanliness, or always?) Let's keep it below */}
         </div>
       </div>
     );
@@ -1850,14 +1852,14 @@ export default function Page() {
   // When `children` is present, a ChevronDown is rendered and the item becomes a dropdown trigger.
   // Desktop nav — all items as flat links
   const allNavItems = [
-    { id: 'home', label: 'Overview' },
+    { id: 'home', label: 'Dashboard' },
     { id: 'markets', label: 'Markets' },
-    { id: 'portfolio', label: 'Portfolio' },
     { id: 'news', label: 'News & Insights', badge: true },
+    { id: 'portfolio', label: 'Portfolio' },
     { id: 'trade', label: 'Trade' },
-    { id: 'community', label: 'Marketplace' },
+    { id: 'community', label: 'Community' },
     { id: 'learn', label: 'Learn' },
-    { id: 'about', label: 'About us' },
+    { id: 'about', label: 'About Us' },
   ] as const;
 
   // Items hidden inside the "More" dropdown
@@ -1892,136 +1894,118 @@ export default function Page() {
       {/* ══════════════════════════════════════════════════════
           DESKTOP TOP NAVIGATION
           ══════════════════════════════════════════════════════ */}
-      <header className="hidden lg:block sticky top-0 z-40 glass-nav">
-        <div className="max-w-7xl mx-auto px-8 flex items-center justify-between" style={{ height: '56px' }}>
+      <header className="hidden lg:flex sticky top-0 z-40 items-center border-t-[3px]" style={{ background: '#191A1D', borderTopColor: '#53A6F6', height: '60px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+        <div className="w-full max-w-[1600px] mx-auto px-6 flex items-center justify-between" style={{ height: '100%' }}>
 
-          {/* ── Brand ───────────────────────────────────────── */}
-          <button
-            onClick={() => setView('landing')}
-            className="flex items-center gap-3 flex-shrink-0 pr-8 border-r border-border/40 text-left focus:outline-none group"
-          >
-            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
-              style={{ boxShadow: '0 0 12px rgba(207,163,67,0.35)' }}>
-              <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
-            </div>
-            <div className="leading-none">
-              <span className="font-sora font-extrabold text-sm tracking-tight text-text-primary block group-hover:text-brand-primary transition-colors">EquityStack</span>
-              <span className="text-[8px] font-bold text-brand-primary uppercase tracking-[0.15em] block mt-0.5">NGX Intelligence</span>
-            </div>
-          </button>
+          <div className="flex items-center">
+            {/* ── Brand ───────────────────────────────────────── */}
+            <button
+              onClick={() => setView('landing')}
+              className="flex items-center gap-3 flex-shrink-0 text-left focus:outline-none group mr-24"
+            >
+              <div className="h-9 w-9 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
+                <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
+              </div>
+              <div className="leading-none mt-0.5">
+                <span className="font-sora font-medium text-[15px] tracking-tight text-white block">EquityStack</span>
+                <span className="text-[10px] font-medium block mt-[3px]" style={{ color: '#D3A84B' }}>NGX Intelligence</span>
+              </div>
+            </button>
 
-          {/* ── Nav Links ── */}
-          <nav className="flex items-center flex-1 px-6">
-            {allNavItems.map((item) => {
-              const isActive = currentView === item.id ||
-                (item.id === 'markets' && currentView === 'stock-detail');
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setView(item.id as Parameters<typeof setView>[0])}
-                  className="relative flex items-center gap-1.5 px-3 py-1 text-sm font-semibold transition-colors duration-200 focus:outline-none whitespace-nowrap"
-                  style={{ color: isActive ? '#CFA343' : 'rgba(255,255,255,0.55)' }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.9)'; }}
-                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.55)'; }}
-                >
-                  <span>{item.label}</span>
-                  {'badge' in item && item.badge && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" style={{ boxShadow: '0 0 4px rgba(207,163,67,0.8)' }} />
-                  )}
-                  {isActive && (
-                    <span className="absolute left-0 right-0 h-px rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)', boxShadow: '0 0 8px rgba(207,163,67,0.6)', bottom: '-9px' }} />
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+
+
+            {/* ── Nav Links ── */}
+            <nav className="flex items-center gap-2">
+              {allNavItems.map((item) => {
+                const isActive = currentView === item.id ||
+                  (item.id === 'markets' && currentView === 'stock-detail');
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setView(item.id as Parameters<typeof setView>[0])}
+                    className="relative flex items-center justify-center px-4 py-1.5 rounded-md text-[13.5px] font-medium transition-all duration-150 focus:outline-none whitespace-nowrap"
+                    style={{
+                      color: isActive ? '#ffffff' : '#D3A84B',
+                      background: isActive ? '#3F392B' : 'transparent',
+                    }}
+                    onMouseEnter={e => {
+                      if (!isActive) {
+                        (e.currentTarget as HTMLButtonElement).style.color = '#F2C96D';
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!isActive) {
+                        (e.currentTarget as HTMLButtonElement).style.color = '#D3A84B';
+                      }
+                    }}
+                  >
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
 
           {/* ── Right Controls ──────────────────────────────── */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Search Button */}
+          <div className="flex items-center gap-5 flex-shrink-0">
+            {/* Search */}
             <button
               onClick={() => setIsHeaderSearchOpen(true)}
-              className="p-2 rounded-lg transition-all focus:outline-none"
-              style={{ color: 'rgba(255,255,255,0.5)' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.5)')}
-              title="Search Stocks"
+              className="flex items-center justify-center transition-all focus:outline-none"
+              style={{ color: '#A855F7' }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.color = '#C084FC';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.color = '#A855F7';
+              }}
+              title="Search"
             >
-              <Search className="h-4.5 w-4.5" />
+              <Search className="h-[22px] w-[22px]" strokeWidth={2.5} />
             </button>
 
             {/* Notifications */}
             <button
-              className="relative p-2 rounded-lg transition-all focus:outline-none"
-              style={{ color: 'rgba(255,255,255,0.5)' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF')}
-              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.5)')}
+              className="flex items-center justify-center transition-all focus:outline-none"
+              style={{ color: '#E0E0E0' }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.color = '#E0E0E0';
+              }}
               title="Notifications"
             >
-              <Bell className="h-4.5 w-4.5" />
-              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full"
-                style={{ background: '#10B981', boxShadow: '0 0 4px rgba(207,163,67,0.8)' }} />
+              <Bell className="h-5 w-5" strokeWidth={2} />
             </button>
 
-            {/* Divider */}
-            <div className="h-5 w-px mx-1" style={{ background: 'rgba(35,33,76,0.8)' }} />
-
-            {/* User Profile Avatar */}
+            {/* Avatar */}
             <button
               onClick={() => setView('profile')}
-              className="h-8.5 w-8.5 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none border border-transparent"
-              style={{
-                background: currentView === 'profile' ? 'rgba(207,163,67,0.15)' : 'transparent',
-                borderColor: currentView === 'profile' ? '#CFA343' : 'transparent',
-              }}
-              onMouseEnter={e => {
-                if (currentView !== 'profile') {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)';
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(207,163,67,0.3)';
-                }
-              }}
-              onMouseLeave={e => {
-                if (currentView !== 'profile') {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent';
-                }
-              }}
+              className="flex items-center justify-center w-[30px] h-[30px] rounded-full focus:outline-none overflow-hidden flex-shrink-0"
+              style={{ border: '1px solid rgba(255,255,255,0.2)' }}
               title="Profile"
             >
-              {/* Avatar circle */}
-              <div
-                className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-extrabold text-bg-base flex-shrink-0"
-                style={{
-                  background: 'linear-gradient(135deg, #CFA343, #B58C35)',
-                  boxShadow: '0 0 8px rgba(207,163,67,0.3)',
-                }}
-              >
-                {user?.name.slice(0, 2).toUpperCase()}
-              </div>
+              <img src="https://i.pravatar.cc/150?img=47" alt="Avatar" className="h-full w-full object-cover" />
             </button>
 
-            {/* Logout */}
+            {/* Logout Icon */}
             <button
               onClick={logoutUser}
-              className="p-2 rounded-lg transition-all focus:outline-none"
-              style={{ color: 'rgba(255,255,255,0.4)' }}
+              className="flex items-center justify-center transition-all focus:outline-none ml-2"
+              style={{ color: '#E0E0E0' }}
               onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.color = '#FF4D4D';
-                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,77,77,0.06)';
+                (e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF';
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.4)';
-                (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                (e.currentTarget as HTMLButtonElement).style.color = '#E0E0E0';
               }}
               title="Sign out"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-[18px] w-[18px]" strokeWidth={2.5} />
             </button>
           </div>
         </div>
-
-        {/* Active-page green bottom border line */}
-        <div className="h-px w-full" style={{ background: 'rgba(207,163,67,0.06)' }} />
       </header>
 
       {/* ══════════════════════════════════════════════════════
