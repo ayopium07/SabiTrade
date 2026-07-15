@@ -46,7 +46,9 @@ import Stock101 from '@/components/Stock101';
 import Community from '@/components/Community';
 import TradePage from '@/components/TradePage';
 import FeatureCards from '@/components/FeatureCards';
-
+import DashboardNewsPortfolio from '@/components/DashboardNewsPortfolio';
+import TickerTape from '@/components/TickerTape';
+import Footer from '@/components/Footer';
 // ─── NGX Ticker Carousel ──────────────────────────────
 const ngxTickerData = [
   { id: 'GTCO', name: 'GTCO', badge: 'GTCO', price: '₦56,623.54', change: '1.41%', up: true, initials: 'GT', bg: '#C0392B', sparkPath: 'M0 22 C15 17,25 20,40 13 S60 9,75 11 S90 7,100 9' },
@@ -674,6 +676,10 @@ export default function Page() {
 
   const [emailInput, setEmailInput] = useState('');
   const [nameInput, setNameInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [confirmInput, setConfirmInput] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState('');
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
@@ -685,10 +691,23 @@ export default function Page() {
   const [activeStep, setActiveStep] = useState(1);
   const [isLandingMenuOpen, setIsLandingMenuOpen] = useState(false);
 
+  const switchAuthMode = (mode: 'login' | 'signup') => {
+    setAuthMode(mode);
+    setAuthError('');
+    setPasswordInput('');
+    setConfirmInput('');
+    setShowPassword(false);
+  };
+
   React.useEffect(() => {
     fetchMarketData();
     fetchNews();
   }, [fetchMarketData, fetchNews]);
+
+  // Scroll to top on every view change (including refresh)
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [currentView]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -710,7 +729,40 @@ export default function Page() {
 
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (emailInput.trim()) loginUser(nameInput.trim() || 'Investor', emailInput.trim());
+    setAuthError('');
+
+    // ── Validation ──────────────────────────────────────
+    if (!emailInput.trim()) {
+      setAuthError('Please enter your email address.');
+      return;
+    }
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(emailInput.trim())) {
+      setAuthError('Please enter a valid email address.');
+      return;
+    }
+    if (!passwordInput) {
+      setAuthError('Please enter your password.');
+      return;
+    }
+    if (authMode === 'signup') {
+      if (!nameInput.trim()) {
+        setAuthError('Please enter your full name.');
+        return;
+      }
+      if (passwordInput.length < 8) {
+        setAuthError('Password must be at least 8 characters.');
+        return;
+      }
+      if (passwordInput !== confirmInput) {
+        setAuthError('Passwords do not match.');
+        return;
+      }
+    }
+
+    // ── All valid: proceed ──────────────────────────────
+    setIsAuthModalOpen(false);
+    loginUser(nameInput.trim() || emailInput.split('@')[0], emailInput.trim());
   };
 
   const handleOnboardingNext = (e?: React.MouseEvent) => {
@@ -1048,6 +1100,7 @@ export default function Page() {
               <MarketStatus />
               <TopMovers />
               <AIDailyBrief />
+              <DashboardNewsPortfolio />
             </div>
           )}
 
@@ -1231,109 +1284,238 @@ export default function Page() {
   );
 
 
-  const renderAuthModal = () => (
-    <>
-      {/* ── Auth Modal ── */}
-      {isAuthModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
-          style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
-          <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden animate-in zoom-in-95 duration-300"
-            style={{ background: 'rgba(8,29,56,0.97)', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
-            {/* Top border */}
-            <div className="absolute top-0 left-0 right-0 h-px"
-              style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
-            {/* Ambient glow */}
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none"
-              style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.12) 0%, transparent 70%)' }} />
+  const renderAuthModal = () => {
+    const pwStrength = (() => {
+      if (!passwordInput) return 0;
+      let s = 0;
+      if (passwordInput.length >= 8) s++;
+      if (/[A-Z]/.test(passwordInput)) s++;
+      if (/[0-9]/.test(passwordInput)) s++;
+      if (/[^A-Za-z0-9]/.test(passwordInput)) s++;
+      return s;
+    })();
+    const pwColors = ['#FF4D4F', '#FF7B00', '#CFA343', '#00D395'];
+    const pwLabels = ['Weak', 'Fair', 'Good', 'Strong'];
 
-            {/* Close */}
-            <button onClick={() => setIsAuthModalOpen(false)}
-              className="absolute top-4 right-4 text-text-secondary hover:text-text-primary p-2 rounded-full transition-colors focus:outline-none"
-              style={{ background: 'rgba(8,29,56,0.8)' }}>
-              ✕
-            </button>
+    return (
+      <>
+        {isAuthModalOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}
+            onClick={() => setIsAuthModalOpen(false)}
+          >
+            <div
+              className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden"
+              style={{ background: '#0B0919', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.9)' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Top gradient border */}
+              <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
+              {/* Ambient glow */}
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.1) 0%, transparent 70%)' }} />
 
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-5">
-                <div className="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center"
-                  style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
-                  <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
-                </div>
-                <span className="font-sora font-extrabold text-text-primary text-sm">EquityStack</span>
-              </div>
-
-              <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-                style={{ textShadow: '0 0 20px rgba(207,163,67,0.3)' }}>
-                {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back'}
-              </h2>
-              <p className="text-xs text-text-secondary font-medium mb-6 font-dm-sans">
-                {authMode === 'signup'
-                  ? 'Join thousands of retail investors compounding wealth on the NGX.'
-                  : 'Enter your credentials to access your intelligence dashboard.'}
-              </p>
-
-              <form onSubmit={handleAuthSubmit} className="space-y-4">
-                {authMode === 'signup' && (
-                  <div>
-                    <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Full Name</label>
-                    <input type="text" required placeholder="e.g. Tunde Balogun" value={nameInput}
-                      onChange={(e) => setNameInput(e.target.value)}
-                      className={inputCls} style={inputStyle}
-                      onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.4)')}
-                      onBlur={e => (e.target.style.borderColor = '#23214C')} />
-                  </div>
-                )}
-                <div>
-                  <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">Email Address</label>
-                  <input type="email" required placeholder="e.g. tunde@gmail.com" value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    className={inputCls} style={inputStyle}
-                    onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.4)')}
-                    onBlur={e => (e.target.style.borderColor = '#23214C')} />
-                </div>
-                <button type="submit"
-                  className="w-full py-3 rounded-xl text-xs font-bold transition-all text-bg-base mt-2 focus:outline-none"
-                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
-                  {authMode === 'signup' ? 'Sign Up for Free' : 'Sign In Now'}
-                </button>
-              </form>
-
-              {/* Divider */}
-              <div className="relative my-5 flex items-center">
-                <div className="flex-grow border-t border-border/50" />
-                <span className="mx-3 text-[10px] font-bold text-text-secondary uppercase px-1"
-                  style={{ background: 'transparent' }}>Or</span>
-                <div className="flex-grow border-t border-border/50" />
-              </div>
-
-              {/* Google Auth */}
-              <button onClick={() => loginUser('Mock User', 'user@gmail.com')}
-                className="w-full py-2.5 rounded-xl text-xs font-bold text-text-primary flex items-center justify-center gap-2 transition-all focus:outline-none border border-border/50"
-                style={{ background: 'rgba(14,13,37,0.6)' }}
-                onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,230,118,0.2)')}
-                onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(35,33,76,0.5)')}>
-                <svg className="h-4 w-4" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" />
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6.16-4.53z" />
-                </svg>
-                Connect via Google Account
+              {/* Close */}
+              <button
+                onClick={() => setIsAuthModalOpen(false)}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-[#7B7E8E] hover:text-white transition-colors focus:outline-none"
+                style={{ background: 'rgba(255,255,255,0.05)' }}
+              >
+                ✕
               </button>
 
-              <p className="mt-5 text-center text-[11px] font-medium text-text-secondary">
-                {authMode === 'signup' ? 'Already have an account?' : 'Need to register?'}
-                <button onClick={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')}
-                  className="ml-1 text-brand-primary font-bold hover:underline focus:outline-none">
-                  {authMode === 'signup' ? 'Sign In' : 'Sign Up'}
+              <div className="relative z-10">
+                {/* Brand */}
+                <div className="flex items-center gap-2.5 mb-6">
+                  <div className="h-9 w-9 rounded-xl overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
+                    <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
+                  </div>
+                  <span className="font-sora font-extrabold text-white text-sm tracking-tight">EquityStack</span>
+                </div>
+
+                {/* Mode tabs */}
+                <div className="flex gap-1 p-1 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                  {(['signup', 'login'] as const).map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => switchAuthMode(m)}
+                      className="flex-1 py-2 rounded-lg text-[12px] font-bold transition-all focus:outline-none"
+                      style={{
+                        background: authMode === m ? '#CFA343' : 'transparent',
+                        color:      authMode === m ? '#0E0B14' : '#7B7E8E',
+                      }}
+                    >
+                      {m === 'signup' ? 'Create Account' : 'Sign In'}
+                    </button>
+                  ))}
+                </div>
+
+                <h2 className="text-xl font-extrabold font-sora tracking-tight mb-1 text-white">
+                  {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back 👋'}
+                </h2>
+                <p className="text-[11px] text-[#7B7E8E] font-medium mb-5">
+                  {authMode === 'signup'
+                    ? 'Join thousands of retail investors on the NGX.'
+                    : 'Enter your credentials to access your dashboard.'}
+                </p>
+
+                {/* Error banner */}
+                {authError && (
+                  <div className="mb-4 px-4 py-2.5 rounded-xl text-[11px] font-bold flex items-center gap-2" style={{ background: 'rgba(255,77,79,0.1)', border: '1px solid rgba(255,77,79,0.25)', color: '#FF4D4F' }}>
+                    <span>⚠</span> {authError}
+                  </div>
+                )}
+
+                <form onSubmit={handleAuthSubmit} className="space-y-4" noValidate>
+                  {/* Full Name — signup only */}
+                  {authMode === 'signup' && (
+                    <div>
+                      <label className="block text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider mb-1.5">Full Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Tunde Balogun"
+                        value={nameInput}
+                        onChange={(e) => { setNameInput(e.target.value); setAuthError(''); }}
+                        className={inputCls}
+                        style={inputStyle}
+                        onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.5)')}
+                        onBlur={e => (e.target.style.borderColor = '#23214C')}
+                      />
+                    </div>
+                  )}
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider mb-1.5">Email Address</label>
+                    <input
+                      type="email"
+                      placeholder="e.g. tunde@gmail.com"
+                      value={emailInput}
+                      onChange={(e) => { setEmailInput(e.target.value); setAuthError(''); }}
+                      className={inputCls}
+                      style={inputStyle}
+                      onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.5)')}
+                      onBlur={e => (e.target.style.borderColor = '#23214C')}
+                    />
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider">Password</label>
+                      {authMode === 'login' && (
+                        <button type="button" className="text-[10px] text-[#CFA343] font-bold hover:underline focus:outline-none">
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder={authMode === 'signup' ? 'At least 8 characters' : 'Enter your password'}
+                        value={passwordInput}
+                        onChange={(e) => { setPasswordInput(e.target.value); setAuthError(''); }}
+                        className={`${inputCls} pr-12`}
+                        style={inputStyle}
+                        onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.5)')}
+                        onBlur={e => (e.target.style.borderColor = '#23214C')}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(s => !s)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7B7E8E] hover:text-white transition-colors focus:outline-none text-[11px] font-bold"
+                      >
+                        {showPassword ? 'HIDE' : 'SHOW'}
+                      </button>
+                    </div>
+
+                    {/* Password strength bar — signup only */}
+                    {authMode === 'signup' && passwordInput && (
+                      <div className="mt-2">
+                        <div className="flex gap-1 mb-1">
+                          {[1,2,3,4].map(i => (
+                            <div key={i} className="h-1 flex-1 rounded-full transition-all" style={{ background: i <= pwStrength ? pwColors[pwStrength - 1] : 'rgba(255,255,255,0.08)' }} />
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-bold" style={{ color: pwColors[pwStrength - 1] || '#7B7E8E' }}>
+                          {pwStrength > 0 ? pwLabels[pwStrength - 1] : ''}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Confirm Password — signup only */}
+                  {authMode === 'signup' && (
+                    <div>
+                      <label className="block text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider mb-1.5">Confirm Password</label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Re-enter your password"
+                          value={confirmInput}
+                          onChange={(e) => { setConfirmInput(e.target.value); setAuthError(''); }}
+                          className={`${inputCls} pr-10`}
+                          style={inputStyle}
+                          onFocus={e => (e.target.style.borderColor = confirmInput && confirmInput !== passwordInput ? 'rgba(255,77,79,0.5)' : 'rgba(207,163,67,0.5)')}
+                          onBlur={e => (e.target.style.borderColor = '#23214C')}
+                        />
+                        {confirmInput && (
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px]">
+                            {confirmInput === passwordInput ? '✓' : '✗'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    className="w-full py-3 rounded-xl text-[12px] font-extrabold transition-all text-[#0E0B14] mt-2 focus:outline-none hover:opacity-90 active:scale-[0.98]"
+                    style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 20px rgba(207,163,67,0.35)' }}
+                  >
+                    {authMode === 'signup' ? 'Create My Account →' : 'Sign In →'}
+                  </button>
+                </form>
+
+                {/* Divider */}
+                <div className="relative my-5 flex items-center">
+                  <div className="flex-grow border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+                  <span className="mx-3 text-[10px] font-bold text-[#44475A] uppercase">or continue with</span>
+                  <div className="flex-grow border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+                </div>
+
+                {/* Google */}
+                <button
+                  onClick={() => { loginUser(nameInput.trim() || 'Google User', emailInput.trim() || 'user@gmail.com'); setIsAuthModalOpen(false); }}
+                  className="w-full py-2.5 rounded-xl text-[12px] font-bold text-white flex items-center justify-center gap-2.5 transition-all focus:outline-none border hover:opacity-80"
+                  style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
+                >
+                  <svg className="h-4 w-4 flex-shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  </svg>
+                  Google
                 </button>
-              </p>
+
+                <p className="mt-5 text-center text-[11px] font-medium text-[#7B7E8E]">
+                  {authMode === 'signup' ? 'Already have an account?' : "Don't have an account?"}
+                  <button
+                    onClick={() => switchAuthMode(authMode === 'signup' ? 'login' : 'signup')}
+                    className="ml-1 text-[#CFA343] font-bold hover:underline focus:outline-none"
+                  >
+                    {authMode === 'signup' ? 'Sign In' : 'Sign Up for Free'}
+                  </button>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </>
-  );
+        )}
+      </>
+    );
+  };
 
   // ══════════════════════════════════════════════════════════
   // A. LANDING / SPLASH SCREEN
@@ -1669,7 +1851,7 @@ export default function Page() {
   // ══════════════════════════════════════════════════════════
   if (currentView === 'onboarding') {
     return (
-      <div className="min-h-screen bg-bg-base flex flex-col py-10 px-4 sm:px-6 relative font-dm-sans">
+      <div className="min-h-screen bg-[#0E0B14] flex flex-col py-10 px-4 sm:px-6 relative font-dm-sans">
         {/* Ambient */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
@@ -1837,9 +2019,10 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="max-w-xl mx-auto w-full text-center text-[10px] text-text-secondary font-medium font-dm-sans border-t border-border/30 pt-5 mt-6 relative z-10">
+        <div className="max-w-xl mx-auto w-full text-center text-[10px] text-text-secondary font-medium font-dm-sans border-t border-border/30 pt-5 mt-6 relative z-10 mb-12">
           EquityStack Onboarding · Secure · Paperless · BVN exempt
         </div>
+        <Footer />
       </div>
     );
   }
@@ -1854,7 +2037,7 @@ export default function Page() {
   const allNavItems = [
     { id: 'home', label: 'Dashboard' },
     { id: 'markets', label: 'Markets' },
-    { id: 'news', label: 'News & Insights', badge: true },
+    { id: 'news', label: 'News', badge: true },
     { id: 'portfolio', label: 'Portfolio' },
     { id: 'trade', label: 'Trade' },
     { id: 'community', label: 'Community' },
@@ -1889,8 +2072,8 @@ export default function Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg-base font-dm-sans flex flex-col">
-
+    <div className="min-h-screen bg-[#0E0B14] font-dm-sans flex flex-col">
+      <TickerTape />
       {/* ══════════════════════════════════════════════════════
           DESKTOP TOP NAVIGATION
           ══════════════════════════════════════════════════════ */}
@@ -2043,10 +2226,10 @@ export default function Page() {
           MAIN CONTENT
           ══════════════════════════════════════════════════════ */}
       <main className="flex-grow flex flex-col">
-        <div className={`flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 ${currentView === 'markets' || currentView === 'portfolio' || currentView === 'trade' ? 'max-w-7xl' : 'max-w-6xl'
-          }`}>
+        <div className="flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 max-w-[100%]">
           {renderViewContent()}
         </div>
+        <Footer />
       </main>
 
       {/* ══════════════════════════════════════════════════════
@@ -2264,6 +2447,7 @@ export default function Page() {
           </div>
         </div>
       )}
+
     </div>
   );
 }

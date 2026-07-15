@@ -5,18 +5,7 @@ import { Calendar, Info, TrendingUp } from 'lucide-react';
 export default function MarketStatus() {
   const [chartType, setChartType] = useState<'candlestick' | 'line'>('candlestick');
   const data = useAppStore((state) => state.indexData);
-  const stocks = useAppStore((state) => state.stocks);
   const isPositive = data.change >= 0;
-
-  // Get marquee tickers dynamically
-  const tickerItems = stocks.slice(0, 10).map(s => ({
-    label: s.ticker,
-    value: `₦${s.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`,
-    change: `${s.change >= 0 ? '+' : ''}${s.change.toFixed(1)}%`,
-    up: s.change >= 0
-  }));
-
-  const allTickers = [...tickerItems, ...tickerItems];
 
   // Specific candlestick data to match the image
   const candles = [
@@ -98,22 +87,6 @@ export default function MarketStatus() {
 
   return (
     <div className="space-y-6">
-      {/* ── Top Ticker Strip ── */}
-      <div className="rounded-xl overflow-hidden border border-border/20 bg-[#191A1D]">
-        <div className="ticker-track py-2.5">
-          {allTickers.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-2 mx-6 text-[10px] font-bold font-dm-sans flex-shrink-0">
-              <span className="text-text-secondary tracking-widest uppercase">{item.label}:</span>
-              <span className="text-text-primary font-sora">{item.value}</span>
-              <span className={item.up ? 'text-gain' : 'text-danger'}>
-                {item.change}
-              </span>
-              <span className="text-border/40 ml-4">|</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
       {/* ── Main Chart Area ── */}
       <div className="rounded-2xl border border-border overflow-hidden" style={{ background: '#191A1D' }}>
         <div className="p-6">
@@ -134,7 +107,6 @@ export default function MarketStatus() {
 
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl font-extrabold text-[#10B981] tracking-tight">₿</span>
                   <h2 className="text-3xl lg:text-4xl font-bold font-sora text-[#10B981] tracking-tight">
                     {data.allShareIndex.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                   </h2>

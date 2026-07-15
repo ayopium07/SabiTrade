@@ -9,11 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Dark base surfaces (Deep luxurious Navy Blue)
-        "bg-base":    "#041226",
-        "bg-surface": "#081D38",
-        "bg-raised":  "#102A4E",
-        "bg-hover":   "#163969",
+        // Dark base surfaces (Landing page purple-black)
+        "bg-base":    "#0E0B14",
+        "bg-surface": "#141020",
+        "bg-raised":  "#1C1728",
+        "bg-hover":   "#251F33",
 
         // Brand — elegant gold identity
         "brand-primary":       "#CFA343",
@@ -40,7 +40,7 @@ const config: Config = {
         gain:    "#10B981", // Emerald green strictly for stock gainers/increases
 
         // Legacy (kept for compat)
-        background: "#041226",
+        background: "#0E0B14",
         foreground:  "#FFFFFF",
       },
 
@@ -65,8 +65,8 @@ const config: Config = {
       backgroundImage: {
         "gradient-green":      "linear-gradient(135deg, #10B981 0%, #059669 100%)", // strictly for gainers
         "gradient-indigo":     "linear-gradient(135deg, #CFA343 0%, #B58C35 100%)", // core buttons/branding
-        "gradient-dark-indigo":"linear-gradient(135deg, #041226 0%, #081D38 100%)",
-        "gradient-card":       "linear-gradient(145deg, #081D38 0%, #041226 100%)",
+        "gradient-dark-indigo":"linear-gradient(135deg, #0E0B14 0%, #141020 100%)",
+        "gradient-card":       "linear-gradient(145deg, #141020 0%, #0E0B14 100%)",
         "gradient-glow":       "radial-gradient(ellipse at top, rgba(207,163,67,0.06) 0%, transparent 60%)",
         "gradient-hero":       "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(207,163,67,0.08) 0%, transparent 70%)",
       },
