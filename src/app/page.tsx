@@ -2288,7 +2288,7 @@ export default function Page() {
         <div className="flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 max-w-[100%]">
           {renderViewContent()}
         </div>
-        {currentView === 'dashboard' && (
+        {currentView === 'home' && (
           <div className="px-4 sm:px-6 lg:px-8 w-full">
             <TrendingStocks />
           </div>
