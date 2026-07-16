@@ -66,14 +66,14 @@ export default function TopMovers() {
   return (
     <div className="w-full">
       {/* ── Header ─────────────────────────────────────────── */}
-      <div className="flex items-end justify-between pb-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between pb-4 gap-4 md:gap-0">
         <div>
           <h3 className="text-lg font-bold text-text-primary font-sora">Top Movers</h3>
           <p className="text-[11px] text-text-secondary font-dm-sans mt-0.5">NGX today · 15-min delay</p>
         </div>
 
         {/* Pill switcher */}
-        <div className="flex border border-border/40 p-1 rounded-2xl gap-1">
+        <div className="flex overflow-x-auto hide-scrollbar border border-border/40 p-1 rounded-2xl gap-1 flex-shrink-0 w-full md:w-auto">
           <button
             onClick={() => setActiveTab('gainers')}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${
@@ -121,8 +121,8 @@ export default function TopMovers() {
         </div>
       </div>
 
-      {/* ── Cards Grid ─────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ── Cards Grid (Horizontal scroll on mobile, Grid on desktop) ─────────────────────────── */}
+      <div className="flex overflow-x-auto pb-4 sm:pb-0 hide-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 snap-x snap-mandatory">
         {movers.map((stock) => {
           const isPos = stock.change > 0;
           const color = isPos ? '#10B981' : '#FF4D4D';
@@ -145,7 +145,7 @@ export default function TopMovers() {
             <button
               key={stock.ticker}
               onClick={() => setSelectedTicker(stock.ticker)}
-              className="border rounded-2xl text-left transition-all duration-300 group focus:outline-none relative overflow-hidden flex flex-col justify-between h-[160px]"
+              className="snap-start flex-shrink-0 w-[220px] sm:w-auto border rounded-2xl text-left transition-all duration-300 group focus:outline-none relative overflow-hidden flex flex-col justify-between h-[160px]"
               style={{
                 background: '#191A1D',
                 borderColor: 'rgba(255,255,255,0.05)',

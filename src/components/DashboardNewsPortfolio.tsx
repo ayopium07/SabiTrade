@@ -9,12 +9,11 @@ export default function DashboardNewsPortfolio() {
   const watchlist = useAppStore((s) => s.watchlist);
   const stocks = useAppStore((s) => s.stocks);
 
-  const [portfolioTab, setPortfolioTab] = useState<'marketNews' | 'portfolio' | 'watchlist' | 'newsletters'>('marketNews');
+  const [portfolioTab, setPortfolioTab] = useState<'portfolio' | 'watchlist' | 'newsletters'>('portfolio');
 
   // Split news for the two columns
   const analysisNews = news.slice(0, 4);
   const marketNews = news.slice(4, 8);
-  const extraNews = news.slice(8, 10); // for the My Portfolio market news tab
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
@@ -109,12 +108,6 @@ export default function DashboardNewsPortfolio() {
           
           <div className="flex items-center gap-4 px-4 py-3 border-b border-white/5 overflow-x-auto no-scrollbar">
             <button 
-              onClick={() => setPortfolioTab('marketNews')}
-              className={`text-[11px] font-bold whitespace-nowrap transition-colors ${portfolioTab === 'marketNews' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
-            >
-              Market News
-            </button>
-            <button 
               onClick={() => setPortfolioTab('portfolio')}
               className={`text-[11px] font-bold whitespace-nowrap transition-colors ${portfolioTab === 'portfolio' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
             >
@@ -135,24 +128,6 @@ export default function DashboardNewsPortfolio() {
           </div>
 
           <div className="p-4 flex-1 flex flex-col gap-3">
-            {portfolioTab === 'marketNews' && (
-              <div className="flex flex-col">
-                {extraNews.map((item) => (
-                  <div key={item.id} className="py-3 border-b border-white/5 last:border-0">
-                    <h4 className="text-[12px] font-semibold text-white/90 leading-tight mb-1 cursor-pointer hover:text-[#D4AF37] transition-colors">{item.originalHeadline}</h4>
-                    <span className="text-[10px] text-white/50">{item.timeAgo} • {item.source}</span>
-                  </div>
-                ))}
-                {extraNews.length === 0 && (
-                  <div className="py-6 text-center text-[12px] text-white/40">No recent market news.</div>
-                )}
-                {/* Add empty dividers to match screenshot */}
-                {Array.from({length: 4}).map((_, i) => (
-                  <div key={i} className="h-10 border-b border-white/5 last:border-0"></div>
-                ))}
-              </div>
-            )}
-
             {portfolioTab === 'portfolio' && (
               <div className="flex flex-col gap-3">
                 {portfolio.length === 0 ? (

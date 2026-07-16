@@ -61,6 +61,7 @@ export interface AppState {
   setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => void;
   setSelectedTicker: (ticker: string) => void;
   loginUser: (name: string, email: string) => void;
+  signInUser: (name: string, email: string) => void;
   setOnboarding: (data: Partial<UserProfile>) => void;
   completeOnboarding: () => void;
   logoutUser: () => void;
@@ -144,6 +145,17 @@ export const useAppStore = create<AppState>()(
       isOnboarded: false,
     },
     currentView: 'onboarding'
+  }),
+
+  signInUser: (name, email) => set({
+    user: {
+      name,
+      email,
+      experienceLevel: 'Beginner',
+      interests: [],
+      isOnboarded: true,
+    },
+    currentView: 'home'
   }),
 
   setOnboarding: (data) => set((state) => ({

@@ -217,7 +217,7 @@ export default function PortfolioTracker() {
                   const color = DONUT_COLORS[idx % DONUT_COLORS.length];
                   return (
                     <div key={h.ticker} onClick={() => setSelectedTicker(h.ticker)}
-                      className="grid grid-cols-12 gap-2 sm:gap-4 items-center px-4 sm:px-5 py-4 cursor-pointer group transition-all"
+                      className="flex flex-col sm:grid sm:grid-cols-12 gap-1 sm:gap-4 items-stretch sm:items-center px-4 sm:px-5 py-4 cursor-pointer group transition-all"
                       style={{ borderLeft: '2px solid transparent' }}
                       onMouseEnter={e => {
                         (e.currentTarget as HTMLDivElement).style.background = 'rgba(99,102,241,0.02)';
@@ -227,29 +227,63 @@ export default function PortfolioTracker() {
                         (e.currentTarget as HTMLDivElement).style.background = 'transparent';
                         (e.currentTarget as HTMLDivElement).style.borderLeftColor = 'transparent';
                       }}>
-                      <div className="col-span-7 sm:col-span-4 flex items-center gap-3">
-                        <span className="h-2.5 w-2.5 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}80` }} />
-                        <div className="truncate">
-                          <span className="text-sm font-extrabold font-sora tracking-tight group-hover:underline"
-                            style={{ color }}>{h.ticker}</span>
-                          <p className="text-xs text-text-secondary font-medium font-dm-sans truncate">{h.stock.name}</p>
+                      {/* Left: Ticker/Name (Desktop & Mobile) */}
+                      <div className="flex justify-between items-center sm:col-span-4 w-full sm:w-auto pb-2 sm:pb-0">
+                        <div className="flex items-center gap-3">
+                          <span className="h-2.5 w-2.5 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}80` }} />
+                          <div className="truncate">
+                            <span className="text-sm font-extrabold font-sora tracking-tight group-hover:underline"
+                              style={{ color }}>{h.ticker}</span>
+                            <p className="text-xs text-text-secondary font-medium font-dm-sans truncate">{h.stock.name}</p>
+                          </div>
+                        </div>
+                        {/* Mobile: Top Right (Current Val & % P&L) */}
+                        <div className="sm:hidden text-right">
+                          <span className="block text-sm font-extrabold text-text-primary font-sora">
+                            ₦{h.currentValue.toLocaleString('en-NG')}
+                          </span>
+                          <span className={`block text-[10px] font-bold ${isPos ? 'text-gain' : 'text-danger'}`}>
+                            {isPos ? '+' : ''}{h.pnlPercent.toFixed(2)}%
+                          </span>
                         </div>
                       </div>
-                      <div className="col-span-3 sm:col-span-2 text-right">
-                        <span className="text-xs font-extrabold text-text-primary font-sora">{h.shares.toLocaleString()}</span>
-                        <span className="block text-[9px] text-text-secondary font-dm-sans uppercase">shares</span>
+
+                      {/* Middle Data Rows */}
+                      <div className="flex justify-between items-end sm:contents w-full pt-3 mt-1 border-t border-border/10 sm:border-0 sm:pt-0 sm:mt-0">
+                        {/* Shares */}
+                        <div className="sm:col-span-2 text-left sm:text-right">
+                          <span className="block sm:hidden text-[9px] text-text-secondary font-dm-sans uppercase mb-0.5 tracking-wider">Shares</span>
+                          <span className="text-xs font-extrabold text-text-primary font-sora">{h.shares.toLocaleString()}</span>
+                          <span className="hidden sm:block text-[9px] text-text-secondary font-dm-sans uppercase">shares</span>
+                        </div>
+
+                        {/* Cost Price */}
+                        <div className="sm:col-span-2 text-center sm:text-right">
+                          <span className="block sm:hidden text-[9px] text-text-secondary font-dm-sans uppercase mb-0.5 tracking-wider">Avg Cost</span>
+                          <span className="text-xs font-bold text-text-secondary font-sora">₦{h.buyPrice.toLocaleString()}</span>
+                          <span className="hidden sm:block text-[9px] text-text-secondary font-dm-sans">₦{h.costBasis.toLocaleString()}</span>
+                        </div>
+
+                        {/* Desktop Current Val */}
+                        <div className="hidden sm:block sm:col-span-2 text-right">
+                          <span className="text-xs font-extrabold text-text-primary font-sora">
+                            ₦{h.currentValue.toLocaleString('en-NG')}
+                          </span>
+                        </div>
+
+                        {/* Mobile P&L */}
+                        <div className="sm:hidden text-right">
+                          <span className="block text-[9px] text-text-secondary font-dm-sans uppercase mb-0.5 tracking-wider">Total P&L</span>
+                          <span className={`text-xs font-extrabold font-sora ${isPos ? 'text-gain' : 'text-danger'}`}
+                            style={{ textShadow: isPos ? '0 0 8px rgba(16,185,129,0.4)' : '0 0 8px rgba(255,77,77,0.3)' }}>
+                            {isPos ? '+' : ''}₦{h.pnl.toLocaleString('en-NG')}
+                          </span>
+                        </div>
                       </div>
-                      <div className="hidden sm:block col-span-2 text-right">
-                        <span className="text-xs font-bold text-text-secondary font-sora">₦{h.buyPrice.toLocaleString()}</span>
-                        <span className="block text-[9px] text-text-secondary font-dm-sans">₦{h.costBasis.toLocaleString()}</span>
-                      </div>
-                      <div className="col-span-2 text-right">
-                        <span className="text-xs font-extrabold text-text-primary font-sora">
-                          ₦{h.currentValue.toLocaleString('en-NG')}
-                        </span>
-                      </div>
-                      <div className="col-span-12 sm:col-span-2 flex items-center justify-between sm:justify-center gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40 border-dashed">
+
+                      {/* Desktop P&L / Mobile Delete */}
+                      <div className="flex justify-between sm:justify-end items-center sm:col-span-2 w-full pt-3 mt-3 border-t border-dashed border-border/20 sm:border-0 sm:pt-0 sm:mt-0">
                         <div className="hidden sm:block text-right">
                           <span className={`text-xs font-extrabold font-sora ${isPos ? 'text-gain' : 'text-danger'}`}
                             style={{ textShadow: isPos ? '0 0 8px rgba(16,185,129,0.4)' : '0 0 8px rgba(255,77,77,0.3)' }}>
@@ -259,9 +293,12 @@ export default function PortfolioTracker() {
                             {isPos ? '+' : ''}{h.pnlPercent.toFixed(1)}%
                           </span>
                         </div>
+                        <div className="sm:hidden text-[10px] text-text-secondary/50 uppercase tracking-widest font-bold">
+                          Manage Asset
+                        </div>
                         <button onClick={(e) => { e.stopPropagation(); removeHolding(h.ticker); }}
-                          className="p-1.5 rounded-lg text-text-secondary hover:text-danger hover:bg-danger/10 border border-transparent hover:border-danger/20 transition-all focus:outline-none">
-                          <Trash2 className="h-3.5 w-3.5" />
+                          className="p-2 sm:p-1.5 rounded-lg text-text-secondary hover:text-danger hover:bg-danger/10 border border-transparent hover:border-danger/20 transition-all focus:outline-none">
+                          <Trash2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                         </button>
                       </div>
                     </div>

@@ -49,6 +49,9 @@ import FeatureCards from '@/components/FeatureCards';
 import DashboardNewsPortfolio from '@/components/DashboardNewsPortfolio';
 import TickerTape from '@/components/TickerTape';
 import Footer from '@/components/Footer';
+import TrendingStocks from '@/components/TrendingStocks';
+import ForeignMarketsSidebar from '@/components/ForeignMarketsSidebar';
+
 // ─── NGX Ticker Carousel ──────────────────────────────
 const ngxTickerData = [
   { id: 'GTCO', name: 'GTCO', badge: 'GTCO', price: '₦56,623.54', change: '1.41%', up: true, initials: 'GT', bg: '#C0392B', sparkPath: 'M0 22 C15 17,25 20,40 13 S60 9,75 11 S90 7,100 9' },
@@ -665,6 +668,7 @@ export default function Page() {
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
   const user = useAppStore((s) => s.user);
   const loginUser = useAppStore((s) => s.loginUser);
+  const signInUser = useAppStore((s) => s.signInUser);
   const setOnboarding = useAppStore((s) => s.setOnboarding);
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
   const logoutUser = useAppStore((s) => s.logoutUser);
@@ -682,11 +686,14 @@ export default function Page() {
   const [authError, setAuthError] = useState('');
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [showWelcomeBack, setShowWelcomeBack] = useState(false);
+  const [welcomeBackName, setWelcomeBackName] = useState('');
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [activeHomeTab, setActiveHomeTab] = useState<'report' | 'dividend' | 'growth' | 'analyst' | 'safe'>('report');
   const [isHeaderSearchOpen, setIsHeaderSearchOpen] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [isHomeMenuOpen, setIsHomeMenuOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const [isLandingMenuOpen, setIsLandingMenuOpen] = useState(false);
@@ -725,6 +732,13 @@ export default function Page() {
     }
   }, [user, setView]);
 
+  // Auto-dismiss the welcome-back overlay after 2.5 s
+  React.useEffect(() => {
+    if (!showWelcomeBack) return;
+    const t = setTimeout(() => setShowWelcomeBack(false), 2500);
+    return () => clearTimeout(t);
+  }, [showWelcomeBack]);
+
   const availableInterests = ['Banking', 'Consumer Goods', 'Oil & Gas', 'Industrials', 'Agriculture', 'Technology'];
 
   const handleAuthSubmit = (e: React.FormEvent) => {
@@ -762,7 +776,17 @@ export default function Page() {
 
     // ── All valid: proceed ──────────────────────────────
     setIsAuthModalOpen(false);
-    loginUser(nameInput.trim() || emailInput.split('@')[0], emailInput.trim());
+
+    if (authMode === 'login') {
+      // Sign-in: skip onboarding, show welcome overlay
+      const displayName = nameInput.trim() || emailInput.split('@')[0];
+      setWelcomeBackName(displayName);
+      setShowWelcomeBack(true);
+      signInUser(displayName, emailInput.trim());
+    } else {
+      // Sign-up: go through onboarding wizard
+      loginUser(nameInput.trim() || emailInput.split('@')[0], emailInput.trim());
+    }
   };
 
   const handleOnboardingNext = (e?: React.MouseEvent) => {
@@ -960,9 +984,30 @@ export default function Page() {
     };
 
     return (
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-        {/* ─── Left Sidebar ─── */}
-        <div className="w-full lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6" style={{ background: '#121212' }}>
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start relative">
+        
+        {/* Mobile Menu Toggle */}
+        <div className="lg:hidden w-full">
+          <button 
+            onClick={() => setIsHomeMenuOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#191A1D] rounded-xl text-[13px] font-bold text-white border border-white/5 focus:outline-none"
+          >
+            <Menu className="w-4 h-4 text-brand-primary" />
+            Dashboard Menu
+          </button>
+        </div>
+
+        {/* ─── Left Sidebar (Off-canvas on mobile) ─── */}
+        {isHomeMenuOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setIsHomeMenuOpen(false)} />
+        )}
+        <div className={`fixed top-0 bottom-0 left-0 z-50 lg:static lg:z-auto w-[280px] lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6 h-full lg:h-auto overflow-y-auto lg:overflow-visible transition-transform duration-300 ${isHomeMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`} style={{ background: '#121212' }}>
+          {/* Mobile Close Header */}
+          <div className="lg:hidden flex justify-end p-4 border-b border-[#2C2D30]">
+            <button onClick={() => setIsHomeMenuOpen(false)} className="p-2 text-white/50 hover:text-white rounded-lg bg-white/5">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
           {/* Menu Navigation */}
           <div className="p-5 pb-6 border-b border-[#2C2D30]">
             <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans mb-5">
@@ -980,7 +1025,10 @@ export default function Page() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveHomeTab(tab.id)}
+                    onClick={() => {
+                      setActiveHomeTab(tab.id);
+                      setIsHomeMenuOpen(false); // Auto-close on mobile
+                    }}
                     className="flex items-center justify-between px-3 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 focus:outline-none"
                     style={isSelected
                       ? { backgroundColor: '#2D2619', color: '#FFFFFF' }
@@ -1098,6 +1146,12 @@ export default function Page() {
           {activeHomeTab === 'report' && (
             <div className="space-y-6 animate-in fade-in duration-300 text-left">
               <MarketStatus />
+              
+              {/* Mobile-only Foreign Markets insertion right after All-Share Index */}
+              <div className="w-full lg:hidden">
+                <ForeignMarketsSidebar />
+              </div>
+
               <TopMovers />
               <AIDailyBrief />
               <DashboardNewsPortfolio />
@@ -1206,6 +1260,11 @@ export default function Page() {
 
           {/* AI News Snapshot (only show on report tab for cleanliness, or always?) Let's keep it below */}
         </div>
+
+        {/* ─── Right Sidebar (Foreign Markets) ─── */}
+        <div className="hidden lg:block lg:w-auto">
+          <ForeignMarketsSidebar />
+        </div>
       </div>
     );
   };
@@ -1307,7 +1366,7 @@ export default function Page() {
           >
             <div
               className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden"
-              style={{ background: '#0B0919', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.9)' }}
+              style={{ background: '#0E0B14', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.9)' }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top gradient border */}
@@ -2229,6 +2288,11 @@ export default function Page() {
         <div className="flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 max-w-[100%]">
           {renderViewContent()}
         </div>
+        {currentView === 'dashboard' && (
+          <div className="px-4 sm:px-6 lg:px-8 w-full">
+            <TrendingStocks />
+          </div>
+        )}
         <Footer />
       </main>
 
