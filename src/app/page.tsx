@@ -51,6 +51,8 @@ import TickerTape from '@/components/TickerTape';
 import Footer from '@/components/Footer';
 import TrendingStocks from '@/components/TrendingStocks';
 import ForeignMarketsSidebar from '@/components/ForeignMarketsSidebar';
+import PublicProfile from '@/components/PublicProfile';
+import ThreadView from '@/components/ThreadView';
 
 // ─── NGX Ticker Carousel ──────────────────────────────
 const ngxTickerData = [
@@ -666,6 +668,7 @@ export default function Page() {
   const currentView = useAppStore((s) => s.currentView);
   const setView = useAppStore((s) => s.setView);
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
+  const updateProfileImage = useAppStore((s) => s.updateProfileImage);
   const user = useAppStore((s) => s.user);
   const loginUser = useAppStore((s) => s.loginUser);
   const signInUser = useAppStore((s) => s.signInUser);
@@ -814,6 +817,8 @@ export default function Page() {
       case 'learn': content = <Stock101 />; break;
       case 'community': content = <Community />; break;
       case 'trade': content = <TradePage />; break;
+      case 'public-profile': content = <PublicProfile />; break;
+      case 'post-thread': content = <ThreadView />; break;
       default: content = renderHomeView();
     }
     return (
@@ -1154,7 +1159,14 @@ export default function Page() {
 
               <TopMovers />
               <AIDailyBrief />
-              <DashboardNewsPortfolio />
+              <div className="flex flex-col xl:flex-row gap-6 w-full">
+                <div className="flex-1 min-w-0">
+                  <DashboardNewsPortfolio />
+                </div>
+                <div className="hidden lg:block xl:w-[320px] flex-shrink-0">
+                  <ForeignMarketsSidebar />
+                </div>
+              </div>
             </div>
           )}
 
@@ -1261,10 +1273,6 @@ export default function Page() {
           {/* AI News Snapshot (only show on report tab for cleanliness, or always?) Let's keep it below */}
         </div>
 
-        {/* ─── Right Sidebar (Foreign Markets) ─── */}
-        <div className="hidden lg:block lg:w-auto">
-          <ForeignMarketsSidebar />
-        </div>
       </div>
     );
   };
@@ -1275,9 +1283,25 @@ export default function Page() {
       <div className="rounded-2xl p-6 border border-border"
         style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
         <div className="flex items-center gap-4 pb-4 border-b border-border/50 mb-4">
-          <div className="h-16 w-16 rounded-full flex items-center justify-center font-sora text-xl font-extrabold text-bg-base flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 20px rgba(207,163,67,0.35)' }}>
-            {user?.name.slice(0, 2).toUpperCase()}
+          <div className="relative group h-16 w-16 rounded-full flex-shrink-0">
+            {user?.profileImage ? (
+              <img src={user.profileImage} alt="Profile" className="h-full w-full object-cover rounded-full" style={{ boxShadow: '0 0 20px rgba(207,163,67,0.35)' }} />
+            ) : (
+              <div className="h-full w-full rounded-full flex items-center justify-center font-sora text-xl font-extrabold text-bg-base"
+                style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 20px rgba(207,163,67,0.35)' }}>
+                {user?.name?.slice(0, 2).toUpperCase() || 'ES'}
+              </div>
+            )}
+            <label className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+              <span className="text-[10px] font-bold text-white">Upload</span>
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const url = URL.createObjectURL(file);
+                  updateProfileImage(url);
+                }
+              }} />
+            </label>
           </div>
           <div>
             <h2 className="text-xl font-extrabold font-sora text-brand-primary" style={{ textShadow: '0 0 16px rgba(207,163,67,0.3)' }}>
@@ -2228,7 +2252,14 @@ export default function Page() {
               style={{ border: '1px solid rgba(255,255,255,0.2)' }}
               title="Profile"
             >
-              <img src="https://i.pravatar.cc/150?img=47" alt="Avatar" className="h-full w-full object-cover" />
+              {user?.profileImage ? (
+                <img src={user.profileImage} alt="Avatar" className="h-full w-full object-cover" />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center font-sora text-[10px] font-extrabold text-bg-base"
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
+                  {user?.name?.slice(0, 2).toUpperCase() || 'ES'}
+                </div>
+              )}
             </button>
 
             {/* Logout Icon */}

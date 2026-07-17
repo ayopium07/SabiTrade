@@ -27,9 +27,6 @@ export default function DashboardNewsPortfolio() {
             {analysisNews.map((item, idx) => (
               <React.Fragment key={item.id}>
                 <div className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                  <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0 bg-white/5 border border-white/10">
-                    <img src={item.imageUrl} alt={item.source} className="w-full h-full object-cover" />
-                  </div>
                   <div className="flex flex-col justify-between flex-1 min-w-0">
                     <div>
                       {item.category === 'Featured' && (
@@ -39,9 +36,9 @@ export default function DashboardNewsPortfolio() {
                         {item.originalHeadline}
                       </h4>
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] text-white/50">{item.timeAgo} • {item.source}</span>
-                      <div className="flex gap-1">
+                    <div className="flex items-center justify-between mt-2 gap-2">
+                      <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo} • {item.source}</span>
+                      <div className="flex gap-1 flex-shrink-0">
                         {item.affectedStocks.slice(0,2).map(ticker => (
                           <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
                             {ticker}
@@ -67,11 +64,6 @@ export default function DashboardNewsPortfolio() {
             {marketNews.map((item, idx) => (
               <React.Fragment key={item.id}>
                 <div className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                  {idx === 0 && (
-                     <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0 bg-white/5 border border-white/10">
-                       <img src={item.imageUrl} alt={item.source} className="w-full h-full object-cover" />
-                     </div>
-                  )}
                   <div className="flex flex-col justify-between flex-1 min-w-0">
                     <div>
                       {idx === 0 && (
@@ -81,9 +73,9 @@ export default function DashboardNewsPortfolio() {
                         {item.originalHeadline}
                       </h4>
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] text-white/50">{item.timeAgo}</span>
-                      <div className="flex gap-1">
+                    <div className="flex items-center justify-between mt-2 gap-2">
+                      <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo}</span>
+                      <div className="flex gap-1 flex-shrink-0">
                         {item.affectedStocks.slice(0,2).map(ticker => (
                           <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
                             {ticker}
@@ -105,87 +97,30 @@ export default function DashboardNewsPortfolio() {
         <h3 className="text-[15px] font-extrabold text-white font-sora mb-3">My Portfolio</h3>
         <div className="rounded-xl border border-white/5 bg-[#111116] overflow-hidden flex flex-col h-full">
           <div className="h-[2px] w-full bg-gradient-to-r from-pink-500 to-rose-600"></div>
-          
-          <div className="flex items-center gap-4 px-4 py-3 border-b border-white/5 overflow-x-auto no-scrollbar">
-            <button 
-              onClick={() => setPortfolioTab('portfolio')}
-              className={`text-[11px] font-bold whitespace-nowrap transition-colors ${portfolioTab === 'portfolio' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
-            >
-              Portfolio
-            </button>
-            <button 
-              onClick={() => setPortfolioTab('watchlist')}
-              className={`text-[11px] font-bold whitespace-nowrap transition-colors ${portfolioTab === 'watchlist' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
-            >
-              Watchlist
-            </button>
-            <button 
-              onClick={() => setPortfolioTab('newsletters')}
-              className={`text-[11px] font-bold whitespace-nowrap transition-colors ${portfolioTab === 'newsletters' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
-            >
-              Newsletters
-            </button>
-          </div>
-
           <div className="p-4 flex-1 flex flex-col gap-3">
-            {portfolioTab === 'portfolio' && (
-              <div className="flex flex-col gap-3">
-                {portfolio.length === 0 ? (
-                  <div className="py-6 text-center text-[12px] text-white/40">Your portfolio is empty.</div>
-                ) : (
-                  portfolio.map(h => {
-                    const stock = stocks.find(s => s.ticker === h.ticker);
-                    return (
-                      <div key={h.ticker} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                        <div className="flex flex-col">
-                          <span className="text-[13px] font-bold text-white">{h.ticker}</span>
-                          <span className="text-[10px] text-white/50">{h.shares} Shares</span>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-[13px] font-bold text-white">₦{(h.shares * (stock?.price || 0)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                          <span className={`text-[10px] ${((stock?.price || 0) - h.buyPrice) >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
-                            {((stock?.price || 0) - h.buyPrice) >= 0 ? '+' : ''}{(((stock?.price || 0) - h.buyPrice) / h.buyPrice * 100).toFixed(2)}%
-                          </span>
-                        </div>
+            <div className="flex flex-col gap-3">
+              {portfolio.length === 0 ? (
+                <div className="py-6 text-center text-[12px] text-white/40">Your portfolio is empty.</div>
+              ) : (
+                portfolio.map(h => {
+                  const stock = stocks.find(s => s.ticker === h.ticker);
+                  return (
+                    <div key={h.ticker} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                      <div className="flex flex-col">
+                        <span className="text-[13px] font-bold text-white">{h.ticker}</span>
+                        <span className="text-[10px] text-white/50">{h.shares} Shares</span>
                       </div>
-                    )
-                  })
-                )}
-              </div>
-            )}
-
-            {portfolioTab === 'watchlist' && (
-              <div className="flex flex-col gap-3">
-                {watchlist.length === 0 ? (
-                  <div className="py-6 text-center text-[12px] text-white/40">Your watchlist is empty.</div>
-                ) : (
-                  watchlist.map(ticker => {
-                    const stock = stocks.find(s => s.ticker === ticker);
-                    if (!stock) return null;
-                    return (
-                      <div key={ticker} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                        <div className="flex flex-col">
-                          <span className="text-[13px] font-bold text-white">{stock.ticker}</span>
-                          <span className="text-[10px] text-white/50">{stock.name}</span>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-[13px] font-bold text-white">₦{stock.price.toFixed(2)}</span>
-                          <span className={`text-[10px] ${stock.change >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
-                            {stock.change >= 0 ? '+' : ''}{stock.change}%
-                          </span>
-                        </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-[13px] font-bold text-white">₦{(h.shares * (stock?.price || 0)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        <span className={`text-[10px] ${((stock?.price || 0) - h.buyPrice) >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
+                          {((stock?.price || 0) - h.buyPrice) >= 0 ? '+' : ''}{(((stock?.price || 0) - h.buyPrice) / h.buyPrice * 100).toFixed(2)}%
+                        </span>
                       </div>
-                    )
-                  })
-                )}
-              </div>
-            )}
-
-            {portfolioTab === 'newsletters' && (
-              <div className="py-6 text-center text-[12px] text-white/40">
-                No newsletters subscribed yet.
-              </div>
-            )}
+                    </div>
+                  )
+                })
+              )}
+            </div>
           </div>
         </div>
       </div>

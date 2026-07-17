@@ -28,7 +28,7 @@ const generateSparkline = (base: number) => {
 };
 
 export default function ForeignMarketsSidebar() {
-  const [activeTab, setActiveTab] = useState<'Indices' | 'Europe' | 'America' | 'Asia'>('Indices');
+  const [activeTab, setActiveTab] = useState<'Indices' | 'Global'>('Indices');
   
   // For the chart, we'll just show a dummy SVG sparkline that looks like the one in the screenshot.
   const chartData = generateSparkline(7550);
@@ -46,7 +46,7 @@ export default function ForeignMarketsSidebar() {
       
       {/* ── Tabs ── */}
       <div className="flex bg-[#252528] text-[12px] font-bold text-white/50 border-b border-black">
-        {(['Indices', 'Europe', 'America', 'Asia'] as const).map((tab) => (
+        {(['Indices', 'Global'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}

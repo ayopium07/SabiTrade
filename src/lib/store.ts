@@ -22,12 +22,44 @@ export interface UserProfile {
   experienceLevel: 'Beginner' | 'Intermediate' | 'Experienced';
   interests: string[];
   isOnboarded: boolean;
+  profileImage?: string;
+}
+
+export interface SocialUser {
+  id: string;
+  name: string;
+  handle: string;
+  avatar: string;
+  bio: string;
+  followers: string[]; // array of userIds
+  following: string[]; // array of userIds
+  joinDate: string;
+}
+
+export interface SocialPost {
+  id: string;
+  authorId: string;
+  content: string;
+  tickerTags: string[];
+  createdAt: string;
+  likes: string[]; // array of userIds
+  retweets: string[]; // array of userIds
+  repliesCount: number;
+}
+
+export interface SocialComment {
+  id: string;
+  postId: string;
+  authorId: string;
+  content: string;
+  createdAt: string;
+  likes: string[]; // array of userIds
 }
 
 export interface AppState {
   // Navigation & View Flow
-  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade';
-  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about' | 'learn' | 'community' | 'trade';
+  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread';
+  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread';
   selectedTicker: string;
   
   // User Authentication & Onboarding
@@ -57,8 +89,15 @@ export interface AppState {
   news: NewsItem[];
   isLoadingNews: boolean;
 
+  // Social Network State
+  communityUsers: SocialUser[];
+  communityPosts: SocialPost[];
+  communityComments: SocialComment[];
+  selectedUserId: string | null;
+  selectedPostId: string | null;
+
   // Actions
-  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => void;
+  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread') => void;
   setSelectedTicker: (ticker: string) => void;
   loginUser: (name: string, email: string) => void;
   signInUser: (name: string, email: string) => void;
@@ -76,6 +115,17 @@ export interface AppState {
   clearChat: () => void;
   fetchMarketData: () => Promise<void>;
   fetchNews: () => Promise<void>;
+  updateProfileImage: (url: string) => void;
+
+  // Social Actions
+  viewProfile: (userId: string) => void;
+  viewThread: (postId: string) => void;
+  likePost: (postId: string, userId: string) => void;
+  retweetPost: (postId: string, userId: string) => void;
+  addPost: (content: string, tickerTags: string[], authorId: string) => void;
+  addComment: (postId: string, content: string, authorId: string) => void;
+  followUser: (targetUserId: string, currentUserId: string) => void;
+  unfollowUser: (targetUserId: string, currentUserId: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -108,6 +158,21 @@ export const useAppStore = create<AppState>()(
   isLoadingMarketData: false,
   news: mockNews,
   isLoadingNews: false,
+
+  communityUsers: [
+    { id: 'u1', name: 'Adebayo O.', handle: 'adebayo_trades', avatar: 'AO', bio: 'Value investor focused on NGX banking sector. Always looking for dividends.', followers: ['u2', 'u3'], following: ['u2'], joinDate: 'March 2026' },
+    { id: 'u2', name: 'Chioma N.', handle: 'chioma_invests', avatar: 'CN', bio: 'Swing trader. Crypto & Stocks.', followers: ['u1'], following: ['u1', 'u3'], joinDate: 'January 2026' },
+    { id: 'u3', name: 'SabiTrade Official', handle: 'sabitrade', avatar: 'ST', bio: 'Official account of SabiTrade. Your home for NGX data and community.', followers: ['u1', 'u2'], following: [], joinDate: 'December 2025' }
+  ],
+  communityPosts: [
+    { id: 'p1', authorId: 'u1', content: 'Just added more to my $ZENITHBANK position. The Q1 earnings report looks very promising! Who else is holding?', tickerTags: ['ZENITHBANK'], createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(), likes: ['u2'], retweets: [], repliesCount: 1 },
+    { id: 'p2', authorId: 'u2', content: 'Anyone tracking $DANGCEM recently? Thinking of rotating my portfolio into more industrial goods as inflation hedges.', tickerTags: ['DANGCEM'], createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(), likes: ['u1', 'u3'], retweets: ['u1'], repliesCount: 0 }
+  ],
+  communityComments: [
+    { id: 'c1', postId: 'p1', authorId: 'u2', content: 'Agreed! Their dividend yield is unbeatable right now.', createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(), likes: ['u1'] }
+  ],
+  selectedUserId: null,
+  selectedPostId: null,
 
   setView: (view) => set((state) => {
     // Save WHERE we currently are as previousView before navigating away.
@@ -165,6 +230,10 @@ export const useAppStore = create<AppState>()(
   completeOnboarding: () => set((state) => ({
     user: state.user ? { ...state.user, isOnboarded: true } : null,
     currentView: 'home'
+  })),
+
+  updateProfileImage: (url) => set((state) => ({
+    user: state.user ? { ...state.user, profileImage: url } : null
   })),
 
   logoutUser: () => set({
@@ -386,7 +455,107 @@ export const useAppStore = create<AppState>()(
     } finally {
       set({ isLoadingNews: false });
     }
-  }
+  },
+
+  viewProfile: (userId) => set((state) => ({
+    selectedUserId: userId,
+    currentView: 'public-profile',
+    previousView: (
+      state.currentView !== 'stock-detail' &&
+      state.currentView !== 'onboarding' &&
+      state.currentView !== 'landing' &&
+      state.currentView !== 'public-profile' &&
+      state.currentView !== 'post-thread'
+    ) ? state.currentView : state.previousView,
+  })),
+
+  viewThread: (postId) => set((state) => ({
+    selectedPostId: postId,
+    currentView: 'post-thread',
+    previousView: (
+      state.currentView !== 'stock-detail' &&
+      state.currentView !== 'onboarding' &&
+      state.currentView !== 'landing' &&
+      state.currentView !== 'public-profile' &&
+      state.currentView !== 'post-thread'
+    ) ? state.currentView : state.previousView,
+  })),
+
+  likePost: (postId, userId) => set((state) => ({
+    communityPosts: state.communityPosts.map(p => {
+      if (p.id === postId) {
+        const hasLiked = p.likes.includes(userId);
+        return { ...p, likes: hasLiked ? p.likes.filter(id => id !== userId) : [...p.likes, userId] };
+      }
+      return p;
+    })
+  })),
+
+  retweetPost: (postId, userId) => set((state) => ({
+    communityPosts: state.communityPosts.map(p => {
+      if (p.id === postId) {
+        const hasRetweeted = p.retweets.includes(userId);
+        return { ...p, retweets: hasRetweeted ? p.retweets.filter(id => id !== userId) : [...p.retweets, userId] };
+      }
+      return p;
+    })
+  })),
+
+  addPost: (content, tickerTags, authorId) => set((state) => ({
+    communityPosts: [
+      {
+        id: `p${Date.now()}`,
+        authorId,
+        content,
+        tickerTags,
+        createdAt: new Date().toISOString(),
+        likes: [],
+        retweets: [],
+        repliesCount: 0
+      },
+      ...state.communityPosts
+    ]
+  })),
+
+  addComment: (postId, content, authorId) => set((state) => ({
+    communityComments: [
+      ...state.communityComments,
+      {
+        id: `c${Date.now()}`,
+        postId,
+        authorId,
+        content,
+        createdAt: new Date().toISOString(),
+        likes: []
+      }
+    ],
+    communityPosts: state.communityPosts.map(p => p.id === postId ? { ...p, repliesCount: p.repliesCount + 1 } : p)
+  })),
+
+  followUser: (targetUserId, currentUserId) => set((state) => ({
+    communityUsers: state.communityUsers.map(u => {
+      if (u.id === targetUserId) {
+        return { ...u, followers: Array.from(new Set([...u.followers, currentUserId])) };
+      }
+      if (u.id === currentUserId) {
+        return { ...u, following: Array.from(new Set([...u.following, targetUserId])) };
+      }
+      return u;
+    })
+  })),
+
+  unfollowUser: (targetUserId, currentUserId) => set((state) => ({
+    communityUsers: state.communityUsers.map(u => {
+      if (u.id === targetUserId) {
+        return { ...u, followers: u.followers.filter(id => id !== currentUserId) };
+      }
+      if (u.id === currentUserId) {
+        return { ...u, following: u.following.filter(id => id !== targetUserId) };
+      }
+      return u;
+    })
+  }))
+
   }),
   {
     name: 'equitystack-session',
