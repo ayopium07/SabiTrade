@@ -58,9 +58,11 @@ export default function AIDailyBrief() {
         <div className="relative pl-5 py-1">
           <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full"
             style={{ background: 'linear-gradient(180deg, #CFA343 0%, rgba(207,163,67,0.1) 100%)' }} />
-          <p className="text-[14px] leading-[1.6] text-white/90 font-sora font-medium">
-            {briefText}
-          </p>
+          <div className="text-[14px] leading-[1.7] text-white/90 font-sora font-medium space-y-4">
+            {briefText.split('\n\n').map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+          </div>
         </div>
 
         {/* Disclaimer */}

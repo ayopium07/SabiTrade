@@ -5,12 +5,6 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'Gemini API key is not configured.' },
-        { status: 500 }
-      );
-    }
 
     // 1. Fetch latest business news from multiple active feeds (Nairametrics, Punch, Premium Times)
     const feeds = [

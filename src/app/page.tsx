@@ -50,7 +50,7 @@ import DashboardNewsPortfolio from '@/components/DashboardNewsPortfolio';
 import TickerTape from '@/components/TickerTape';
 import Footer from '@/components/Footer';
 import TrendingStocks from '@/components/TrendingStocks';
-import ForeignMarketsSidebar from '@/components/ForeignMarketsSidebar';
+
 import PublicProfile from '@/components/PublicProfile';
 import ThreadView from '@/components/ThreadView';
 
@@ -989,7 +989,8 @@ export default function Page() {
     };
 
     return (
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start relative">
+      <>
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start relative">
         
         {/* Mobile Menu Toggle */}
         <div className="lg:hidden w-full">
@@ -1152,21 +1153,9 @@ export default function Page() {
             <div className="space-y-6 animate-in fade-in duration-300 text-left">
               <MarketStatus />
               
-              {/* Mobile-only Foreign Markets insertion right after All-Share Index */}
-              <div className="w-full lg:hidden">
-                <ForeignMarketsSidebar />
-              </div>
+
 
               <TopMovers />
-              <AIDailyBrief />
-              <div className="flex flex-col xl:flex-row gap-6 w-full">
-                <div className="flex-1 min-w-0">
-                  <DashboardNewsPortfolio />
-                </div>
-                <div className="hidden lg:block xl:w-[320px] flex-shrink-0">
-                  <ForeignMarketsSidebar />
-                </div>
-              </div>
             </div>
           )}
 
@@ -1274,6 +1263,16 @@ export default function Page() {
         </div>
 
       </div>
+
+      {activeHomeTab === 'report' && (
+        <div className="w-full mt-6 space-y-6 animate-in fade-in duration-300 text-left">
+          <AIDailyBrief />
+          <div className="w-full">
+            <DashboardNewsPortfolio />
+          </div>
+        </div>
+      )}
+      </>
     );
   };
 

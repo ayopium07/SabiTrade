@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info } from 'lucide-react';
+import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info, Calendar } from 'lucide-react';
 import { mockNews, NewsItem } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
@@ -32,6 +32,7 @@ const categories = ['All', 'Featured', 'Breaking', 'Most Popular', 'Cryptocurren
 export default function AINewsFeed() {
   const [activeCategory, setActiveCategory] = useState<typeof categories[number]>('All');
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
   const setView = useAppStore((s) => s.setView);
@@ -44,14 +45,23 @@ export default function AINewsFeed() {
     fetchNews();
   }, [fetchNews]);
 
-  // Filter news by active category (case-insensitive with "All" option fallback)
-  const filteredNews = activeCategory === 'All'
-    ? newsList
-    : newsList.filter((item) => {
-        const itemCat = (item.category || '').trim().toLowerCase();
-        const activeCat = activeCategory.trim().toLowerCase();
-        return itemCat === activeCat;
-      });
+  // Filter news by active category and selected date
+  const filteredNews = newsList.filter((item) => {
+    const matchesCategory = activeCategory === 'All' || 
+      (item.category || '').trim().toLowerCase() === activeCategory.trim().toLowerCase();
+    
+    let matchesDate = true;
+    if (selectedDate && item.date) {
+      const itemDateStr = new Date(item.date).toISOString().split('T')[0];
+      matchesDate = itemDateStr === selectedDate;
+    }
+    return matchesCategory && matchesDate;
+  }).sort((a, b) => {
+    // Sort by newest first
+    const dateA = a.date ? new Date(a.date).getTime() : 0;
+    const dateB = b.date ? new Date(b.date).getTime() : 0;
+    return dateB - dateA;
+  });
 
   const handleStockClick = (ticker: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening news modal
@@ -69,10 +79,32 @@ export default function AINewsFeed() {
             NGX-filtered · Sora-interpreted market news
           </p>
         </div>
-        <span className="flex items-center gap-1.5 text-[10px] font-bold text-brand-primary uppercase tracking-wider">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand-primary animate-pulse" />
-          Live Feed
-        </span>
+        <div className="flex items-center gap-3">
+          {/* Calendar Metric */}
+          <div className="flex items-center gap-1.5 bg-bg-hover px-2.5 py-1.5 rounded-lg border border-border/40 transition-colors hover:border-border/60">
+            <Calendar className="w-3.5 h-3.5 text-brand-primary" />
+            <input 
+              type="date" 
+              className="bg-transparent text-xs text-text-primary outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:filter-invert"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              title="Filter news by date"
+            />
+            {selectedDate && (
+              <button 
+                onClick={() => setSelectedDate('')} 
+                className="ml-0.5 text-text-secondary hover:text-danger focus:outline-none transition-colors"
+                title="Clear date"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+          <span className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold text-brand-primary uppercase tracking-wider">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-primary animate-pulse" />
+            Live Feed
+          </span>
+        </div>
       </div>
 
       {/* Category Tabs */}

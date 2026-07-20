@@ -28,7 +28,7 @@ const generateSparkline = (base: number) => {
 };
 
 export default function ForeignMarketsSidebar() {
-  const [activeTab, setActiveTab] = useState<'Indices' | 'Global'>('Indices');
+  const [activeTab, setActiveTab] = useState<'Global Indices'>('Global Indices');
   
   // For the chart, we'll just show a dummy SVG sparkline that looks like the one in the screenshot.
   const chartData = generateSparkline(7550);
@@ -42,11 +42,11 @@ export default function ForeignMarketsSidebar() {
   const linePath = points.reduce((d, p, i) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
 
   return (
-    <div className="w-full lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6 rounded-xl overflow-hidden shadow-2xl border border-white/[0.05]" style={{ background: '#191A1D' }}>
+    <div className="w-full h-full flex flex-col rounded-xl overflow-hidden shadow-2xl border border-white/[0.05]" style={{ background: '#191A1D' }}>
       
       {/* ── Tabs ── */}
       <div className="flex bg-[#252528] text-[12px] font-bold text-white/50 border-b border-black">
-        {(['Indices', 'Global'] as const).map((tab) => (
+        {(['Global Indices'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -54,7 +54,7 @@ export default function ForeignMarketsSidebar() {
               activeTab === tab ? 'bg-[#191A1D] text-white shadow-[0_-2px_0_#CFA343_inset]' : 'hover:bg-[#2A2B2F]'
             }`}
           >
-            {tab === 'Indices' && <Activity className="w-3 h-3 inline-block mr-1 -mt-0.5" />}
+            {tab === 'Global Indices' && <Activity className="w-3 h-3 inline-block mr-1 -mt-0.5" />}
             {tab}
           </button>
         ))}

@@ -30,6 +30,7 @@ export interface NewsItem {
   id: string;
   source: string;
   timeAgo: string;
+  date: string; // ISO string for calendar filtering
   originalHeadline: string;
   aiSummary: string;
   whyItMatters: string;
@@ -358,9 +359,9 @@ export const mockMovers = {
 };
 
 export const equityStackAIBrief = {
-  morning: "Morning Market Update: The NGX opened today with robust buying interest in the Tier-1 Banking sector, as institutional investors position ahead of the upcoming MPC meeting. Expect heightened volatility in consumer goods as FX revaluation fears weigh on early trading volumes. Keep an eye on ZENITHBANK and GTCO as primary volume drivers today.",
-  afternoon: "Mid-Day Market Update: Trading volumes have surged past ₦4B as the banking rally sustains momentum into the afternoon session. The All Share Index (ASI) is trending upwards, while the oil & gas sector sees selective buying (OANDO up +9.8% following NAOC regulatory clearance). Consumer goods continue to experience minor sell-side pressure.",
-  night: "Daily Market Recap: The NGX ASI closed strong today (+1.24%), primarily driven by a heavy morning bid in banking equities that sustained through the afternoon. The Central Bank's hawkish stance favored financial stocks, masking the steep declines in consumer manufacturers who face rising dollar-denominated input costs. Oando's upstream acquisition approval also injected significant optimism into the energy sector today."
+  morning: "Morning Market Update: The NGX opened today with robust buying interest in the Tier-1 Banking sector, as institutional investors position ahead of the upcoming MPC meeting.\n\nMacro Overview: Inflation metrics continue to dictate early trading patterns. Expect heightened volatility in consumer goods as FX revaluation fears weigh on early trading volumes. Importers are bracing for the newly adjusted exchange rates.\n\nSector Highlights: Keep an eye on ZENITHBANK and GTCO as primary volume drivers today. The Financial services sector is seeing a 2.3% uptick in pre-market indications. In the Energy sector, downstream operators are stabilizing after recent policy changes.",
+  afternoon: "Mid-Day Market Update: Trading volumes have surged past ₦4B as the banking rally sustains momentum into the afternoon session.\n\nMacro Overview: The All Share Index (ASI) is trending upwards, driven by institutional block trades. Currency stability over the last 48 hours is restoring confidence in the short-term market outlook.\n\nSector Highlights: The oil & gas sector sees selective buying (OANDO up +9.8% following NAOC regulatory clearance). Consumer goods continue to experience minor sell-side pressure, though Nestle is holding its support level.",
+  night: "Daily Market Recap: The NGX ASI closed strong today (+1.24%), primarily driven by a heavy morning bid in banking equities that sustained through the afternoon.\n\nMacro Overview: The Central Bank's hawkish stance favored financial stocks, masking the steep declines in consumer manufacturers who face rising dollar-denominated input costs. The market breath remains positive with 24 gainers against 16 losers.\n\nSector Highlights: Oando's upstream acquisition approval injected significant optimism into the energy sector today. Tier-1 banks accumulated the most volume, with Zenith Bank leading trades by value."
 };
 
 export const mockNews: NewsItem[] = [
@@ -368,6 +369,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-1',
     source: 'BusinessDay',
     timeAgo: '2h ago',
+    date: '2026-07-19T06:00:00Z',
     originalHeadline: 'CBN Grants Final Approval for Oando Acquisition of Agip Oil Assets',
     aiSummary: 'Oando PLC has received final regulatory approval from the Central Bank and NUPRC to buy Italian oil giant Eni\'s local subsidiary (Agip). This massive deal will instantly double Oando\'s oil production capacity, creating high optimism in the energy market.',
     whyItMatters: 'NAOC acquisition instantly doubles Oando\'s upstream oil production capacity from 20,000 to 40,000 barrels per day, creating substantial cash flow expansion.',
@@ -384,6 +386,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-2',
     source: 'PremiumTimes',
     timeAgo: '4h ago',
+    date: '2026-07-19T04:00:00Z',
     originalHeadline: 'Nestle Nigeria Records FX Loss as Naira Volatility Weighs on Earnings',
     aiSummary: 'Nestle Nigeria reported substantial losses in its latest quarterly results due to dollar-based loans. Although local sales of Milo and Maggi grew by 24%, the cost of paying off dollar debts in weakened Naira has completely wiped out their profits.',
     whyItMatters: 'Dollar-denominated loans caused massive currency revaluation losses due to Naira devaluation, wiping out otherwise profitable local sales.',
@@ -400,6 +403,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-3',
     source: 'Nairametrics',
     timeAgo: '6h ago',
+    date: '2026-07-19T02:00:00Z',
     originalHeadline: 'Zenith Bank Proposes Outstanding Interim Dividend of N1.00 Per Share',
     aiSummary: 'Zenith Bank has announced a cash payout of ₦1.00 for every share you own. This reward comes after their half-year profits surged by 42% due to high interest rates, making it highly attractive to dividend-seeking investors.',
     whyItMatters: 'Profits rose 42% due to high interest rates, allowing the bank to reward shareholders with an attractive interim cash payout.',
@@ -416,6 +420,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-4',
     source: 'Stears Business',
     timeAgo: '1d ago',
+    date: '2026-07-18T08:00:00Z',
     originalHeadline: 'Inflation Hits 33.69% in Nigeria; Consumer Spending Power Drops',
     aiSummary: 'Nigeria\'s inflation continues to climb, rising to 33.69%. This means food, transport, and energy are much more expensive. Consumers are spending less on snacks, forcing food companies to cut costs and struggle with sales.',
     whyItMatters: 'Rising price levels reduce the purchasing power of average consumers, squeezing sales for consumer goods manufacturers.',
@@ -432,6 +437,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-5',
     source: 'BusinessDay',
     timeAgo: '2d ago',
+    date: '2026-07-17T08:00:00Z',
     originalHeadline: 'Access Holdings Launches N351 Billion Rights Issue for Capital Raise',
     aiSummary: 'Access Holdings is asking current investors to buy new shares at a discount (₦19.75) to raise ₦351 Billion. This money will help them meet the Central Bank\'s new high capital rules, but the extra shares on the market have caused the price to drop slightly.',
     whyItMatters: 'The bank needs to raise ₦351 Billion to satisfy the Central Bank of Nigeria\'s new tier-1 capital requirements.',
@@ -448,6 +454,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-6',
     source: 'Nairametrics',
     timeAgo: '23h ago',
+    date: '2026-07-18T09:00:00Z',
     originalHeadline: 'Dangote Cement Expands Export Capacity, Targets West African Markets',
     aiSummary: 'Dangote Cement PLC has commissioned new clinker export terminals, expanding its reach into neighboring West African countries to earn foreign exchange and hedge against local inflation.',
     whyItMatters: 'Export earnings in foreign currency provide a natural buffer against domestic currency devaluation and high input inflation.',
@@ -464,6 +471,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-7',
     source: 'TechCabal',
     timeAgo: '14h ago',
+    date: '2026-07-18T18:00:00Z',
     originalHeadline: 'MTN Nigeria Secures License for Additional 5G Spectrum from NCC',
     aiSummary: 'MTN Nigeria has acquired more 5G spectrum space to boost network speeds and capacity. This is expected to drive higher data usage and subscription revenue.',
     whyItMatters: 'Additional spectrum allows MTN to handle more concurrent high-bandwidth data connections, reducing congestion in urban hubs like Lagos.',
@@ -480,6 +488,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-8',
     source: 'BusinessDay',
     timeAgo: '15h ago',
+    date: '2026-07-18T17:00:00Z',
     originalHeadline: 'BUA Foods Reports Record N120 Billion Profit in Half-Year Performance',
     aiSummary: 'BUA Foods announced record half-year profits, driven by massive increases in sales across its sugar, pasta, and flour product lines, showing strong inelastic consumer demand.',
     whyItMatters: 'Inelastic consumer demand for essential food items allows BUA Foods to maintain high margins despite rising wheat and transport costs.',
@@ -496,6 +505,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-9',
     source: 'PremiumTimes',
     timeAgo: '28m ago',
+    date: '2026-07-19T07:30:00Z',
     originalHeadline: 'Seplat Energy Resumes Oil Export Operations via Forcados Terminal',
     aiSummary: 'Seplat Energy PLC has resumed crude oil exports at the Forcados Terminal after completion of scheduled pipeline maintenance, ending a short production dip.',
     whyItMatters: 'Resumption of Forcados exports returns Seplat\'s production to normal levels (~45k boepd), securing near-term oil revenue.',
@@ -512,6 +522,7 @@ export const mockNews: NewsItem[] = [
     id: 'news-10',
     source: 'CryptoAsset',
     timeAgo: '3h ago',
+    date: '2026-07-19T05:00:00Z',
     originalHeadline: 'SEC Nigeria Issues Regulatory Framework for Digital Asset Exchanges',
     aiSummary: 'The Securities and Exchange Commission of Nigeria has released new guidelines and licensing frameworks for digital assets, signaling a major shift in regulatory tone.',
     whyItMatters: 'Clear regulatory guidelines legitimize local crypto platforms, reducing systemic banking transaction block risks.',
@@ -523,6 +534,40 @@ export const mockNews: NewsItem[] = [
     imageUrl: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=300&q=80',
     commentsCount: 31,
     category: 'Cryptocurrency',
+  },
+  {
+    id: 'news-11',
+    source: 'Financial Times',
+    timeAgo: '1mo ago',
+    date: '2026-06-15T12:00:00Z',
+    originalHeadline: 'Central Bank of Nigeria Hikes Interest Rates by 150 Basis Points',
+    aiSummary: 'In a bold move to combat soaring inflation, the Central Bank has increased the monetary policy rate. This makes borrowing more expensive but benefits bank margins.',
+    whyItMatters: 'Higher interest rates mean higher borrowing costs for businesses, but banks can charge more for loans, expanding their net interest margins.',
+    implications: 'Expect banking stocks to rally on expected profit surges, while consumer goods stocks may face continued pressure.',
+    keyDriver: 'Policy Change',
+    affectedStocks: ['ZENITHBANK', 'GTCO', 'UBA'],
+    marketImpact: 'Positive',
+    drivers: ['CBN', 'InterestRates', 'BankingSector'],
+    imageUrl: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=300&q=80',
+    commentsCount: 45,
+    category: 'Breaking',
+  },
+  {
+    id: 'news-12',
+    source: 'Reuters',
+    timeAgo: '2mo ago',
+    date: '2026-05-20T10:00:00Z',
+    originalHeadline: 'Nigeria\'s Q1 GDP Growth Slows Amid Economic Reforms',
+    aiSummary: 'Economic growth in the first quarter came in below expectations as the country adjusts to fuel subsidy removals and FX unification.',
+    whyItMatters: 'Slower GDP growth reflects the immediate pain of structural reforms, reducing overall market liquidity.',
+    implications: 'Investors are shifting towards defensive stocks and high-yield fixed income assets to protect against economic slowdown.',
+    keyDriver: 'Macro Event',
+    affectedStocks: [],
+    marketImpact: 'Negative',
+    drivers: ['GDP', 'EconomicGrowth', 'Reforms'],
+    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80',
+    commentsCount: 62,
+    category: 'Featured',
   }
 ];
 

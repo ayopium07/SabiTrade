@@ -3,6 +3,7 @@
 import React from 'react';
 import { useAppStore } from '@/lib/store';
 import { ChevronUp, ChevronDown, Flame, Activity } from 'lucide-react';
+import ForeignMarketsSidebar from './ForeignMarketsSidebar';
 
 export default function TrendingStocks() {
   const stocks = useAppStore(s => s.stocks);
@@ -80,7 +81,7 @@ export default function TrendingStocks() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-12">
         {/* Trending Column */}
         <div>
           <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4 px-4">
@@ -118,6 +119,26 @@ export default function TrendingStocks() {
           </div>
           <div className="flex flex-col relative z-10">
             {defaultActive.map(renderRow)}
+          </div>
+        </div>
+
+        {/* Global Markets Column */}
+        <div>
+          <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4 px-4">
+            <div className="flex items-center gap-3 flex-1">
+              <div className="p-1.5 rounded-lg bg-green-500/10 text-green-500">
+                <Activity className="w-4 h-4" />
+              </div>
+              <span className="text-[12px] md:text-[13px] font-bold text-white/70 uppercase tracking-widest font-sora">
+                Global Indices
+              </span>
+            </div>
+            <div className="w-[85px] text-center">
+              <span className="text-[11px] font-bold text-white/50 uppercase tracking-widest">1D Chg</span>
+            </div>
+          </div>
+          <div className="flex flex-col relative z-10 h-full">
+            <ForeignMarketsSidebar />
           </div>
         </div>
       </div>
