@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { 
-  ChevronLeft, 
-  Star, 
-  Sparkles, 
-  BookOpen, 
-  BarChart2, 
-  FileText, 
-  Gift, 
-  Activity, 
-  Users, 
-  Layers, 
-  Newspaper 
+import {
+  ChevronLeft,
+  Star,
+  Sparkles,
+  BookOpen,
+  BarChart2,
+  FileText,
+  Gift,
+  Activity,
+  Users,
+  Layers,
+  Newspaper
 } from 'lucide-react';
 import { mockNews } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
@@ -141,12 +141,12 @@ const getDividendHistoryData = (ticker: string, divYield: string, price: number)
 
 export default function StockDetail() {
   const selectedTicker = useAppStore((state) => state.selectedTicker);
-  const previousView   = useAppStore((state) => state.previousView);
-  const setView        = useAppStore((state) => state.setView);
+  const previousView = useAppStore((state) => state.previousView);
+  const setView = useAppStore((state) => state.setView);
   const toggleWatchlist = useAppStore((state) => state.toggleWatchlist);
-  const watchlist      = useAppStore((state) => state.watchlist);
-  const user           = useAppStore((state) => state.user);
-  const stocks         = useAppStore((state) => state.stocks);
+  const watchlist = useAppStore((state) => state.watchlist);
+  const user = useAppStore((state) => state.user);
+  const stocks = useAppStore((state) => state.stocks);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'financials' | 'dividend' | 'valuation' | 'management' | 'competitors' | 'news'>('overview');
   const [activeDuration, setActiveDuration] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1M');
@@ -156,10 +156,10 @@ export default function StockDetail() {
   const [hoverY, setHoverY] = useState<number | null>(null);
   const chartRef = useRef<SVGSVGElement | null>(null);
 
-  const stock      = stocks.find((s) => s.ticker === selectedTicker) || stocks[0];
+  const stock = stocks.find((s) => s.ticker === selectedTicker) || stocks[0];
   const isPositive = stock.change >= 0;
-  const isWatched  = watchlist.includes(stock.ticker);
-  const color      = isPositive ? '#10B981' : '#FF4D4D';
+  const isWatched = watchlist.includes(stock.ticker);
+  const color = isPositive ? '#10B981' : '#FF4D4D';
 
   const relatedNews = mockNews.filter((news) => news.affectedStocks.includes(stock.ticker));
 
@@ -171,20 +171,20 @@ export default function StockDetail() {
       case '1D': return rawData.slice(-4);
       case '1W': return rawData.slice(-7);
       case '1M': return rawData.slice(-15);
-      default:   return rawData;
+      default: return rawData;
     }
   };
 
   const chartPoints = getSlicedData();
-  const prices   = chartPoints.map((p) => p.price);
+  const prices = chartPoints.map((p) => p.price);
   const maxPrice = Math.max(...prices);
   const minPrice = Math.min(...prices);
   const priceRange = maxPrice - minPrice || 1;
 
-  const chartWidth  = 500;
+  const chartWidth = 500;
   const chartHeight = 180;
-  const paddingX    = 20;
-  const paddingY    = 20;
+  const paddingX = 20;
+  const paddingY = 20;
 
   const points = chartPoints.map((point, index) => {
     const x = paddingX + (index / (chartPoints.length - 1)) * (chartWidth - paddingX * 2);
@@ -199,7 +199,7 @@ export default function StockDetail() {
 
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     if (!chartRef.current || points.length === 0) return;
-    const rect   = chartRef.current.getBoundingClientRect();
+    const rect = chartRef.current.getBoundingClientRect();
     const mouseX = ((e.clientX - rect.left) / rect.width) * chartWidth;
     let closestIndex = 0;
     let minDiff = Infinity;
@@ -258,9 +258,8 @@ export default function StockDetail() {
                   style={{ textShadow: isPositive ? `0 0 20px ${color}30` : 'none' }}>
                   ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                 </span>
-                <span className={`inline-flex items-center text-sm font-bold px-2 py-0.5 rounded-lg ${
-                  isPositive ? 'bg-gain/10 text-gain border border-gain/20' : 'bg-danger/10 text-danger'
-                }`}>
+                <span className={`inline-flex items-center text-sm font-bold px-2 py-0.5 rounded-lg ${isPositive ? 'bg-gain/10 text-gain border border-gain/20' : 'bg-danger/10 text-danger'
+                  }`}>
                   {isPositive ? '+' : ''}{stock.change.toFixed(1)}%
                 </span>
               </div>
@@ -330,7 +329,7 @@ export default function StockDetail() {
 
                 {points.map((p, idx) => {
                   const maxVol = Math.max(...points.map((pt) => pt.volume));
-                  const volH   = (p.volume / maxVol) * 28;
+                  const volH = (p.volume / maxVol) * 28;
                   return (
                     <rect key={idx} x={p.x - 2} y={chartHeight - paddingY - volH}
                       width="4" height={volH}
@@ -625,12 +624,11 @@ export default function StockDetail() {
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-border/20">
                 <span className="text-xs text-text-secondary font-medium">Analyst Consensus Rating:</span>
-                <span className={`text-xs font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                  stock.rating === 'Outperform' ? 'bg-gain/15 text-gain border border-gain/35 shadow-glow-green-sm' :
-                  stock.rating === 'Underperform' ? 'bg-danger/15 text-danger border border-danger/35 shadow-glow-red' :
-                  'bg-warning/15 text-warning border border-warning/35'
-                }`}>
-                  {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string,string>)[stock.rating] ?? stock.rating}
+                <span className={`text-xs font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${stock.rating === 'Outperform' ? 'bg-gain/15 text-gain border border-gain/35 shadow-glow-green-sm' :
+                    stock.rating === 'Underperform' ? 'bg-danger/15 text-danger border border-danger/35 shadow-glow-red' :
+                      'bg-warning/15 text-warning border border-warning/35'
+                  }`}>
+                  {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string, string>)[stock.rating] ?? stock.rating}
                 </span>
               </div>
             </div>
@@ -837,7 +835,7 @@ export default function StockDetail() {
                   <p className="text-xs text-text-secondary font-medium leading-relaxed font-dm-sans">
                     {news.aiSummary}
                   </p>
-                  
+
                   {/* Drivers Badges */}
                   <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-border/30">
                     {news.drivers?.map((d) => (
@@ -874,11 +872,10 @@ export default function StockDetail() {
         </button>
 
         <button onClick={() => toggleWatchlist(stock.ticker)}
-          className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all focus:outline-none ${
-            isWatched
+          className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all focus:outline-none ${isWatched
               ? 'bg-warning/10 border-warning/25 text-warning'
               : 'text-text-secondary hover:text-text-primary border-border hover:border-border-bright'
-          }`}
+            }`}
           style={!isWatched ? { background: 'rgba(14,13,37,0.5)' } : {}}>
           <Star className={`h-3.5 w-3.5 ${isWatched ? 'fill-warning' : ''}`} />
           {isWatched ? 'Watching' : 'Add to Watchlist'}
@@ -925,11 +922,10 @@ export default function StockDetail() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center justify-center lg:justify-start gap-2.5 px-4 lg:px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 relative flex-shrink-0 lg:flex-shrink focus:outline-none ${
-                    isActive
+                  className={`w-full flex items-center justify-center lg:justify-start gap-2.5 px-4 lg:px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 relative flex-shrink-0 lg:flex-shrink focus:outline-none ${isActive
                       ? 'text-brand-primary bg-brand-primary/10 border border-brand-primary/20 shadow-[0_0_8px_rgba(99,102,241,0.1)]'
                       : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface/50 border border-transparent'
-                  }`}
+                    }`}
                 >
                   <Icon className={`h-4 w-4 flex-shrink-0 ${isActive ? 'text-brand-primary' : 'text-text-secondary'}`} />
                   <span>{item.label}</span>

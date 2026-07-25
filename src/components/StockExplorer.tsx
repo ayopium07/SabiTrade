@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, ChevronUp, ChevronDown, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronUp, ChevronDown, MoreVertical } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 
 // ── Mini Sparkline SVG ─────────────────────────────────────────
@@ -93,8 +93,6 @@ function SortTh({
   );
 }
 
-const PAGE_SIZE = 10;
-
 // ── Main Component ─────────────────────────────────────────────
 export default function StockExplorer() {
   const stocks = useAppStore((s) => s.stocks);
@@ -106,7 +104,6 @@ export default function StockExplorer() {
   const [sector, setSector] = useState('All');
   const [sortBy, setSortBy] = useState<SortField>('price');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [page, setPage] = useState(1);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
 
@@ -138,13 +135,9 @@ export default function StockExplorer() {
       });
   }, [stocks, search, sector, sortBy, sortOrder]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
   const handleSort = (field: SortField) => {
     if (sortBy === field) setSortOrder(o => o === 'desc' ? 'asc' : 'desc');
     else { setSortBy(field); setSortOrder('desc'); }
-    setPage(1);
   };
 
   const toggleCheck = (ticker: string) => {
@@ -171,7 +164,7 @@ export default function StockExplorer() {
           {sectors.map((s) => (
             <button
               key={s}
-              onClick={() => { setSector(s); setPage(1); }}
+              onClick={() => { setSector(s); }}
               className="px-4 py-2 rounded-lg text-[10px] md:text-[12px] font-bold transition-all focus:outline-none"
               style={{
                 background: sector === s ? '#CFA343' : 'rgba(255,255,255,0.05)',
@@ -191,7 +184,7 @@ export default function StockExplorer() {
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              onChange={(e) => { setSearch(e.target.value); }}
               placeholder="Search NGX stock (e.g Zenith, DANGCEM)..."
               className="w-full pl-9 pr-4 py-2.5 rounded-lg text-[10px] md:text-[12px] font-medium bg-[#141020] border border-white/8 text-white placeholder:text-[#44475A] focus:outline-none focus:border-[#CFA343]/40"
             />
@@ -258,8 +251,8 @@ export default function StockExplorer() {
               </tr>
             </thead>
             <tbody>
-              {paged.map((stock, idx) => {
-                const rowNum = String((page - 1) * PAGE_SIZE + idx + 1).padStart(2, '0');
+              {filtered.map((stock, idx) => {
+                const rowNum = String(idx + 1).padStart(2, '0');
                 const isPositive = stock.change >= 0;
                 const isChecked = checked.has(stock.ticker);
                 const upside = ((stock.targetPrice - stock.price) / stock.price) * 100;
@@ -416,9 +409,9 @@ export default function StockExplorer() {
                 );
               })}
 
-              {paged.length === 0 && (
+              {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-16 text-center text-[11px] md:text-[13px] font-medium text-[#7B7E8E]">
+                  <td colSpan={14} className="px-4 py-16 text-center text-[11px] md:text-[13px] font-medium text-[#7B7E8E]">
                     No stocks match your search.
                   </td>
                 </tr>
@@ -427,29 +420,15 @@ export default function StockExplorer() {
           </table>
         </div>
 
-        {/* ── Pagination ── */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-white/5" style={{ background: '#12101E' }}>
-          <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] md:text-[12px] font-bold text-[#94A3B8] border border-white/8 hover:border-white/20 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none"
-          >
-            <ChevronLeft className="h-3.5 w-3.5" />
-            Previous
-          </button>
-
-          <span className="text-[10px] md:text-[12px] font-medium text-[#7B7E8E]">
-            Page {page} of {totalPages}
+        {/* ── Table Footer Summary ── */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-white/5 text-[10px] md:text-[12px] font-medium text-[#7B7E8E]" style={{ background: '#12101E' }}>
+          <span>
+            Showing all <strong className="text-white font-semibold">{filtered.length}</strong> equities {sector !== 'All' ? `in ${sector}` : ''}
           </span>
-
-          <button
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] md:text-[12px] font-bold text-[#94A3B8] border border-white/8 hover:border-white/20 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none"
-          >
-            Next
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
+          <span className="text-[#00D395] font-semibold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#00D395] animate-pulse" />
+            Live Market Data
+          </span>
         </div>
       </div>
     </div>
