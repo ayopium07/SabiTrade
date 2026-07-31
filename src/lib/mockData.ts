@@ -28,6 +28,7 @@ export interface Stock {
 
 export interface NewsItem {
   id: string;
+  author?: string;
   source: string;
   timeAgo: string;
   date: string; // ISO string for calendar filtering
@@ -41,7 +42,9 @@ export interface NewsItem {
   drivers?: string[];
   imageUrl: string;
   commentsCount: number;
-  category: 'Featured' | 'Breaking' | 'Most Popular' | 'Cryptocurrency';
+  category: 'Stock Market' | 'Economy' | 'Global News' | 'Featured' | string;
+  fullContent?: string;
+  commentsList?: { id: string; user: string; avatar: string; text: string; timeAgo: string }[];
 }
 
 export const ngxIndexData = {
@@ -380,7 +383,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['Acquisition', 'Regulatory', 'OilAndGas', 'ProductionBoost'],
     imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80',
     commentsCount: 18,
-    category: 'Breaking',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-2',
@@ -397,7 +409,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['ForexLoss', 'Devaluation', 'ConsumerGoods', 'EarningsReport'],
     imageUrl: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&w=300&q=80',
     commentsCount: 12,
-    category: 'Featured',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-3',
@@ -414,7 +435,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['InterimDividend', 'BankingSector', 'ProfitsSurge', 'CashPayout'],
     imageUrl: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=300&q=80',
     commentsCount: 24,
-    category: 'Most Popular',
+    category: 'Economy',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-4',
@@ -431,7 +461,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['InflationData', 'Macroeconomics', 'ConsumerGoods', 'PurchasingPower'],
     imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',
     commentsCount: 9,
-    category: 'Breaking',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-5',
@@ -448,7 +487,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['RightsIssue', 'CapitalAdequacy', 'BankingSector', 'CBNPolicy'],
     imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=300&q=80',
     commentsCount: 15,
-    category: 'Featured',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-6',
@@ -465,7 +513,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['Exports', 'Expansion', 'WestAfrica', 'Dangote'],
     imageUrl: 'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=300&q=80',
     commentsCount: 8,
-    category: 'Featured',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-7',
@@ -482,7 +539,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['5GSpectrum', 'NCC', 'Telecoms', 'DataGrowth'],
     imageUrl: 'https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&w=300&q=80',
     commentsCount: 22,
-    category: 'Breaking',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-8',
@@ -499,7 +565,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['Earnings', 'FoodStaples', 'RecordProfit', 'BUA'],
     imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=300&q=80',
     commentsCount: 14,
-    category: 'Most Popular',
+    category: 'Economy',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-9',
@@ -516,7 +591,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['OilExports', 'Forcados', 'ProductionRecovery', 'Seplat'],
     imageUrl: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=300&q=80',
     commentsCount: 5,
-    category: 'Most Popular',
+    category: 'Economy',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-10',
@@ -533,7 +617,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['CryptoRules', 'SECNigeria', 'DigitalAssets', 'Regulation'],
     imageUrl: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=300&q=80',
     commentsCount: 31,
-    category: 'Cryptocurrency',
+    category: 'Global News',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-11',
@@ -550,7 +643,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['CBN', 'InterestRates', 'BankingSector'],
     imageUrl: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=300&q=80',
     commentsCount: 45,
-    category: 'Breaking',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   },
   {
     id: 'news-12',
@@ -567,7 +669,16 @@ export const mockNews: NewsItem[] = [
     drivers: ['GDP', 'EconomicGrowth', 'Reforms'],
     imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=300&q=80',
     commentsCount: 62,
-    category: 'Featured',
+    category: 'Stock Market',
+    fullContent: `This is a comprehensive overview of the recent events affecting this sector. Analysts are closely watching the developments, noting that the implications could be far-reaching for investors.
+
+"The current market dynamics require a strategic approach," noted a senior analyst. "We are seeing unprecedented shifts in trading volumes and sentiment."
+
+Investors are advised to maintain a diversified portfolio and stay informed about upcoming policy announcements.`,
+    commentsList: [
+      { id: '1', user: 'TradingPro99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TradingPro99', text: 'This is exactly what I was expecting. The market was pricing this in.', timeAgo: '2h ago' },
+      { id: '2', user: 'ValueInvestor', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ValueInvestor', text: 'Interesting perspective. I might adjust my position accordingly.', timeAgo: '4h ago' }
+    ],
   }
 ];
 

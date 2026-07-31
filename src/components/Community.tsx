@@ -38,7 +38,7 @@ export default function Community() {
   } = useAppStore();
 
   // Create a pseudo current user id
-  const currentUserId = user ? 'u1' : 'guest';
+  const currentUserId = user ? 'current-user' : 'guest';
 
   const handleVote = (type: 'bullish' | 'bearish') => {
     if (hasVoted) return;

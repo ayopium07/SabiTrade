@@ -39,6 +39,7 @@ import AIDailyBrief from '@/components/AIDailyBrief';
 import StockExplorer from '@/components/StockExplorer';
 import StockDetail from '@/components/StockDetail';
 import AINewsFeed from '@/components/AINewsFeed';
+import NewsDetail from '@/components/NewsDetail';
 import PortfolioTracker from '@/components/PortfolioTracker';
 import AIChatbot from '@/components/AIChatbot';
 import AboutUs from '@/components/AboutUs';
@@ -50,6 +51,7 @@ import DashboardNewsPortfolio from '@/components/DashboardNewsPortfolio';
 import TickerTape from '@/components/TickerTape';
 import Footer from '@/components/Footer';
 import TrendingStocks from '@/components/TrendingStocks';
+import LearnSection from '@/components/LearnSection';
 
 import PublicProfile from '@/components/PublicProfile';
 import ThreadView from '@/components/ThreadView';
@@ -810,6 +812,7 @@ export default function Page() {
       case 'home': content = renderHomeView(); break;
       case 'markets': content = <StockExplorer />; break;
       case 'news': content = <AINewsFeed />; break;
+      case 'news-detail': content = <NewsDetail />; break;
       case 'portfolio': content = <PortfolioTracker />; break;
       case 'profile': content = renderProfileView(); break;
       case 'stock-detail': content = <StockDetail />; break;
@@ -1602,7 +1605,7 @@ export default function Page() {
   // ══════════════════════════════════════════════════════════
   // A. LANDING / SPLASH SCREEN
   // ══════════════════════════════════════════════════════════
-  if (!user || currentView === 'landing' || currentView === 'about') {
+  if (!user || currentView === 'landing') {
     const handleGuestNav = (targetView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade') => {
       if (targetView === 'about') {
         setView('about');
@@ -1765,7 +1768,7 @@ export default function Page() {
               </h1>
 
               <p className="text-[#A39EBA] text-sm sm:text-base leading-relaxed max-w-3xl mb-12">
-                EquityStack provides investors with personalized dashboards and powerful analytical tools to model portfolios, evaluate risk, and estimate potential returns. The platform combines financial data, visual infographics, and AI-driven insights to deliver tailored portfolio analysis and stock recommendations based on each investor's goals and preferences.
+                We believe great investment decisions start with great information. We believe financial intelligence should be accessible to everyone, not just professionals. That's why we built a platform that's beautifully designed, easy to use, and powered by institutional-grade analysis. We just happen to help you discover your next winning investment. Ready to build wealth?
               </p>
 
               {/* Company Logos Grid */}
@@ -2319,8 +2322,9 @@ export default function Page() {
           {renderViewContent()}
         </div>
         {currentView === 'home' && (
-          <div className="px-4 sm:px-6 lg:px-8 w-full">
+          <div className="px-4 sm:px-6 lg:px-8 w-full flex flex-col gap-10">
             <TrendingStocks />
+            <LearnSection />
           </div>
         )}
         <Footer />

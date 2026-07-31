@@ -26,7 +26,7 @@ const team = [
   {
     name: 'Joshua Ayotope',
     role: 'Co-Founder & CTO',
-    bio: 'A versatile tech innovator and systems architect with multi-disciplinary knowledge across different sectors. Joshua has worked closely with different sectors to build efficient technical solutions. At EquityStack, he translates complex market intelligence models into a production-ready web platform, directing the Sora AI logic implementation.',
+    bio: 'A versatile tech innovator and systems architect with multi-disciplinary knowledge across different sectors. Joshua has worked closely with different sectors to build efficient technical solutions. At EquityStack, he translates complex market intelligence models into a production-ready web platform, directing the EquityStack AI logic implementation.',
     initials: 'JAA',
     image: '/Temisann.png',
     color: '#10B981',

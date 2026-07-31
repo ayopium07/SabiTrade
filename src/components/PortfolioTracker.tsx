@@ -1,9 +1,54 @@
-import React, { useState } from 'react';
-import { Briefcase, Plus, TrendingUp, TrendingDown, Trash2, LayoutGrid } from 'lucide-react';
-// ngxStocks is loaded dynamically from store
+'use client';
+
+import React, { useState, useMemo } from 'react';
+import { Briefcase, Plus, TrendingUp, TrendingDown, Trash2, LayoutGrid, Calendar, X, Check } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 
-const DONUT_COLORS = ['#CFA343', '#10B981', '#00B8FF', '#FFB800', '#FF4D4D', '#A855F7'];
+const DONUT_COLORS = ['#FF7A68', '#00B8FF', '#FFD166', '#FF4D4D', '#A855F7', '#10B981'];
+
+export type Timeframe = '12 month' | '30 days' | '7 days' | '24 hours';
+export interface DataPoint {
+  date: string;
+  fullDate: string;
+  pVal: number;
+  asiVal: number;
+}
+
+function generateChartData(tf: Timeframe, finalPortfolioVal: number) {
+  const points: DataPoint[] = [];
+  const now = new Date();
+  const maxPVal = finalPortfolioVal > 0 ? finalPortfolioVal : 10000;
+  
+  if (tf === '12 month') {
+    const count = 12;
+    // Specific curve multipliers to mimic the exact screenshot graph shape
+    const curveShapeP = [0.05, 0.12, 0.40, 0.45, 0.85, 0.55, 0.45, 0.50, 0.45, 0.55, 0.90, 1.0];
+    const curveShapeA = [0.02, 0.08, 0.25, 0.30, 0.45, 0.40, 0.25, 0.40, 0.30, 0.45, 0.65, 0.1];
+    
+    for (let i = 0; i < count; i++) {
+      const dt = new Date(now);
+      dt.setMonth(now.getMonth() - (count - 1 - i));
+      const label = dt.toLocaleDateString('en-US', { month: 'short' });
+      const fullDate = dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+      
+      const pVal = finalPortfolioVal === 0 ? 0 : (curveShapeP[i] * maxPVal * 0.6) + (maxPVal * 0.4);
+      const asiVal = finalPortfolioVal === 0 ? 0 : (curveShapeA[i] * maxPVal * 0.6) + (maxPVal * 0.3);
+      points.push({ date: label, fullDate, pVal, asiVal });
+    }
+  } else {
+    // Other timeframes, generate generic smooth data
+    const count = tf === '30 days' ? 30 : tf === '7 days' ? 7 : 24;
+    let pBase = maxPVal * 0.8;
+    let asiBase = maxPVal * 0.7;
+    for (let i = 0; i < count; i++) {
+      const pVal = i === count - 1 && finalPortfolioVal > 0 ? finalPortfolioVal : pBase + (Math.random() - 0.4) * (maxPVal * 0.05);
+      const asiVal = asiBase + (Math.random() - 0.5) * (maxPVal * 0.05);
+      pBase = pVal; asiBase = asiVal;
+      points.push({ date: '', fullDate: '', pVal: finalPortfolioVal === 0 ? 0 : pVal, asiVal: finalPortfolioVal === 0 ? 0 : asiVal });
+    }
+  }
+  return points;
+}
 
 export default function PortfolioTracker() {
   const portfolio = useAppStore((state) => state.portfolio);
@@ -11,13 +56,18 @@ export default function PortfolioTracker() {
   const removeHolding = useAppStore((state) => state.removeHolding);
   const setSelectedTicker = useAppStore((state) => state.setSelectedTicker);
   const stocks = useAppStore((state) => state.stocks);
+  const news = useAppStore((state) => state.news);
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [tickerSelect, setTickerSelect] = useState('ZENITHBANK');
   const [sharesInput, setSharesInput] = useState('');
   const [priceInput, setPriceInput] = useState('');
+  
+  const [timeframe, setTimeframe] = useState<Timeframe>('12 month');
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
-  // ── Portfolio Metrics ─────────────────────────────────
+  // ── Portfolio Metrics ──
   let totalCostBasis = 0;
   let totalCurrentValue = 0;
   let totalTodayChange = 0;
@@ -29,9 +79,11 @@ export default function PortfolioTracker() {
     const pnl = currentValue - costBasis;
     const pnlPercent = costBasis > 0 ? (pnl / costBasis) * 100 : 0;
     const todayChangeAmount = holding.shares * stock.changeAmount;
+    
     totalCostBasis += costBasis;
     totalCurrentValue += currentValue;
     totalTodayChange += todayChangeAmount;
+    
     return { ...holding, stock, costBasis, currentValue, pnl, pnlPercent, todayChangeAmount };
   });
 
@@ -50,9 +102,58 @@ export default function PortfolioTracker() {
     }
   };
 
-  // ── Donut Chart ───────────────────────────────────────
+  // ── Chart Data & SVG ──
+  const activeData = useMemo(() => generateChartData(timeframe, totalCurrentValue), [timeframe, totalCurrentValue]);
+  
+  const svgCoords = useMemo(() => {
+    const pts = activeData;
+    const len = pts.length;
+    
+    // Find min and max across both Pval and AsiVal to set Y scale properly
+    const allVals = pts.flatMap(p => [p.pVal, p.asiVal]);
+    const rawMin = Math.min(...allVals);
+    const rawMax = Math.max(...allVals);
+    const range = (rawMax - rawMin) || 1;
+    
+    const paddedMin = rawMin - range * 0.1;
+    const paddedMax = rawMax + range * 0.2; // leave room at top
+    const finalRange = paddedMax - paddedMin;
+
+    return pts.map((p, i) => {
+      const x = (i / (len - 1)) * 100;
+      const yP = 100 - ((p.pVal - paddedMin) / finalRange) * 100;
+      const yA = 100 - ((p.asiVal - paddedMin) / finalRange) * 100;
+      return { x, yP, yA, point: p };
+    });
+  }, [activeData]);
+
+  // Smooth cubic bezier path generator
+  const createSmoothPath = (points: {x: number, y: number}[]) => {
+    if (points.length === 0) return '';
+    let path = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i];
+      const p1 = points[i + 1];
+      const cx = (p0.x + p1.x) / 2;
+      path += ` C ${cx} ${p0.y}, ${cx} ${p1.y}, ${p1.x} ${p1.y}`;
+    }
+    return path;
+  };
+
+  const pPath = useMemo(() => createSmoothPath(svgCoords.map(p => ({x: p.x, y: p.yP}))), [svgCoords]);
+  const aPath = useMemo(() => createSmoothPath(svgCoords.map(p => ({x: p.x, y: p.yA}))), [svgCoords]);
+  
+  const areaPath = useMemo(() => {
+    if (svgCoords.length === 0) return '';
+    return `${pPath} L 100 100 L 0 100 Z`;
+  }, [pPath, svgCoords]);
+
+  // ── Donut Chart ──
   let accumulatedAngle = 0;
-  const donutSlices = holdingsDetails.map((h, i) => {
+  // Sort holdings by value descending for donut
+  const sortedHoldings = [...holdingsDetails].sort((a,b) => b.currentValue - a.currentValue);
+  
+  const donutSlices = sortedHoldings.map((h, i) => {
     const percentage = totalCurrentValue > 0 ? h.currentValue / totalCurrentValue : 0;
     const angle = percentage * 360;
     const startAngle = accumulatedAngle;
@@ -63,7 +164,14 @@ export default function PortfolioTracker() {
       return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
     };
 
-    const describeArc = (x: number, y: number, r: number, sA: number, eA: number) => {
+    const describeArc = (x: number, y: number, r: number, sA: number, eA: number): string => {
+      // If a single holding is 100%, render two semicircles to form a full circle safely
+      if (percentage === 1) {
+          const half1 = describeArc(x, y, r, 0, 180);
+          const half2 = describeArc(x, y, r, 180, 360);
+          return `${half1} ${half2}`;
+      }
+      
       const start = polarToCartesian(x, y, r, eA);
       const end = polarToCartesian(x, y, r, sA);
       const large = eA - sA <= 180 ? '0' : '1';
@@ -73,321 +181,391 @@ export default function PortfolioTracker() {
     return {
       ticker: h.ticker,
       percentage,
-      path: describeArc(100, 100, 68, startAngle, startAngle + angle),
+      path: describeArc(100, 100, 75, startAngle, startAngle + angle),
       color: DONUT_COLORS[i % DONUT_COLORS.length],
     };
   });
 
-  const cardStyle = {
-    background: 'linear-gradient(145deg, #0E0D25, #070615)',
-    border: '1px solid #23214C',
-  };
-
   return (
-    <div className="space-y-6">
-      {/* ── Stats Row ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Total Value */}
-        <div className="p-5 rounded-2xl relative overflow-hidden" style={cardStyle}>
-          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)' }} />
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
-            Total Valuation
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-            style={{ textShadow: '0 0 20px rgba(99,102,241,0.3)' }}>
-            ₦{totalCurrentValue.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-          </h2>
-          <div className="text-[10px] text-text-secondary font-dm-sans">
-            Cost basis: <span className="text-text-primary font-bold">₦{totalCostBasis.toLocaleString('en-NG')}</span>
-          </div>
-        </div>
-
-        {/* Today's P&L */}
-        <div className="p-5 rounded-2xl" style={cardStyle}>
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
-            Today&apos;s Return
-          </span>
-          <div className="flex items-baseline gap-2 mb-1">
-            <h2 className={`text-2xl sm:text-3xl font-extrabold font-sora tracking-tight ${
-              totalTodayChange >= 0 ? 'text-gain' : 'text-danger'
-            }`}
-              style={{ textShadow: totalTodayChange >= 0 ? '0 0 16px rgba(16,185,129,0.3)' : '0 0 16px rgba(255,77,77,0.3)' }}>
-              {totalTodayChange >= 0 ? '+' : ''}₦{totalTodayChange.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-            </h2>
-            <span className={`inline-flex items-center text-xs font-bold px-1.5 py-0.5 rounded-lg ${
-              totalTodayChange >= 0 ? 'bg-gain/10 text-gain border border-gain/20' : 'bg-danger/10 text-danger'
-            }`}>
-              {totalTodayChange >= 0 ? <TrendingUp className="h-3 w-3 mr-0.5" /> : <TrendingDown className="h-3 w-3 mr-0.5" />}
-              {totalTodayChange >= 0 ? '+' : ''}{totalTodayPnlPercent.toFixed(2)}%
-            </span>
-          </div>
-          <span className="text-[9px] text-text-secondary font-dm-sans uppercase">Since NGX open</span>
-        </div>
-
-        {/* All-time P&L */}
-        <div className="p-5 rounded-2xl" style={cardStyle}>
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
-            All-Time P&amp;L
-          </span>
-          <div className="flex items-baseline gap-2 mb-1">
-            <h2 className={`text-2xl sm:text-3xl font-extrabold font-sora tracking-tight ${
-              totalAllTimePnl >= 0 ? 'text-gain' : 'text-danger'
-            }`}
-              style={{ textShadow: totalAllTimePnl >= 0 ? '0 0 16px rgba(16,185,129,0.3)' : '0 0 16px rgba(255,77,77,0.3)' }}>
-              {totalAllTimePnl >= 0 ? '+' : ''}₦{totalAllTimePnl.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-            </h2>
-            <span className={`inline-flex text-xs font-bold px-1.5 py-0.5 rounded-lg ${
-              totalAllTimePnl >= 0 ? 'bg-gain/10 text-gain border border-gain/20' : 'bg-danger/10 text-danger'
-            }`}>
-              {totalAllTimePnl >= 0 ? '+' : ''}{totalAllTimePnlPercent.toFixed(2)}%
-            </span>
-          </div>
-          <span className="text-[9px] text-text-secondary font-dm-sans uppercase">Unrealised ledger P&L</span>
-        </div>
-      </div>
-
-      {/* ── Donut & Holdings ─────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-        {/* Donut Chart */}
-        {portfolio.length > 0 && (
-          <div className="md:col-span-4 p-5 rounded-2xl space-y-4" style={cardStyle}>
-            <h3 className="text-[10px] font-extrabold text-text-secondary uppercase tracking-widest font-dm-sans">
-              Allocation
-            </h3>
-            <div className="relative w-44 h-44 mx-auto">
-              <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
-                {/* Dark ring background */}
-                <circle cx="100" cy="100" r="68" fill="none" stroke="#23214C" strokeWidth="20" />
-                {donutSlices.map((slice) => (
-                  <path key={slice.ticker} d={slice.path} fill="none"
-                    stroke={slice.color} strokeWidth="20"
-                    style={{ filter: `drop-shadow(0 0 6px ${slice.color}60)` }} />
-                ))}
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className="text-[9px] text-text-secondary font-bold uppercase tracking-wider">Assets</span>
-                <span className="text-lg font-extrabold text-brand-primary font-sora">{portfolio.length}</span>
-                <span className="text-[9px] text-text-secondary">Equities</span>
+    <div className="space-y-6 text-[#E0E0E0] font-dm-sans min-h-screen">
+      
+      {/* ── TOP SECTION (GRID) ── */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+        
+        {/* LEFT COLUMN: Main Chart (col-span-8) */}
+        <div className="md:col-span-8 rounded-[14px] border border-white/5 overflow-hidden flex flex-col" style={{ background: '#171622' }}>
+          <div className="p-6 flex-1 flex flex-col relative">
+            
+            {/* Header row */}
+            <div className="flex justify-between items-start mb-8 z-10 relative">
+              <div>
+                <div className="text-[11px] font-bold text-white/50 mb-2">Total Valuation</div>
+                <div className="text-4xl font-extrabold text-[#CFA343] font-sora tracking-tight mb-2">
+                  ₦{totalCurrentValue.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                </div>
+                <div className="text-[11px] text-white/60">
+                  Cost basis: <span className="font-bold text-white">₦{totalCostBasis.toLocaleString('en-NG')}</span>
+                </div>
+                
+                <div className="flex items-center gap-5 mt-6">
+                   <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></div>
+                      <span className="text-[11px] text-white/60 font-semibold">Portfolio Performance</span>
+                   </div>
+                   <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                      <span className="text-[11px] text-white/60 font-semibold">ASI line</span>
+                   </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                 <div className="flex items-center rounded-md border border-white/10 bg-transparent overflow-hidden">
+                    {(['12 month', '30 days', '7 days', '24 hours'] as Timeframe[]).map((tf) => (
+                      <button key={tf} onClick={() => setTimeframe(tf)}
+                        className={`px-3 py-1.5 text-[10px] font-bold border-r border-white/10 last:border-r-0 transition-colors ${timeframe === tf ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>
+                        {tf}
+                      </button>
+                    ))}
+                 </div>
+                 
+                 <button onClick={() => setIsDatePickerOpen(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 bg-transparent hover:bg-white/5 transition-colors">
+                    <Calendar className="h-3.5 w-3.5 text-white/60" />
+                    <span className="text-[10px] font-bold text-white">Select dates</span>
+                 </button>
               </div>
             </div>
-            <div className="space-y-1.5 pt-2 border-t border-border/50">
-              {donutSlices.map((slice) => (
-                <div key={slice.ticker} className="flex items-center justify-between text-xs font-medium font-dm-sans">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: slice.color, boxShadow: `0 0 4px ${slice.color}80` }} />
-                    <span className="font-bold text-text-primary uppercase text-[11px]">{slice.ticker}</span>
-                  </div>
-                  <span className="text-text-secondary font-sora text-[10px]">
-                    {(slice.percentage * 100).toFixed(0)}%
-                  </span>
-                </div>
-              ))}
+            
+            {/* SVG Chart Area */}
+            <div className="relative w-full h-[320px] mt-auto">
+               
+               {/* Horizontal grid lines */}
+               <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                 {[...Array(5)].map((_, i) => (
+                   <div key={i} className="w-full border-t border-white/5" />
+                 ))}
+               </div>
+
+               {/* SVG Canvas */}
+               <div 
+                 className="absolute inset-0 z-0" 
+                 onMouseLeave={() => setHoveredIdx(null)}
+                 onMouseMove={(e) => {
+                   const rect = e.currentTarget.getBoundingClientRect();
+                   const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                   setHoveredIdx(Math.round(ratio * (activeData.length - 1)));
+                 }}
+               >
+                 <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+                   <defs>
+                     <linearGradient id="port-grad" x1="0" y1="0" x2="0" y2="1">
+                       <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+                       <stop offset="70%" stopColor="#10B981" stopOpacity="0.05" />
+                       <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                     </linearGradient>
+                   </defs>
+                   
+                   {/* ASI Line (White) */}
+                   <path d={aPath} fill="none" stroke="#FFFFFF" strokeWidth="1.2" vectorEffect="non-scaling-stroke" strokeOpacity="0.6" />
+                   
+                   {/* Portfolio Line (Green) + Area */}
+                   <path d={areaPath} fill="url(#port-grad)" />
+                   <path d={pPath} fill="none" stroke="#10B981" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+
+                   {/* Hover logic */}
+                   {hoveredIdx !== null && svgCoords[hoveredIdx] && (
+                      <g>
+                        <line x1={svgCoords[hoveredIdx].x} y1="0" x2={svgCoords[hoveredIdx].x} y2="100" stroke="#10B981" strokeWidth="0.5" strokeOpacity="0.7" vectorEffect="non-scaling-stroke" />
+                        <circle cx={svgCoords[hoveredIdx].x} cy={svgCoords[hoveredIdx].yP} r="3" fill="#171622" stroke="#10B981" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                      </g>
+                   )}
+                 </svg>
+                 
+                 {/* X Axis Labels */}
+                 <div className="absolute -bottom-8 left-0 right-0 flex justify-between px-2">
+                    {activeData.map((d, i) => {
+                      if (!d.date) return null;
+                      const x = (i / (activeData.length - 1)) * 100;
+                      return (
+                        <div key={i} className="absolute text-[10px] text-white/50 -translate-x-1/2" style={{ left: `${x}%` }}>
+                          {d.date}
+                        </div>
+                      )
+                    })}
+                 </div>
+
+                 {/* Custom Tooltip text on hover */}
+                 {hoveredIdx !== null && activeData[hoveredIdx] && activeData[hoveredIdx].fullDate && (
+                    <div className="absolute text-[10px] text-white pointer-events-none" style={{ left: `${svgCoords[hoveredIdx].x}%`, top: '-10px', transform: 'translateX(-50%)' }}>
+                       {activeData[hoveredIdx].fullDate}
+                    </div>
+                 )}
+               </div>
+               
             </div>
           </div>
-        )}
+        </div>
+        
+        {/* RIGHT COLUMN: 3 Stacked Cards (col-span-4) */}
+        <div className="md:col-span-4 flex flex-col gap-5">
+           
+           {/* Card 1: Today's Return */}
+           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center bg-[#171622]">
+              <div className="text-[11px] font-bold text-white/50 mb-3">Today's Return</div>
+              <div className={`text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalTodayChange >= 0 ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+                 {totalTodayChange >= 0 ? '+' : ''}₦{totalTodayChange.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                 <span className={`flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full ${totalTodayChange >= 0 ? 'bg-[#00D395]/10 text-[#00D395]' : 'bg-[#FF4D4D]/10 text-[#FF4D4D]'}`}>
+                    <TrendingUp className={`h-3 w-3 mr-1 ${totalTodayChange >= 0 ? '' : 'rotate-180'}`} />
+                    {totalTodayChange >= 0 ? '+' : ''}{totalTodayPnlPercent.toFixed(2)}%
+                 </span>
+              </div>
+              <div className="text-[10px] text-white/40">Since NGX open</div>
+           </div>
+           
+           {/* Card 2: All-Time P&L */}
+           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center bg-[#171622]">
+              <div className="text-[11px] font-bold text-white/50 mb-3">All-Time P&L</div>
+              <div className={`text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalAllTimePnl >= 0 ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+                 {totalAllTimePnl >= 0 ? '+' : ''}₦{totalAllTimePnl.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                 <span className={`flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full ${totalAllTimePnl >= 0 ? 'bg-[#00D395]/10 text-[#00D395]' : 'bg-[#FF4D4D]/10 text-[#FF4D4D]'}`}>
+                    <TrendingUp className={`h-3 w-3 mr-1 ${totalAllTimePnl >= 0 ? '' : 'rotate-180'}`} />
+                    {totalAllTimePnl >= 0 ? '+' : ''}{totalAllTimePnlPercent.toFixed(2)}%
+                 </span>
+              </div>
+              <div className="text-[10px] text-white/40">Unrealised ledger P&L</div>
+           </div>
+           
+           {/* Card 3: Donut */}
+           <div className="rounded-[14px] border border-white/5 p-6 flex-1 flex items-center bg-[#171622] gap-4">
+              <div className="relative w-[130px] h-[130px] flex-shrink-0">
+                 <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
+                   <circle cx="100" cy="100" r="75" fill="none" stroke="#23214C" strokeWidth="22" />
+                   {donutSlices.map(s => (
+                      <path key={s.ticker} d={s.path} fill="none" stroke={s.color} strokeWidth="22" />
+                   ))}
+                 </svg>
+                 <div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
+                    <span className="text-[9px] text-white/50 font-bold tracking-wider">ASSETS</span>
+                    <span className="text-xl font-extrabold text-[#CFA343] font-sora leading-tight">{portfolio.length}</span>
+                    <span className="text-[9px] text-white/40">Equities</span>
+                 </div>
+              </div>
+              <div className="flex-1 flex flex-col justify-center gap-3">
+                 {donutSlices.slice(0,3).map((slice) => (
+                    <div key={slice.ticker} className="flex items-start gap-2">
+                       <div className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0" style={{ backgroundColor: slice.color }}></div>
+                       <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-white tracking-wide">{slice.ticker}</span>
+                          <span className="text-[10px] text-white/50">{(slice.percentage * 100).toFixed(0)}%</span>
+                       </div>
+                    </div>
+                 ))}
+                 {donutSlices.length > 3 && (
+                    <div className="text-[10px] text-white/40 italic ml-5">+ {donutSlices.length - 3} more</div>
+                 )}
+              </div>
+           </div>
 
-        {/* Holdings Table */}
-        <div className={`${portfolio.length > 0 ? 'md:col-span-8' : 'md:col-span-12'} space-y-4`}>
-          <div className="flex items-center justify-between">
-            <h3 className="text-[10px] font-extrabold text-text-secondary uppercase tracking-widest font-dm-sans">
+        </div>
+      </div>
+      
+      {/* ── BOTTOM SECTION: Tracked Holdings ── */}
+      <div className="rounded-[14px] border border-white/5 bg-[#171622] p-6">
+         <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xs font-extrabold text-white/60 uppercase tracking-widest">
               Tracked Holdings
             </h3>
             <button onClick={() => setIsAddOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold focus:outline-none transition-all text-bg-base"
-              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.3)' }}>
-              <Plus className="h-3.5 w-3.5" />
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold focus:outline-none transition-all text-black bg-[#FFD166] hover:bg-[#CFA343]">
+              <Plus className="h-4 w-4" />
               Record Purchase
             </button>
-          </div>
-
-          <div className="rounded-2xl overflow-hidden" style={cardStyle}>
-            {holdingsDetails.length > 0 ? (
-              <div className="divide-y divide-border/50">
-                <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-3 border-b border-border/50 text-[9px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans"
-                  style={{ background: 'rgba(0,0,0,0.3)' }}>
-                  <div className="col-span-4">Equity</div>
-                  <div className="col-span-2 text-right">Holdings</div>
-                  <div className="col-span-2 text-right">Cost Price</div>
-                  <div className="col-span-2 text-right">Current Val</div>
-                  <div className="col-span-2 text-center">P&L / Del</div>
-                </div>
-                {holdingsDetails.map((h, idx) => {
-                  const isPos = h.pnl >= 0;
-                  const color = DONUT_COLORS[idx % DONUT_COLORS.length];
-                  return (
-                    <div key={h.ticker} onClick={() => setSelectedTicker(h.ticker)}
-                      className="flex flex-col sm:grid sm:grid-cols-12 gap-1 sm:gap-4 items-stretch sm:items-center px-4 sm:px-5 py-4 cursor-pointer group transition-all"
-                      style={{ borderLeft: '2px solid transparent' }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLDivElement).style.background = 'rgba(99,102,241,0.02)';
-                        (e.currentTarget as HTMLDivElement).style.borderLeftColor = color;
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLDivElement).style.background = 'transparent';
-                        (e.currentTarget as HTMLDivElement).style.borderLeftColor = 'transparent';
-                      }}>
-                      {/* Left: Ticker/Name (Desktop & Mobile) */}
-                      <div className="flex justify-between items-center sm:col-span-4 w-full sm:w-auto pb-2 sm:pb-0">
-                        <div className="flex items-center gap-3">
-                          <span className="h-2.5 w-2.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}80` }} />
-                          <div className="truncate">
-                            <span className="text-sm font-extrabold font-sora tracking-tight group-hover:underline"
-                              style={{ color }}>{h.ticker}</span>
-                            <p className="text-xs text-text-secondary font-medium font-dm-sans truncate">{h.stock.name}</p>
+         </div>
+         
+         <div className="w-full overflow-x-auto pb-4">
+            <div className="min-w-[800px]">
+               {/* Table Header */}
+               <div className="grid grid-cols-12 gap-4 pb-4 border-b border-white/5 text-[9px] font-bold text-white/40 uppercase tracking-widest text-left">
+                  <div className="col-span-3">Equity</div>
+                  <div className="col-span-2 text-center">Current Price</div>
+                  <div className="col-span-2 text-center">Holdings</div>
+                  <div className="col-span-2 text-center">Cost Price</div>
+                  <div className="col-span-1 text-center">Current Val</div>
+                  <div className="col-span-2 text-right pr-4">P&L / DEL</div>
+               </div>
+               
+               {/* Table Body */}
+               <div className="divide-y divide-white/5">
+                  {holdingsDetails.length === 0 ? (
+                     <div className="py-12 text-center">
+                        <LayoutGrid className="h-8 w-8 text-white/20 mx-auto mb-3" />
+                        <p className="text-sm font-bold text-white mb-1">Portfolio is Empty</p>
+                        <p className="text-xs text-white/40 max-w-sm mx-auto">
+                           Track your NGX holdings manually. Record your first buy to analyze yields!
+                        </p>
+                     </div>
+                  ) : (
+                     holdingsDetails.map((h, idx) => {
+                        const isPos = h.pnl >= 0;
+                        // Use exact matching for colors based on donut order to maintain visual consistency
+                        const colorIndex = sortedHoldings.findIndex(sh => sh.ticker === h.ticker);
+                        const color = DONUT_COLORS[colorIndex % DONUT_COLORS.length];
+                        
+                        return (
+                          <div key={h.ticker} className="grid grid-cols-12 gap-4 py-5 items-center hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-lg">
+                             
+                             {/* EQUITY */}
+                             <div className="col-span-3 flex items-center gap-3">
+                                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }}></div>
+                                <div className="flex flex-col">
+                                   <span className="text-sm font-extrabold text-white tracking-wide font-sora cursor-pointer hover:underline"
+                                         onClick={() => setSelectedTicker(h.ticker)}>
+                                     {h.ticker}
+                                   </span>
+                                   <span className="text-xs text-[#00B8FF] opacity-80 truncate" style={{ color }}>{h.stock.name}</span>
+                                </div>
+                             </div>
+                             
+                             {/* CURRENT PRICE */}
+                             <div className="col-span-2 flex flex-col items-center">
+                                <span className="text-sm font-extrabold text-white font-sora">₦{h.stock.price.toLocaleString('en-NG')}</span>
+                                <span className="text-[10px] text-white/40 font-bold mt-0.5">N{(h.shares * h.stock.price).toLocaleString('en-NG')}</span>
+                             </div>
+                             
+                             {/* HOLDINGS */}
+                             <div className="col-span-2 flex flex-col items-center">
+                                <span className="text-sm font-extrabold text-white font-sora">{h.shares.toLocaleString()}</span>
+                                <span className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5 font-bold">Shares</span>
+                             </div>
+                             
+                             {/* COST PRICE */}
+                             <div className="col-span-2 flex flex-col items-center">
+                                <span className="text-sm font-extrabold text-white font-sora">₦{h.buyPrice.toLocaleString()}</span>
+                                <span className="text-[10px] text-white/40 font-bold mt-0.5">N{h.costBasis.toLocaleString('en-NG')}</span>
+                             </div>
+                             
+                             {/* CURRENT VAL */}
+                             <div className="col-span-1 flex justify-center items-center">
+                                <span className="text-sm font-extrabold text-white font-sora">₦{h.currentValue.toLocaleString('en-NG')}</span>
+                             </div>
+                             
+                             {/* P&L / DEL */}
+                             <div className="col-span-2 flex items-center justify-end gap-3 pr-2">
+                                <div className="flex flex-col items-end">
+                                   <span className={`text-sm font-extrabold font-sora ${isPos ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+                                      {isPos ? '+' : ''}₦{h.pnl.toLocaleString('en-NG')}
+                                   </span>
+                                   <span className={`text-[10px] font-bold mt-0.5 ${isPos ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+                                      {isPos ? '+' : ''}{h.pnlPercent.toFixed(1)}%
+                                   </span>
+                                </div>
+                                <button onClick={() => removeHolding(h.ticker)} className="p-1.5 rounded bg-white/5 hover:bg-[#FF4D4D]/20 text-white/30 hover:text-[#FF4D4D] transition-colors">
+                                   <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                             </div>
+                             
                           </div>
-                        </div>
-                        {/* Mobile: Top Right (Current Val & % P&L) */}
-                        <div className="sm:hidden text-right">
-                          <span className="block text-sm font-extrabold text-text-primary font-sora">
-                            ₦{h.currentValue.toLocaleString('en-NG')}
-                          </span>
-                          <span className={`block text-[10px] font-bold ${isPos ? 'text-gain' : 'text-danger'}`}>
-                            {isPos ? '+' : ''}{h.pnlPercent.toFixed(2)}%
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Middle Data Rows */}
-                      <div className="flex justify-between items-end sm:contents w-full pt-3 mt-1 border-t border-border/10 sm:border-0 sm:pt-0 sm:mt-0">
-                        {/* Shares */}
-                        <div className="sm:col-span-2 text-left sm:text-right">
-                          <span className="block sm:hidden text-[9px] text-text-secondary font-dm-sans uppercase mb-0.5 tracking-wider">Shares</span>
-                          <span className="text-xs font-extrabold text-text-primary font-sora">{h.shares.toLocaleString()}</span>
-                          <span className="hidden sm:block text-[9px] text-text-secondary font-dm-sans uppercase">shares</span>
-                        </div>
-
-                        {/* Cost Price */}
-                        <div className="sm:col-span-2 text-center sm:text-right">
-                          <span className="block sm:hidden text-[9px] text-text-secondary font-dm-sans uppercase mb-0.5 tracking-wider">Avg Cost</span>
-                          <span className="text-xs font-bold text-text-secondary font-sora">₦{h.buyPrice.toLocaleString()}</span>
-                          <span className="hidden sm:block text-[9px] text-text-secondary font-dm-sans">₦{h.costBasis.toLocaleString()}</span>
-                        </div>
-
-                        {/* Desktop Current Val */}
-                        <div className="hidden sm:block sm:col-span-2 text-right">
-                          <span className="text-xs font-extrabold text-text-primary font-sora">
-                            ₦{h.currentValue.toLocaleString('en-NG')}
-                          </span>
-                        </div>
-
-                        {/* Mobile P&L */}
-                        <div className="sm:hidden text-right">
-                          <span className="block text-[9px] text-text-secondary font-dm-sans uppercase mb-0.5 tracking-wider">Total P&L</span>
-                          <span className={`text-xs font-extrabold font-sora ${isPos ? 'text-gain' : 'text-danger'}`}
-                            style={{ textShadow: isPos ? '0 0 8px rgba(16,185,129,0.4)' : '0 0 8px rgba(255,77,77,0.3)' }}>
-                            {isPos ? '+' : ''}₦{h.pnl.toLocaleString('en-NG')}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Desktop P&L / Mobile Delete */}
-                      <div className="flex justify-between sm:justify-end items-center sm:col-span-2 w-full pt-3 mt-3 border-t border-dashed border-border/20 sm:border-0 sm:pt-0 sm:mt-0">
-                        <div className="hidden sm:block text-right">
-                          <span className={`text-xs font-extrabold font-sora ${isPos ? 'text-gain' : 'text-danger'}`}
-                            style={{ textShadow: isPos ? '0 0 8px rgba(16,185,129,0.4)' : '0 0 8px rgba(255,77,77,0.3)' }}>
-                            {isPos ? '+' : ''}₦{h.pnl.toLocaleString('en-NG')}
-                          </span>
-                          <span className={`block text-[9px] font-bold ${isPos ? 'text-gain' : 'text-danger'}`}>
-                            {isPos ? '+' : ''}{h.pnlPercent.toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="sm:hidden text-[10px] text-text-secondary/50 uppercase tracking-widest font-bold">
-                          Manage Asset
-                        </div>
-                        <button onClick={(e) => { e.stopPropagation(); removeHolding(h.ticker); }}
-                          className="p-2 sm:p-1.5 rounded-lg text-text-secondary hover:text-danger hover:bg-danger/10 border border-transparent hover:border-danger/20 transition-all focus:outline-none">
-                          <Trash2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="p-12 text-center text-text-secondary font-dm-sans">
-                <LayoutGrid className="h-8 w-8 text-text-secondary/40 mx-auto mb-3" />
-                <p className="text-sm font-bold text-text-primary mb-1">Portfolio is Empty</p>
-                <p className="text-xs mb-5 max-w-sm mx-auto leading-relaxed">
-                  Track your NGX holdings manually. Record your first buy to analyze yields!
-                </p>
-                <button onClick={() => setIsAddOpen(true)}
-                  className="px-5 py-2 rounded-xl text-xs font-bold text-bg-base transition-all focus:outline-none"
-                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.3)' }}>
-                  Start tracking investments
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Add Holding Modal ─────────────────────────────── */}
-      {isAddOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
-          style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}>
-          <div className="w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-300"
-            style={{ background: '#0E0D25', border: '1px solid rgba(207,163,67,0.15)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)' }}>
-            <div className="absolute top-0 left-0 right-0 h-px rounded-t-3xl"
-              style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
-
-            <div className="flex items-center justify-between border-b border-border/50 pb-3">
-              <h3 className="text-sm font-extrabold text-brand-primary font-sora flex items-center gap-2">
-                <Briefcase className="h-4 w-4" />
-                Record Buy Transaction
-              </h3>
-              <button onClick={() => setIsAddOpen(false)}
-                className="text-text-secondary hover:text-text-primary text-sm font-bold focus:outline-none p-1">✕</button>
+                        );
+                     })
+                  )}
+               </div>
             </div>
-
+         </div>
+      </div>
+      
+      {/* ── BOTTOM SECTION 2: Portfolio News and Analysis ── */}
+      <div className="rounded-[14px] border border-white/5 bg-[#171622] p-6 mt-6">
+         <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xs font-extrabold text-white/60 uppercase tracking-widest">
+              Portfolio News and Analysis
+            </h3>
+         </div>
+         <div className="divide-y divide-white/5">
+            {news
+              .filter(n => n.affectedStocks?.some(ticker => portfolio.some(h => h.ticker === ticker)))
+              .map((item) => (
+               <div key={item.id} className="py-5 flex gap-4 hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-lg cursor-pointer">
+                  {item.imageUrl && (
+                     <div className="w-[120px] h-[80px] rounded-lg overflow-hidden flex-shrink-0 border border-white/10 hidden sm:block">
+                        <img src={item.imageUrl} alt={item.originalHeadline} className="w-full h-full object-cover" />
+                     </div>
+                  )}
+                  <div className="flex flex-col flex-1 justify-center">
+                     <h4 className="text-sm font-bold text-[#00B8FF] hover:underline mb-1">
+                        {item.originalHeadline}
+                     </h4>
+                     <p className="text-[10px] text-white/40 mb-2">
+                        By {item.source} - {item.date ? new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : item.timeAgo}
+                     </p>
+                     <p className="text-xs text-white/70 line-clamp-2 leading-relaxed">
+                        {item.aiSummary || item.whyItMatters}
+                     </p>
+                  </div>
+               </div>
+            ))}
+            {news.filter(n => n.affectedStocks?.some(ticker => portfolio.some(h => h.ticker === ticker))).length === 0 && (
+               <div className="py-8 text-center">
+                  <p className="text-sm font-bold text-white mb-1">No News Available</p>
+                  <p className="text-xs text-white/40">Add assets to your portfolio to track related news and analysis.</p>
+               </div>
+            )}
+         </div>
+      </div>
+      
+      {/* ── Modals (Add Holding, DatePicker) ── */}
+      {/* ... Add Modal ... */}
+      {isAddOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-2xl p-6 space-y-4 bg-[#171622] border border-white/10 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <h3 className="text-sm font-extrabold text-[#CFA343] font-sora flex items-center gap-2">
+                <Briefcase className="h-4 w-4" /> Record Buy Transaction
+              </h3>
+              <button onClick={() => setIsAddOpen(false)} className="text-white/40 hover:text-white p-1"><X className="h-4 w-4" /></button>
+            </div>
             <form onSubmit={handleAdd} className="space-y-4">
-              {[
-                { label: 'Select NGX Asset', el: (
-                  <select value={tickerSelect} onChange={e => setTickerSelect(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-text-primary"
-                    style={{ background: '#0E0D25', border: '1px solid #23214C' }}>
-                    {stocks.map(s => (
-                      <option key={s.ticker} value={s.ticker} style={{ background: '#0E0D25' }}>
-                        {s.ticker} — {s.name} (₦{s.price.toFixed(2)})
-                      </option>
-                    ))}
-                  </select>
-                )},
-                { label: 'Shares Purchased', el: (
-                  <input type="number" required placeholder="e.g. 5,000" value={sharesInput}
-                    onChange={e => setSharesInput(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-text-primary placeholder:text-text-secondary"
-                    style={{ background: '#0E0D25', border: '1px solid #23214C' }} />
-                )},
-                { label: 'Buy Price per Share (₦)', el: (
-                  <input type="number" step="0.01" placeholder="Leave empty for current price" value={priceInput}
-                    onChange={e => setPriceInput(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-text-primary placeholder:text-text-secondary"
-                    style={{ background: '#0E0D25', border: '1px solid #23214C' }} />
-                )},
-              ].map(({ label, el }) => (
-                <div key={label}>
-                  <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans mb-1.5">{label}</label>
-                  {el}
-                </div>
-              ))}
-
-              <div className="pt-2 flex items-center justify-end gap-2.5">
-                <button type="button" onClick={() => setIsAddOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-text-secondary hover:text-text-primary border border-border/50 transition-colors">
-                  Cancel
-                </button>
-                <button type="submit"
-                  className="px-5 py-2 rounded-xl text-xs font-bold text-bg-base transition-all"
-                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.3)' }}>
-                  Add Transaction
-                </button>
+              <div>
+                <label className="block text-[10px] text-white/50 font-bold uppercase mb-1.5">Select NGX Asset</label>
+                <select value={tickerSelect} onChange={e => setTickerSelect(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-white bg-[#0E0D25] border border-white/10">
+                  {stocks.map(s => <option key={s.ticker} value={s.ticker}>{s.ticker} — {s.name} (₦{s.price.toFixed(2)})</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] text-white/50 font-bold uppercase mb-1.5">Shares Purchased</label>
+                <input type="number" required placeholder="e.g. 5,000" value={sharesInput} onChange={e => setSharesInput(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-white bg-[#0E0D25] border border-white/10" />
+              </div>
+              <div>
+                <label className="block text-[10px] text-white/50 font-bold uppercase mb-1.5">Buy Price per Share (₦)</label>
+                <input type="number" step="0.01" placeholder="Leave empty for current price" value={priceInput} onChange={e => setPriceInput(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-white bg-[#0E0D25] border border-white/10" />
+              </div>
+              <div className="pt-2 flex justify-end gap-2.5">
+                <button type="button" onClick={() => setIsAddOpen(false)} className="px-4 py-2 rounded-xl text-xs font-bold text-white/60 hover:text-white border border-white/10">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl text-xs font-bold text-black bg-[#CFA343] hover:bg-[#FFD166] transition-colors">Add Transaction</button>
               </div>
             </form>
           </div>
         </div>
       )}
+      
+      {/* ... Date Picker Modal ... */}
+      {isDatePickerOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+           {/* Re-use exact design from MarketStatus, simplified */}
+           <div className="bg-[#171622] border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                 <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-[#CFA343]" /><h3 className="text-sm font-bold text-white font-sora">Select Date Range</h3></div>
+                 <button onClick={() => setIsDatePickerOpen(false)} className="text-white/40 hover:text-white p-1"><X className="h-4 w-4" /></button>
+              </div>
+              <div className="text-xs text-white/50">Date picker feature disabled in demo. Select a quick timeframe.</div>
+              <div className="flex justify-end pt-2"><button onClick={() => setIsDatePickerOpen(false)} className="px-4 py-2 rounded-xl text-xs font-bold text-black bg-[#CFA343] hover:bg-[#FFD166]">Close</button></div>
+           </div>
+        </div>
+      )}
+
     </div>
   );
 }

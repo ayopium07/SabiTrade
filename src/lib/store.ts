@@ -58,8 +58,8 @@ export interface SocialComment {
 
 export interface AppState {
   // Navigation & View Flow
-  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread';
-  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread';
+  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread' | 'news-detail';
+  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread' | 'news-detail';
   selectedTicker: string;
   
   // User Authentication & Onboarding
@@ -88,6 +88,7 @@ export interface AppState {
   // Real-time news state
   news: NewsItem[];
   isLoadingNews: boolean;
+  selectedNewsArticle: NewsItem | null;
 
   // Social Network State
   communityUsers: SocialUser[];
@@ -97,7 +98,7 @@ export interface AppState {
   selectedPostId: string | null;
 
   // Actions
-  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread') => void;
+  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread' | 'news-detail') => void;
   setSelectedTicker: (ticker: string) => void;
   loginUser: (name: string, email: string) => void;
   signInUser: (name: string, email: string) => void;
@@ -115,6 +116,9 @@ export interface AppState {
   clearChat: () => void;
   fetchMarketData: () => Promise<void>;
   fetchNews: () => Promise<void>;
+  publishNews: (headline: string, content: string, imageUrl?: string, source?: string) => Promise<void>;
+  setSelectedNewsArticle: (news: NewsItem | null) => void;
+  addNewsComment: (newsId: string, text: string) => void;
   updateProfileImage: (url: string) => void;
 
   // Social Actions
@@ -158,6 +162,7 @@ export const useAppStore = create<AppState>()(
   isLoadingMarketData: false,
   news: mockNews,
   isLoadingNews: false,
+  selectedNewsArticle: null,
 
   communityUsers: [
     { id: 'u1', name: 'Adebayo O.', handle: 'adebayo_trades', avatar: 'AO', bio: 'Value investor focused on NGX banking sector. Always looking for dividends.', followers: ['u2', 'u3'], following: ['u2'], joinDate: 'March 2026' },
@@ -439,6 +444,42 @@ export const useAppStore = create<AppState>()(
     }
   },
 
+  setSelectedNewsArticle: (news) => set({ selectedNewsArticle: news }),
+
+  addNewsComment: (newsId, text) => {
+    set(state => {
+      const newComment = {
+        id: Math.random().toString(36).substring(7),
+        user: state.user?.name || 'Current User',
+        avatar: state.user?.profileImage || 'https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser',
+        text,
+        timeAgo: 'Just now'
+      };
+      
+      const updatedNews = state.news.map(n => {
+        if (n.id === newsId) {
+          return {
+            ...n,
+            commentsList: [newComment, ...(n.commentsList || [])],
+            commentsCount: n.commentsCount + 1
+          };
+        }
+        return n;
+      });
+      
+      let updatedSelected = state.selectedNewsArticle;
+      if (updatedSelected && updatedSelected.id === newsId) {
+        updatedSelected = {
+          ...updatedSelected,
+          commentsList: [newComment, ...(updatedSelected.commentsList || [])],
+          commentsCount: updatedSelected.commentsCount + 1
+        };
+      }
+      
+      return { news: updatedNews, selectedNewsArticle: updatedSelected };
+    });
+  },
+
   fetchNews: async () => {
     if (get().isLoadingNews) return;
     set({ isLoadingNews: true });
@@ -447,7 +488,10 @@ export const useAppStore = create<AppState>()(
       if (response.ok) {
         const data = await response.json();
         if (data.news && Array.isArray(data.news)) {
-          set({ news: data.news });
+          set(state => {
+            const userNews = state.news.filter(n => n.id.startsWith('news-user-'));
+            return { news: [...userNews, ...data.news] };
+          });
         }
       }
     } catch (err) {
@@ -455,6 +499,44 @@ export const useAppStore = create<AppState>()(
     } finally {
       set({ isLoadingNews: false });
     }
+  },
+
+  publishNews: async (headline, content, imageUrl = '', source = 'Community Contributor') => {
+    // Generate AI Summary and Implications locally or simulate a quick processing delay
+    const newId = `news-user-${Date.now()}`;
+    
+    // Simulate AI processing time
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // In a real prod environment, this would call the /api/ai/news backend to generate these fields.
+    // For now, we simulate an AI processing the user's article.
+    const aiSummary = content.length > 150 ? content.slice(0, 150) + '...' : content;
+    
+    set(state => {
+      const newArticle: NewsItem = {
+        id: newId,
+        source: source,
+        author: state.user?.name || 'User',
+        timeAgo: 'Just now',
+        date: new Date().toISOString(),
+        originalHeadline: headline,
+        aiSummary: `EquityStack AI: ${aiSummary}`,
+        fullContent: content,
+        whyItMatters: 'A community contributor has highlighted this development, pointing to potential shifts in market dynamics.',
+        implications: 'Investors should monitor community sentiment as it may precede institutional movements.',
+        keyDriver: 'Macro Event',
+        affectedStocks: [],
+        marketImpact: 'Neutral',
+        category: 'All News',
+        imageUrl: imageUrl || 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=400&q=80',
+        commentsCount: 0,
+        commentsList: []
+      };
+
+      return {
+        news: [newArticle, ...state.news]
+      };
+    });
   },
 
   viewProfile: (userId) => set((state) => ({
@@ -501,36 +583,72 @@ export const useAppStore = create<AppState>()(
     })
   })),
 
-  addPost: (content, tickerTags, authorId) => set((state) => ({
-    communityPosts: [
-      {
-        id: `p${Date.now()}`,
-        authorId,
-        content,
-        tickerTags,
-        createdAt: new Date().toISOString(),
-        likes: [],
-        retweets: [],
-        repliesCount: 0
-      },
-      ...state.communityPosts
-    ]
-  })),
+  addPost: (content, tickerTags, authorId) => set((state) => {
+    let users = state.communityUsers;
+    if (authorId === 'current-user' && state.user && !users.find(u => u.id === 'current-user')) {
+      users = [{
+        id: 'current-user',
+        name: state.user.name,
+        handle: state.user.name.toLowerCase().replace(/\s/g, '_'),
+        avatar: state.user.profileImage || state.user.name.charAt(0).toUpperCase(),
+        bio: 'SabiTrade Member',
+        followers: [],
+        following: [],
+        joinDate: 'Today'
+      }, ...users];
+    }
 
-  addComment: (postId, content, authorId) => set((state) => ({
-    communityComments: [
-      ...state.communityComments,
-      {
-        id: `c${Date.now()}`,
-        postId,
-        authorId,
-        content,
-        createdAt: new Date().toISOString(),
-        likes: []
-      }
-    ],
-    communityPosts: state.communityPosts.map(p => p.id === postId ? { ...p, repliesCount: p.repliesCount + 1 } : p)
-  })),
+    return {
+      communityUsers: users,
+      communityPosts: [
+        {
+          id: `p${Date.now()}`,
+          authorId,
+          content,
+          tickerTags,
+          createdAt: new Date().toISOString(),
+          likes: [],
+          retweets: [],
+          repliesCount: 0
+        },
+        ...state.communityPosts
+      ]
+    };
+  }),
+
+  addComment: (postId, content, authorId) => set((state) => {
+    let users = state.communityUsers;
+    if (authorId === 'current-user' && state.user && !users.find(u => u.id === 'current-user')) {
+      users = [{
+        id: 'current-user',
+        name: state.user.name,
+        handle: state.user.name.toLowerCase().replace(/\s/g, '_'),
+        avatar: state.user.profileImage || state.user.name.charAt(0).toUpperCase(),
+        bio: 'SabiTrade Member',
+        followers: [],
+        following: [],
+        joinDate: 'Today'
+      }, ...users];
+    }
+
+    return {
+      communityUsers: users,
+      communityPosts: state.communityPosts.map(p => 
+        p.id === postId ? { ...p, repliesCount: p.repliesCount + 1 } : p
+      ),
+      communityComments: [
+        ...state.communityComments,
+        {
+          id: `c${Date.now()}`,
+          postId,
+          authorId,
+          content,
+          createdAt: new Date().toISOString(),
+          likes: []
+        }
+      ]
+    };
+  }),
 
   followUser: (targetUserId, currentUserId) => set((state) => ({
     communityUsers: state.communityUsers.map(u => {

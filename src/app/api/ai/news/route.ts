@@ -94,14 +94,14 @@ export async function GET() {
 
     // 3. Ask Gemini to enrich this news with EquityStack tags, impact, and simplified summaries
     const geminiPrompt = `You are a financial news intelligence analyst for EquityStack.
-I have a list of raw Nigerian business news headlines and descriptions fetched from real-time outlets (Nairametrics, Punch Business, etc.).
-Your job is to rewrite these stories for retail investors, simplify complex jargon, and enrich them with EquityStack-specific fields.
+I have a list of raw Nigerian business news headlines and descriptions fetched from real-time outlets.
+Your job is to rewrite these stories into full, multi-paragraph articles for retail investors, adhering to a strict, professional financial analyst tone. 
+You must also simplify complex jargon where necessary without losing the professional tone, and enrich them with EquityStack-specific fields.
 
 CRITICAL INSTRUCTIONS FOR TRUTHFULNESS & FACTUAL ACCURACY:
 1. DO NOT make up any facts, figures, dates, or names. You must rely ONLY on the details explicitly mentioned in the raw news stories below.
 2. Under no circumstances should you hallucinate or alter any prices, financial metrics, or statistics.
-3. Translate advanced financial terms (like "Recapitalization", "Hawkish", "Yield Curve", "NPL ratio", "NIM") into simple, friendly English so beginners can understand them, but ensure you do not distort the truth of the news.
-4. Keep the original facts 100% correct so we never mislead our users.
+3. Keep the original facts 100% correct so we never mislead our users.
 
 Raw News Stories:
 ${JSON.stringify(rawItems, null, 2)}
@@ -111,18 +111,20 @@ Return a JSON array of objects. Each object MUST match this structure:
 {
   "id": string (unique identifier like "news-feed-1", "news-feed-2"...),
   "source": string (the news source provided or a reputable Nigerian financial paper),
+  "author": string (generate a realistic sounding name for a financial journalist),
   "timeAgo": string (e.g. "2h ago", "12h ago", or "1d ago" relative to the current time),
   "originalHeadline": string (the headline of the story),
-  "aiSummary": string (a highly simplified, clear 2-sentence summary translating any financial jargon into plain English),
+  "aiSummary": string (a highly simplified, clear 2-sentence summary),
+  "fullContent": string (a comprehensive 3-4 paragraph article based on the news, strictly keeping a professional financial analyst tone. Use \\n\\n for paragraph breaks.),
   "whyItMatters": string (1 sentence explaining why this is important to a retail investor),
   "implications": string (1 sentence explaining the future outlook/implication for the stock market or economy),
   "keyDriver": string (must be one of: "Earnings Beat", "Policy Change", "Macro Event", "Dividend Payout", "Inflation Surge", "Regulatory Approval"),
   "affectedStocks": array of strings (must only contain tickers from this exact list: ["DANGCEM", "MTNN", "ZENITHBANK", "GTCO", "SEPLAT", "BUAFOODS", "ACCESSCORP", "NESTLE", "OANDO", "UBA"]. If no tickers are affected, return []),
   "marketImpact": string (must be one of: "Positive", "Negative", "Neutral"),
-  "category": string (must be one of: "Featured", "Breaking", "Most Popular", "Cryptocurrency")
+  "category": string (must be one of: "All News", "Stock Market", "Economy", "Global News")
 }
 
-Return ONLY valid JSON. Do not include markdown code block wrappers (e.g., \`\`\`json ... \`\`\`). Do not include any text before or after the JSON array.`;
+Return ONLY valid JSON. Do not include markdown code block wrappers.`;
 
     let parsedNews = [];
     let apiCallSucceeded = false;
@@ -184,15 +186,17 @@ Return ONLY valid JSON. Do not include markdown code block wrappers (e.g., \`\`\
         return {
           id: `news-feed-${index + 1}`,
           source: item.source,
+          author: 'System Analyst',
           timeAgo: '1h ago',
           originalHeadline: title,
           aiSummary: description.slice(0, 150) + (description.length > 150 ? '...' : ''),
+          fullContent: `${description}\n\nThis development comes at a critical time for the broader market as macroeconomic indicators continue to display significant volatility. Analysts suggest that the initial market reaction represents a calibration of investor expectations moving forward.\n\nFurthermore, institutional investors are closely monitoring the regulatory landscape for any shifts that might further impact the sector's long-term profitability. Caution remains the prevailing sentiment among top-tier financial strategists.`,
           whyItMatters: 'Factual news update matching local business activities.',
           implications: 'Market reactions depend on subsequent volume execution.',
           keyDriver,
           affectedStocks: [],
           marketImpact,
-          category: index === 0 ? 'Breaking' : 'Featured'
+          category: index === 0 ? 'Stock Market' : 'All News'
         };
       });
     }
@@ -210,14 +214,14 @@ Return ONLY valid JSON. Do not include markdown code block wrappers (e.g., \`\`\
 
     const enrichedNews = parsedNews.map((item: any) => {
       const driver = item.keyDriver || 'Macro Event';
-      let category = item.category || 'Featured';
+      let category = item.category || 'All News';
       
-      const validCategories = ['Featured', 'Breaking', 'Most Popular', 'Cryptocurrency'];
+      const validCategories = ['All News', 'Stock Market', 'Economy', 'Global News'];
       const matched = validCategories.find(c => c.toLowerCase() === category.toString().trim().toLowerCase());
       if (matched) {
         category = matched;
       } else {
-        category = 'Featured';
+        category = 'All News';
       }
 
       return {
@@ -242,30 +246,34 @@ Return ONLY valid JSON. Do not include markdown code block wrappers (e.g., \`\`\
       {
         id: 'news-feed-1',
         source: 'Nairametrics',
+        author: 'Adeyemi Lawson',
         timeAgo: '1h ago',
         originalHeadline: 'Nigeria Inflation Rises as FX Pressure Continues on Domestic Markets',
         aiSummary: 'The consumer price index records another uptick as transport and food costs push household budgets to the limit across major urban centers.',
+        fullContent: 'The consumer price index records another uptick as transport and food costs push household budgets to the limit across major urban centers.\n\nThis continuous rise in inflation is deeply connected to ongoing foreign exchange pressures, which have exacerbated the cost of imports, trickling down into domestic pricing structures. Analysts predict that unless there is a substantial intervention from the monetary authorities, this trend may persist into the next quarter.\n\nRetail investors are advised to re-evaluate their portfolios, seeking out assets that historically offer a hedge against inflation. Industrial goods and robust dividend-paying stocks might provide some shelter in this volatile macroeconomic environment.',
         whyItMatters: 'Higher inflation reduces the purchasing power of everyday consumers, leaving them with less money to invest in the stock market.',
         implications: 'The central bank may raise interest rates further to combat inflation, which could make fixed-income investments more attractive than equities.',
         keyDriver: 'Inflation Surge',
         affectedStocks: [],
         marketImpact: 'Negative',
-        category: 'Breaking',
+        category: 'Economy',
         imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80',
         commentsCount: 12
       },
       {
         id: 'news-feed-2',
         source: 'BusinessDay',
+        author: 'Chioma Ndubuisi',
         timeAgo: '2h ago',
         originalHeadline: 'Zenith Bank and GTCO Trade High Volumes on NGX Banking Index Rally',
         aiSummary: 'Tier-1 commercial bank shares saw sustained buying pressure as foreign and retail accounts positioned for interim dividend payouts.',
+        fullContent: 'Tier-1 commercial bank shares saw sustained buying pressure as foreign and retail accounts positioned for interim dividend payouts.\n\nThe surge in trading volume across Zenith Bank and GTCO underscores strong institutional confidence in the banking sector\'s resilience despite macroeconomic headwinds. Market observers note that this rally is predominantly driven by attractive dividend yields, which continue to outpace many fixed-income alternatives.\n\nLooking ahead, if these financial institutions can maintain their robust earnings trajectory, the NGX Banking Index may experience further upside. Investors remain watchful of upcoming earnings reports to validate the current valuations.',
         whyItMatters: 'This rally offers retail investors an opportunity to capture short-term gains and secure steady cash payouts from top-performing banks.',
         implications: 'Sustained buying interest could push banking sector valuations higher in the coming weeks as dividend qualification dates approach.',
         keyDriver: 'Dividend Payout',
         affectedStocks: ['ZENITHBANK', 'GTCO'],
         marketImpact: 'Positive',
-        category: 'Featured',
+        category: 'Stock Market',
         imageUrl: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=400&q=80',
         commentsCount: 18
       }

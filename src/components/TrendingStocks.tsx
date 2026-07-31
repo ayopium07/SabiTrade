@@ -3,7 +3,6 @@
 import React from 'react';
 import { useAppStore } from '@/lib/store';
 import { ChevronUp, ChevronDown, Flame, Activity } from 'lucide-react';
-import ForeignMarketsSidebar from './ForeignMarketsSidebar';
 
 export default function TrendingStocks() {
   const stocks = useAppStore(s => s.stocks);
@@ -33,6 +32,19 @@ export default function TrendingStocks() {
     { ticker: 'FCMB', name: 'FCMB Group Plc', change: -6.12 },
     { ticker: 'FLOURMILL', name: 'Flour Mills of Nigeria', change: -5.88 },
     { ticker: 'WAPCO', name: 'Lafarge Africa Plc', change: 1.99 },
+  ];
+
+  const defaultIndices = [
+    { ticker: 'SPX', name: 'S&P 500', change: 0.42 },
+    { ticker: 'DJI', name: 'DOW JONES', change: 0.29 },
+    { ticker: 'NDX', name: 'NASDAQ 100', change: 0.33 },
+    { ticker: 'TSX', name: 'TSX COMP', change: 0.30 },
+    { ticker: 'FTSE', name: 'FTSE 100', change: -0.05 },
+    { ticker: 'DAX', name: 'DAX', change: 0.17 },
+    { ticker: 'CAC', name: 'CAC 40', change: 0.17 },
+    { ticker: 'STOXX', name: 'EURO STOXX 50', change: 0.08 },
+    { ticker: 'SHCOMP', name: 'SHANGHAI COMPOSITE', change: -2.06 },
+    { ticker: 'TOPIX', name: 'TOPIX', change: -0.71 },
   ];
 
   const renderRow = (item: { ticker: string; name: string; change: number }) => {
@@ -137,8 +149,8 @@ export default function TrendingStocks() {
               <span className="text-[11px] font-bold text-white/50 uppercase tracking-widest">1D Chg</span>
             </div>
           </div>
-          <div className="flex flex-col relative z-10 h-full">
-            <ForeignMarketsSidebar />
+          <div className="flex flex-col relative z-10">
+            {defaultIndices.map(renderRow)}
           </div>
         </div>
       </div>
