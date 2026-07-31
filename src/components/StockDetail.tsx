@@ -922,7 +922,7 @@ export default function StockDetail() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center justify-center lg:justify-start gap-2.5 px-4 lg:px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 relative flex-shrink-0 lg:flex-shrink focus:outline-none ${isActive
+                  className={`w-full flex items-center justify-center lg:justify-start gap-2.5 px-4 lg:px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 relative flex-shrink-0 lg:flex-shrink focus:outline-none whitespace-nowrap ${isActive
                       ? 'text-brand-primary bg-brand-primary/10 border border-brand-primary/20 shadow-[0_0_8px_rgba(99,102,241,0.1)]'
                       : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface/50 border border-transparent'
                     }`}

@@ -68,16 +68,30 @@ const ngxTickerData = [
 
 function NGXTickerCarousel() {
   const [offset, setOffset] = React.useState(0);
-  const visible = 4;
-  const max = ngxTickerData.length - visible;
+  const [visible, setVisible] = React.useState(4);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      if (w < 640) setVisible(1);
+      else if (w < 768) setVisible(2);
+      else if (w < 1024) setVisible(3);
+      else setVisible(4);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const max = Math.max(0, ngxTickerData.length - visible);
   const cards = ngxTickerData.slice(offset, offset + visible);
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4">
+    <div className="w-full max-w-5xl mx-auto space-y-4 px-1 sm:px-0">
 
       {/* ── Section heading ── */}
       <div>
-        <h2 className="text-2xl font-bold text-white font-sora leading-tight">
+        <h2 className="text-xl sm:text-2xl font-bold text-white font-sora leading-tight">
           Nigerian Exchange
         </h2>
         <p className="text-[12px] font-medium mt-0.5" style={{ color: '#CFA343' }}>
@@ -85,15 +99,16 @@ function NGXTickerCarousel() {
         </p>
       </div>
 
-      {/* ── Carousel wrapper with outer nav arrows ── */}
+      {/* ── Carousel wrapper with internal nav arrows ── */}
       <div className="relative">
 
         {/* Left arrow */}
         <button
           onClick={() => setOffset(o => Math.max(0, o - 1))}
           disabled={offset === 0}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 hover:border-white/25 transition-all disabled:opacity-20 focus:outline-none"
-          style={{ background: 'rgba(0,0,0,0.3)' }}
+          className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
+          style={{ background: 'rgba(8,29,56,0.85)' }}
+          aria-label="Previous NGX Stocks"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
         </button>
@@ -102,19 +117,20 @@ function NGXTickerCarousel() {
         <button
           onClick={() => setOffset(o => Math.min(max, o + 1))}
           disabled={offset >= max}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 hover:border-white/25 transition-all disabled:opacity-20 focus:outline-none"
-          style={{ background: 'rgba(0,0,0,0.3)' }}
+          className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
+          style={{ background: 'rgba(8,29,56,0.85)' }}
+          aria-label="Next NGX Stocks"
         >
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
 
-        {/* Card row — no outer container style, cards float freely */}
-        <div className="w-full flex gap-3">
+        {/* Card row */}
+        <div className="w-full flex gap-3 overflow-hidden px-1 py-1">
 
           {cards.map((s) => (
             <div
               key={s.id}
-              className="relative flex-1 flex flex-col gap-4 px-5 py-6 cursor-pointer rounded-xl"
+              className="relative flex-1 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl min-w-[240px] sm:min-w-0"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.055)'}
               onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
@@ -185,33 +201,49 @@ const usStockData = [
 
 function USMarketsCarousel() {
   const [offset, setOffset] = React.useState(0);
-  const visible = 4;
-  const max = usStockData.length - visible;
+  const [visible, setVisible] = React.useState(4);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      if (w < 640) setVisible(1);
+      else if (w < 768) setVisible(2);
+      else if (w < 1024) setVisible(3);
+      else setVisible(4);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const max = Math.max(0, usStockData.length - visible);
   const cards = usStockData.slice(offset, offset + visible);
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4">
+    <div className="w-full max-w-5xl mx-auto space-y-4 px-1 sm:px-0">
       <div>
-        <h2 className="text-2xl font-bold text-white font-sora leading-tight">US Markets (NYSE &amp; NASDAQ)</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white font-sora leading-tight">US Markets (NYSE &amp; NASDAQ)</h2>
         <p className="text-[12px] font-medium mt-0.5" style={{ color: '#CFA343' }}>8,000+ equities &middot; New York</p>
       </div>
 
       <div className="relative">
         <button onClick={() => setOffset(o => Math.max(0, o - 1))} disabled={offset === 0}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 transition-all disabled:opacity-20 focus:outline-none"
-          style={{ background: 'rgba(0,0,0,0.3)' }}>
+          className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
+          style={{ background: 'rgba(8,29,56,0.85)' }}
+          aria-label="Previous US Stocks">
           <ArrowLeft className="h-3.5 w-3.5" />
         </button>
         <button onClick={() => setOffset(o => Math.min(max, o + 1))} disabled={offset >= max}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-8 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white/80 transition-all disabled:opacity-20 focus:outline-none"
-          style={{ background: 'rgba(0,0,0,0.3)' }}>
+          className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
+          style={{ background: 'rgba(8,29,56,0.85)' }}
+          aria-label="Next US Stocks">
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
 
-        <div className="flex gap-3">
+        <div className="w-full flex gap-3 overflow-hidden px-1 py-1">
           {cards.map((s) => (
             <div key={s.id}
-              className="flex-1 flex flex-col gap-4 px-5 py-6 rounded-xl cursor-pointer"
+              className="flex-1 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 rounded-xl cursor-pointer min-w-[240px] sm:min-w-0"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.055)'}
               onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
@@ -1713,7 +1745,7 @@ export default function Page() {
 
         {/* Mobile / Tablet Dropdown Menu Drawer */}
         {isLandingMenuOpen && (
-          <div className="md:hidden absolute top-[76px] left-0 right-0 z-30 px-5 pb-6 bg-[#041226]/95 backdrop-blur-md border-b border-border/40 flex flex-col gap-4 py-4 animate-in slide-in-from-top duration-200">
+          <div className="md:hidden absolute top-[76px] left-0 right-0 z-30 px-5 pb-6 bg-[#0E0B14]/95 backdrop-blur-md border-b border-border/40 flex flex-col gap-4 py-4 animate-in slide-in-from-top duration-200">
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => { setView('landing'); setIsLandingMenuOpen(false); }}
@@ -1772,32 +1804,32 @@ export default function Page() {
               </p>
 
               {/* Company Logos Grid */}
-              <div className="flex flex-col items-center gap-4 mb-14">
+              <div className="flex flex-col items-center gap-3 sm:gap-4 mb-14 max-w-full overflow-hidden">
                 {/* Row 1 */}
-                <div className="flex items-center justify-center gap-4 flex-wrap">
+                <div className="flex items-center justify-center gap-2.5 sm:gap-4 flex-wrap max-w-full">
                   {[
-                    { id: 1, name: 'Apple', icon: <span className="font-extrabold text-3xl" style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #A2AAAD 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></span> },
-                    { id: 2, name: 'Zenith', icon: <div className="font-extrabold text-2xl flex items-center gap-1"><div className="w-2.5 h-2.5 bg-[#E84142]" /><span className="text-white">Z</span></div> },
-                    { id: 3, name: 'Nvidia', icon: <span className="font-black text-xl italic tracking-tighter" style={{ color: '#76B900' }}>NVIDIA</span> },
-                    { id: 4, name: 'SpaceX', icon: <span className="font-medium text-[11px] tracking-[0.3em] text-white uppercase">SpaceX</span> },
-                    { id: 5, name: 'Tesla', icon: <span className="font-black text-3xl" style={{ color: '#E31937', fontFamily: 'serif' }}>T</span> },
-                    { id: 6, name: 'Dangote Food', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[13px] text-white uppercase">Dangote</span><span className="text-[9px] text-[#CFA343] font-bold">FOOD</span></div> },
+                    { id: 1, name: 'Apple', icon: <span className="font-extrabold text-2xl sm:text-3xl" style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #A2AAAD 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></span> },
+                    { id: 2, name: 'Zenith', icon: <div className="font-extrabold text-xl sm:text-2xl flex items-center gap-1"><div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#E84142]" /><span className="text-white">Z</span></div> },
+                    { id: 3, name: 'Nvidia', icon: <span className="font-black text-lg sm:text-xl italic tracking-tighter" style={{ color: '#76B900' }}>NVIDIA</span> },
+                    { id: 4, name: 'SpaceX', icon: <span className="font-medium text-[10px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.3em] text-white uppercase">SpaceX</span> },
+                    { id: 5, name: 'Tesla', icon: <span className="font-black text-2xl sm:text-3xl" style={{ color: '#E31937', fontFamily: 'serif' }}>T</span> },
+                    { id: 6, name: 'Dangote Food', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[11px] sm:text-[13px] text-white uppercase">Dangote</span><span className="text-[8px] text-[#CFA343] font-bold">FOOD</span></div> },
                   ].map(item => (
-                    <div key={item.id} className="w-16 h-16 sm:w-20 sm:h-20 rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-110 hover:bg-white/5 transition-all duration-300">
+                    <div key={item.id} className="w-14 h-14 sm:w-20 sm:h-20 rounded-[18px] sm:rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-105 sm:hover:scale-110 hover:bg-white/5 transition-all duration-300">
                       {item.icon}
                     </div>
                   ))}
                 </div>
                 {/* Row 2 */}
-                <div className="flex items-center justify-center gap-4 flex-wrap">
+                <div className="flex items-center justify-center gap-2.5 sm:gap-4 flex-wrap max-w-full">
                   {[
-                    { id: 7, name: 'Buafood', icon: <span className="font-black text-2xl tracking-tighter" style={{ background: 'linear-gradient(to right, #00B4C9, #00E4FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUA</span> },
-                    { id: 8, name: 'Airtel', icon: <span className="font-black text-xl italic" style={{ color: '#E84142' }}>airtel</span> },
-                    { id: 9, name: 'FIRSTHOLDCO', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[14px] text-white">FIRST</span><span className="text-[8px] text-[#CFA343] font-bold tracking-widest uppercase">Holdco</span></div> },
-                    { id: 10, name: 'Meta', icon: <span className="font-black text-2xl tracking-tight" style={{ color: '#2764FF' }}>Meta</span> },
-                    { id: 11, name: 'Alphabet', icon: <span className="font-bold text-[14px] font-sora text-white tracking-tight">Alphabet</span> },
+                    { id: 7, name: 'Buafood', icon: <span className="font-black text-xl sm:text-2xl tracking-tighter" style={{ background: 'linear-gradient(to right, #00B4C9, #00E4FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUA</span> },
+                    { id: 8, name: 'Airtel', icon: <span className="font-black text-lg sm:text-xl italic" style={{ color: '#E84142' }}>airtel</span> },
+                    { id: 9, name: 'FIRSTHOLDCO', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[12px] sm:text-[14px] text-white">FIRST</span><span className="text-[7px] sm:text-[8px] text-[#CFA343] font-bold tracking-widest uppercase">Holdco</span></div> },
+                    { id: 10, name: 'Meta', icon: <span className="font-black text-xl sm:text-2xl tracking-tight" style={{ color: '#2764FF' }}>Meta</span> },
+                    { id: 11, name: 'Alphabet', icon: <span className="font-bold text-[12px] sm:text-[14px] font-sora text-white tracking-tight">Alphabet</span> },
                   ].map(item => (
-                    <div key={item.id} className="w-16 h-16 sm:w-20 sm:h-20 rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-110 hover:bg-white/5 transition-all duration-300">
+                    <div key={item.id} className="w-14 h-14 sm:w-20 sm:h-20 rounded-[18px] sm:rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-105 sm:hover:scale-110 hover:bg-white/5 transition-all duration-300">
                       {item.icon}
                     </div>
                   ))}
@@ -1805,7 +1837,7 @@ export default function Page() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                 <button onClick={() => handleGuestNav('markets')}
                   className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-bold text-[#14131A] transition-all focus:outline-none"
                   style={{ background: '#CFA343' }}>
@@ -1843,13 +1875,15 @@ export default function Page() {
                   {/* Left Arrow */}
                   <button
                     onClick={() => setActiveStep((prev) => (prev === 0 ? 4 : prev - 1))}
-                    className="absolute -left-6 sm:-left-12 top-1/2 -translate-y-1/2 z-10 text-white/50 hover:text-white transition-colors focus:outline-none"
+                    className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all focus:outline-none backdrop-blur-md shadow-lg"
+                    style={{ background: 'rgba(8,29,56,0.85)' }}
+                    aria-label="Previous Pillar"
                   >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-4 h-4" />
                   </button>
 
                   {/* Cards */}
-                  <div className="flex gap-4 overflow-hidden">
+                  <div className="flex gap-4 overflow-x-auto custom-scrollbar pb-2 pt-1 px-1">
                     {[
                       steps[activeStep % 5],
                       steps[(activeStep + 1) % 5],
@@ -1870,7 +1904,7 @@ export default function Page() {
                         <div
                           key={item.title}
                           onClick={() => setActiveStep(steps.indexOf(item))}
-                          className={`flex-1 rounded-2xl p-6 sm:p-8 cursor-pointer transition-all duration-300 flex flex-col items-start min-w-[240px] ${
+                          className={`flex-1 rounded-2xl p-6 sm:p-8 cursor-pointer transition-all duration-300 flex flex-col items-start min-w-[220px] sm:min-w-[260px] ${
                             isActive
                               ? 'bg-[#CFA343]'
                               : 'bg-[#111116]'
@@ -1901,9 +1935,11 @@ export default function Page() {
                   {/* Right Arrow */}
                   <button
                     onClick={() => setActiveStep((prev) => (prev === 4 ? 0 : prev + 1))}
-                    className="absolute -right-6 sm:-right-12 top-1/2 -translate-y-1/2 z-10 text-white/50 hover:text-white transition-colors focus:outline-none"
+                    className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all focus:outline-none backdrop-blur-md shadow-lg"
+                    style={{ background: 'rgba(8,29,56,0.85)' }}
+                    aria-label="Next Pillar"
                   >
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -2169,7 +2205,7 @@ export default function Page() {
             {/* ── Brand ───────────────────────────────────────── */}
             <button
               onClick={() => setView('landing')}
-              className="flex items-center gap-3 flex-shrink-0 text-left focus:outline-none group mr-24"
+              className="flex items-center gap-2.5 flex-shrink-0 text-left focus:outline-none group mr-4 lg:mr-6 xl:mr-16"
             >
               <div className="h-9 w-9 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                 <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
@@ -2180,10 +2216,8 @@ export default function Page() {
               </div>
             </button>
 
-
-
             {/* ── Nav Links ── */}
-            <nav className="flex items-center gap-2">
+            <nav className="flex items-center gap-1 xl:gap-2">
               {allNavItems.map((item) => {
                 const isActive = currentView === item.id ||
                   (item.id === 'markets' && currentView === 'stock-detail');
@@ -2191,7 +2225,7 @@ export default function Page() {
                   <button
                     key={item.id}
                     onClick={() => setView(item.id as Parameters<typeof setView>[0])}
-                    className="relative flex items-center justify-center px-4 py-1.5 rounded-md text-[13.5px] font-medium transition-all duration-150 focus:outline-none whitespace-nowrap"
+                    className="relative flex items-center justify-center px-2.5 lg:px-3 xl:px-4 py-1.5 rounded-md text-[12.5px] xl:text-[13.5px] font-medium transition-all duration-150 focus:outline-none whitespace-nowrap"
                     style={{
                       color: isActive ? '#ffffff' : '#D3A84B',
                       background: isActive ? '#3F392B' : 'transparent',
@@ -2369,7 +2403,7 @@ export default function Page() {
           onClick={() => setIsMobileDrawerOpen(false)}>
 
           {/* Drawer Panel */}
-          <div className="w-[290px] h-full bg-[#081D38] border-l border-brand-primary/15 p-6 flex flex-col justify-between shadow-2xl relative animate-in slide-in-from-right duration-300"
+          <div className="w-[290px] h-full bg-[#141020] border-l border-brand-primary/15 p-6 flex flex-col justify-between shadow-2xl relative animate-in slide-in-from-right duration-300"
             style={{ boxShadow: '-10px 0 30px rgba(0,0,0,0.5)' }}
             onClick={(e) => e.stopPropagation()}>
 
@@ -2472,7 +2506,7 @@ export default function Page() {
           style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)' }}
           onClick={() => setIsHeaderSearchOpen(false)}>
           <div className="w-full max-w-lg rounded-2xl border border-brand-primary/20 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-250"
-            style={{ background: 'rgba(8, 29, 56, 0.98)' }}
+            style={{ background: 'rgba(20, 16, 32, 0.98)' }}
             onClick={(e) => e.stopPropagation()}>
 
             {/* Input row */}

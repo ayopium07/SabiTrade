@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #041226;
+  --background: #0E0B14;
   --foreground: #FFFFFF;
   --brand:      #CFA343;
   --brand-dim:  #B58C35;
@@ -12,28 +12,31 @@
 
 /* ─── Base Reset ─────────────────────────────────────── */
 html {
-  background: #041226;
+  background: #0E0B14;
   color-scheme: dark;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-dm-sans), sans-serif;
+  max-width: 100vw;
   overflow-x: hidden;
 }
 
 /* ─── Glass Card Utilities ───────────────────────────── */
 @layer components {
   .glass {
-    background: rgba(8, 29, 56, 0.7);
+    background: rgba(20, 16, 32, 0.75);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(207, 163, 67, 0.08);
   }
 
   .glass-elevated {
-    background: rgba(16, 42, 78, 0.85);
+    background: rgba(28, 23, 40, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(207, 163, 67, 0.15);
@@ -41,7 +44,7 @@ body {
   }
 
   .glass-nav {
-    background: rgba(4, 18, 38, 0.85);
+    background: rgba(14, 11, 20, 0.85);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border-bottom: 1px solid rgba(207, 163, 67, 0.1);
@@ -49,7 +52,7 @@ body {
   }
 
   .glass-modal {
-    background: rgba(8, 29, 56, 0.95);
+    background: rgba(20, 16, 32, 0.95);
     backdrop-filter: blur(32px);
     -webkit-backdrop-filter: blur(32px);
     border: 1px solid rgba(207, 163, 67, 0.25);

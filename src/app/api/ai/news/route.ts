@@ -129,41 +129,43 @@ Return ONLY valid JSON. Do not include markdown code block wrappers.`;
     let parsedNews = [];
     let apiCallSucceeded = false;
 
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: geminiPrompt }] }],
-            generationConfig: {
-              temperature: 0.2,
-              responseMimeType: 'application/json',
-            }
-          })
-        }
-      );
+    if (apiKey && apiKey.trim() !== '') {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: geminiPrompt }] }],
+              generationConfig: {
+                temperature: 0.2,
+                responseMimeType: 'application/json',
+              }
+            })
+          }
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-        replyText = replyText.trim();
-        if (replyText.startsWith('```')) {
-          replyText = replyText.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+        if (response.ok) {
+          const data = await response.json();
+          let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          replyText = replyText.trim();
+          if (replyText.startsWith('```')) {
+            replyText = replyText.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+          }
+          parsedNews = JSON.parse(replyText);
+          if (Array.isArray(parsedNews)) {
+            apiCallSucceeded = true;
+          }
+        } else {
+          const errText = await response.text();
+          console.warn('Gemini News API returned non-ok response, using fallback parsing:', errText);
         }
-        parsedNews = JSON.parse(replyText);
-        if (Array.isArray(parsedNews)) {
-          apiCallSucceeded = true;
-        }
-      } else {
-        const errText = await response.text();
-        console.warn('Gemini News API returned non-ok response, using fallback parsing:', errText);
+      } catch (e) {
+        console.warn('Failed to call Gemini News API, using fallback parsing:', e);
       }
-    } catch (e) {
-      console.warn('Failed to call Gemini News API, using fallback parsing:', e);
     }
 
     // Fallback if Gemini failed

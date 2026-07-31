@@ -25,19 +25,21 @@ export default function TradePage() {
   const [tradeError, setTradeError] = useState<string | null>(null);
   const [showAddSuccess, setShowAddSuccess] = useState(false);
 
-  const activeStock = stocks.find((s) => s.ticker === selectedTickerState) || stocks[0];
+  const activeStock = stocks.find((s) => s.ticker === selectedTickerState) || stocks[0] || { ticker: 'GTCO', name: 'Guaranty Trust Holding Co', price: 0, changeAmount: 0 };
 
   // Calculate Demo Portfolio Values
   let totalCostBasis = 0;
   let totalCurrentValue = 0;
 
   const holdingsDetails = demoPortfolio.map((holding) => {
-    const stock = stocks.find((s) => s.ticker === holding.ticker) || stocks[0];
-    const costBasis = holding.shares * holding.buyPrice;
-    const currentValue = holding.shares * stock.price;
+    const stock = stocks.find((s) => s.ticker === holding.ticker) || { price: 0, changeAmount: 0, name: holding.ticker };
+    const stockPrice = Number(stock.price) || 0;
+    const stockChangeAmount = Number(stock.changeAmount) || 0;
+    const costBasis = holding.shares * (Number(holding.buyPrice) || 0);
+    const currentValue = holding.shares * stockPrice;
     const pnl = currentValue - costBasis;
     const pnlPercent = costBasis > 0 ? (pnl / costBasis) * 100 : 0;
-    const todayChangeAmount = holding.shares * stock.changeAmount;
+    const todayChangeAmount = holding.shares * stockChangeAmount;
     totalCostBasis += costBasis;
     totalCurrentValue += currentValue;
     return { ...holding, stock, costBasis, currentValue, pnl, pnlPercent, todayChangeAmount };
@@ -56,7 +58,7 @@ export default function TradePage() {
       return;
     }
 
-    const tradePrice = activeStock.price;
+    const tradePrice = Number(activeStock.price) || 0;
     const tradeValue = quantity * tradePrice;
     const commission = tradeValue * 0.0135;
     const regulatory = tradeValue * 0.004;
@@ -121,71 +123,64 @@ export default function TradePage() {
         </button>
       </div>
 
-      {/* ── Stats Summary Row ────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Virtual Cash */}
-        <div className="p-5 rounded-2xl relative overflow-hidden hover-scale-effect cursor-default transition-all duration-300" style={cardStyle}>
-          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.08) 0%, transparent 70%)' }} />
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
-            Simulated Cash
-          </span>
-          <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-            style={{ textShadow: '0 0 20px rgba(207,163,67,0.2)' }}>
-            ₦{cashBalance.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-          </h2>
-          <span className="text-[9px] text-text-secondary font-medium uppercase font-dm-sans">
-            Ready to deploy
-          </span>
-        </div>
-
-        {/* Demo Holdings Valuation */}
-        <div className="p-5 rounded-2xl relative overflow-hidden hover-scale-effect cursor-default transition-all duration-300" style={cardStyle}>
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
-            Demo Portfolio Value
-          </span>
-          <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-text-primary">
-            ₦{totalCurrentValue.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-          </h2>
-          <div className="text-[9px] text-text-secondary font-dm-sans">
-            Cost basis: <span className="text-text-primary font-semibold">₦{totalCostBasis.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
+      {/* ── Metric Cards ─────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-dm-sans">
+        {/* Cash Balance */}
+        <div className="p-4 rounded-2xl space-y-1" style={cardStyle}>
+          <div className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+            Available Simulated Cash
           </div>
+          <div className="text-xl font-extrabold text-[#CFA343] font-sora tracking-tight">
+            ₦{cashBalance.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+          </div>
+          <div className="text-[10px] text-text-secondary">Ready for instant execution</div>
         </div>
 
-        {/* Account Total Capital */}
-        <div className="p-5 rounded-2xl relative overflow-hidden hover-scale-effect cursor-default transition-all duration-300" style={cardStyle}>
-          <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans block mb-1">
-            Total Account Value
-          </span>
-          <h2 className="text-2xl font-extrabold font-sora tracking-tight mb-1 text-brand-primary"
-            style={{ textShadow: '0 0 20px rgba(207,163,67,0.1)' }}>
-            ₦{(cashBalance + totalCurrentValue).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-          </h2>
-          <div className="flex items-center gap-1.5 text-[9px] font-bold">
-            <span className={`inline-flex items-center rounded ${totalAllTimePnl >= 0 ? 'text-gain' : 'text-danger'}`}>
-              {totalAllTimePnl >= 0 ? <TrendingUp className="h-3 w-3 mr-0.5" /> : <TrendingDown className="h-3 w-3 mr-0.5" />}
-              {totalAllTimePnl >= 0 ? '+' : ''}{totalAllTimePnlPercent.toFixed(2)}% P&amp;L
+        {/* Demo Holdings Value */}
+        <div className="p-4 rounded-2xl space-y-1" style={cardStyle}>
+          <div className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+            Portfolio Equities Value
+          </div>
+          <div className="text-xl font-extrabold text-text-primary font-sora tracking-tight">
+            ₦{totalCurrentValue.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+          </div>
+          <div className="text-[10px] text-text-secondary">Cost basis: ₦{totalCostBasis.toLocaleString('en-NG')}</div>
+        </div>
+
+        {/* Unrealised PnL */}
+        <div className="p-4 rounded-2xl space-y-1" style={cardStyle}>
+          <div className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+            Unrealised P&amp;L
+          </div>
+          <div className={`text-xl font-extrabold font-sora tracking-tight flex items-center gap-1.5 ${
+            totalAllTimePnl >= 0 ? 'text-gain' : 'text-danger'
+          }`}>
+            {totalAllTimePnl >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+            {totalAllTimePnl >= 0 ? '+' : ''}₦{totalAllTimePnl.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+          </div>
+          <div className="text-[10px] text-text-secondary">
+            Return: <span className={`font-bold ${totalAllTimePnl >= 0 ? 'text-gain' : 'text-danger'}`}>
+              {totalAllTimePnl >= 0 ? '+' : ''}{totalAllTimePnlPercent.toFixed(2)}%
             </span>
           </div>
         </div>
       </div>
 
-      {/* ── Main Grid ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left: Trade Simulator */}
+      {/* ── Main Trading Grid ────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left: Trade Order Form */}
         <div className="lg:col-span-5 space-y-4">
           <div className="p-5 rounded-3xl space-y-4" style={cardStyle}>
-            <div className="flex items-center justify-between pb-3 border-b border-border/40">
+            <div className="flex items-center justify-between pb-1 border-b border-border/40">
               <div className="flex items-center gap-2">
-                <Activity className="h-4.5 w-4.5 text-brand-primary animate-pulse" />
-                <h4 className="text-sm font-bold text-brand-primary font-sora">Order Entry</h4>
+                <Activity className="h-4.5 w-4.5 text-brand-primary" />
+                <h4 className="text-sm font-bold text-text-primary font-sora">New Simulated Order</h4>
               </div>
-              <span className="text-[9px] px-2 py-0.5 rounded-full border border-warning/20 bg-warning/5 text-warning font-extrabold font-dm-sans">
-                SIMULATION
+              <span className="text-[10px] font-bold text-gain bg-gain/10 border border-gain/20 px-2 py-0.5 rounded-full">
+                Instant Execution
               </span>
             </div>
 
-            {/* Notifications */}
             {tradeError && (
               <div className="bg-danger/10 border border-danger/25 text-danger rounded-xl p-3 text-xs font-bold text-center animate-in fade-in duration-200">
                 ⚠️ {tradeError}
@@ -214,7 +209,7 @@ export default function TradePage() {
                 >
                   {stocks.map((s) => (
                     <option key={s.ticker} value={s.ticker} style={{ background: '#0E0D25' }}>
-                      {s.ticker} — {s.name} (₦{s.price.toFixed(2)})
+                      {s.ticker} — {s.name} (₦{(Number(s.price) || 0).toFixed(2)})
                     </option>
                   ))}
                 </select>
@@ -301,7 +296,7 @@ export default function TradePage() {
               {/* pricing calculator logic */}
               {(() => {
                 const quantity = parseFloat(sharesInput) || 0;
-                const tradePrice = activeStock.price;
+                const tradePrice = Number(activeStock.price) || 0;
                 const tradeValue = quantity * tradePrice;
                 const commission = tradeValue * 0.0135;
                 const regulatory = tradeValue * 0.004;
@@ -313,7 +308,7 @@ export default function TradePage() {
                   <div className="space-y-1.5 pt-2 text-xs font-dm-sans font-medium text-text-secondary">
                     <div className="flex justify-between">
                       <span>Last price</span>
-                      <span className="font-bold text-text-primary">₦{activeStock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
+                      <span className="font-bold text-text-primary">₦{tradePrice.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
                     </div>
 
                     <div className="border-t border-border/40 pt-2.5 mt-2 space-y-1.5">

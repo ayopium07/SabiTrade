@@ -21,6 +21,13 @@ export default function AIChatbot() {
   const dragStart   = useRef({ mx: 0, my: 0, bx: 0, by: 0 });
   const orbRef      = useRef<HTMLButtonElement | null>(null);
 
+  // Set initial Y offset on mobile to avoid overlapping the bottom tab bar
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setPos({ x: 16, y: 76 });
+    }
+  }, []);
+
   // Scroll chat to bottom on new messages
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });

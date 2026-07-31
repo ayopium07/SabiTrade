@@ -114,23 +114,34 @@ export default function StockExplorer() {
     return stocks
       .filter((s) => {
         const q = search.toLowerCase();
-        const matchQ = s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
+        const matchQ = (s.ticker || '').toLowerCase().includes(q) || (s.name || '').toLowerCase().includes(q);
         const matchS = sector === 'All' || s.sector === sector;
         return matchQ && matchS;
       })
       .sort((a, b) => {
         let cmp = 0;
-        if (sortBy === 'ticker') cmp = a.ticker.localeCompare(b.ticker);
-        if (sortBy === 'price') cmp = a.price - b.price;
-        if (sortBy === 'change') cmp = a.change - b.change;
-        if (sortBy === 'target') cmp = a.targetPrice - b.targetPrice;
-        if (sortBy === 'upside') cmp = ((a.targetPrice - a.price) / a.price) - ((b.targetPrice - b.price) / b.price);
-        if (sortBy === 'rating') cmp = a.rating.localeCompare(b.rating);
-        if (sortBy === 'high') cmp = a.fiftyTwoWeekRange.high - b.fiftyTwoWeekRange.high;
-        if (sortBy === 'low') cmp = a.fiftyTwoWeekRange.low - b.fiftyTwoWeekRange.low;
-        if (sortBy === 'eps') cmp = a.eps - b.eps;
-        if (sortBy === 'bvps') cmp = a.bvps - b.bvps;
-        if (sortBy === 'peRatio') cmp = a.peRatio - b.peRatio;
+        const priceA = Number(a.price) || 0;
+        const priceB = Number(b.price) || 0;
+        const targetA = Number(a.targetPrice) || 0;
+        const targetB = Number(b.targetPrice) || 0;
+        const changeA = Number(a.change) || 0;
+        const changeB = Number(b.change) || 0;
+        const highA = Number(a.fiftyTwoWeekRange?.high) || 0;
+        const highB = Number(b.fiftyTwoWeekRange?.high) || 0;
+        const lowA = Number(a.fiftyTwoWeekRange?.low) || 0;
+        const lowB = Number(b.fiftyTwoWeekRange?.low) || 0;
+
+        if (sortBy === 'ticker') cmp = (a.ticker || '').localeCompare(b.ticker || '');
+        if (sortBy === 'price') cmp = priceA - priceB;
+        if (sortBy === 'change') cmp = changeA - changeB;
+        if (sortBy === 'target') cmp = targetA - targetB;
+        if (sortBy === 'upside') cmp = (priceA > 0 ? (targetA - priceA) / priceA : 0) - (priceB > 0 ? (targetB - priceB) / priceB : 0);
+        if (sortBy === 'rating') cmp = (a.rating || '').localeCompare(b.rating || '');
+        if (sortBy === 'high') cmp = highA - highB;
+        if (sortBy === 'low') cmp = lowA - lowB;
+        if (sortBy === 'eps') cmp = (Number(a.eps) || 0) - (Number(b.eps) || 0);
+        if (sortBy === 'bvps') cmp = (Number(a.bvps) || 0) - (Number(b.bvps) || 0);
+        if (sortBy === 'peRatio') cmp = (Number(a.peRatio) || 0) - (Number(b.peRatio) || 0);
         return sortOrder === 'desc' ? -cmp : cmp;
       });
   }, [stocks, search, sector, sortBy, sortOrder]);
@@ -253,9 +264,16 @@ export default function StockExplorer() {
             <tbody>
               {filtered.map((stock, idx) => {
                 const rowNum = String(idx + 1).padStart(2, '0');
-                const isPositive = stock.change >= 0;
+                const changeVal = Number(stock.change) || 0;
+                const isPositive = changeVal >= 0;
                 const isChecked = checked.has(stock.ticker);
-                const upside = ((stock.targetPrice - stock.price) / stock.price) * 100;
+                const priceVal = Number(stock.price) || 0;
+                const targetVal = Number(stock.targetPrice) || 0;
+                const highVal = Number(stock.fiftyTwoWeekRange?.high) || 0;
+                const lowVal = Number(stock.fiftyTwoWeekRange?.low) || 0;
+                const epsVal = Number(stock.eps) || 0;
+                const bvpsVal = Number(stock.bvps) || 0;
+                const peVal = Number(stock.peRatio) || 0;
 
                 return (
                   <tr
@@ -293,7 +311,7 @@ export default function StockExplorer() {
                         <StockAvatar ticker={stock.ticker} sector={stock.sector} />
                         <div>
                           <div className="text-[11px] md:text-[13px] font-extrabold text-white font-sora leading-none">{stock.ticker}</div>
-                          <div className="text-[10px] font-medium text-[#7B7E8E] mt-0.5">{stock.name.split(' ')[0].toUpperCase()}</div>
+                          <div className="text-[10px] font-medium text-[#7B7E8E] mt-0.5">{(stock.name || '').split(' ')[0].toUpperCase()}</div>
                         </div>
                       </div>
                     </td>
@@ -301,7 +319,7 @@ export default function StockExplorer() {
                     {/* Close Price */}
                     <td className="px-3 py-2 md:px-4 md:py-3.5 text-right">
                       <span className="text-[11px] md:text-[13px] font-bold text-white font-sora">
-                        ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                        ₦{priceVal.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </td>
 
@@ -315,42 +333,42 @@ export default function StockExplorer() {
                     {/* 52W High */}
                     <td className="px-3 py-2 md:px-4 md:py-3.5 text-right">
                       <span className="text-[10px] md:text-[12px] font-bold text-[#00D395] font-sora">
-                        ₦{stock.fiftyTwoWeekRange.high.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                        ₦{highVal.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </td>
 
                     {/* 52W Low */}
                     <td className="px-3 py-2 md:px-4 md:py-3.5 text-right">
                       <span className="text-[10px] md:text-[12px] font-bold text-[#FF4D4F] font-sora">
-                        ₦{stock.fiftyTwoWeekRange.low.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                        ₦{lowVal.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </td>
 
                     {/* EPS */}
                     <td className="px-3 py-2 md:px-4 md:py-3.5 text-right">
                       <span className="text-[10px] md:text-[12px] font-bold text-[#94A3B8] font-sora">
-                        ₦{stock.eps.toFixed(2)}
+                        ₦{epsVal.toFixed(2)}
                       </span>
                     </td>
 
                     {/* BVPS */}
                     <td className="px-3 py-2 md:px-4 md:py-3.5 text-right">
                       <span className="text-[10px] md:text-[12px] font-bold text-[#94A3B8] font-sora">
-                        ₦{stock.bvps.toFixed(2)}
+                        ₦{bvpsVal.toFixed(2)}
                       </span>
                     </td>
 
                     {/* P/E Ratio */}
                     <td className="px-3 py-2 md:px-4 md:py-3.5 text-right">
                       <span className="text-[10px] md:text-[12px] font-bold text-[#94A3B8] font-sora">
-                        {stock.peRatio.toFixed(1)}x
+                        {peVal.toFixed(1)}x
                       </span>
                     </td>
 
                     {/* Fair Value */}
                     <td className="px-3 py-2 md:px-4 md:py-3.5 text-right">
                       <span className="text-[11px] md:text-[13px] font-bold text-white font-sora">
-                        ₦{stock.targetPrice.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                        ₦{targetVal.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </td>
 
@@ -366,7 +384,7 @@ export default function StockExplorer() {
                         {isPositive
                           ? <ChevronUp className="w-3 h-3" />
                           : <ChevronDown className="w-3 h-3" />}
-                        {isPositive ? '+' : ''}{stock.change.toFixed(1)}%
+                        {isPositive ? '+' : ''}{changeVal.toFixed(1)}%
                       </span>
                     </td>
 

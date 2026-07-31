@@ -35,16 +35,53 @@ function generateChartData(tf: Timeframe, finalPortfolioVal: number) {
       const asiVal = finalPortfolioVal === 0 ? 0 : (curveShapeA[i] * maxPVal * 0.6) + (maxPVal * 0.3);
       points.push({ date: label, fullDate, pVal, asiVal });
     }
-  } else {
-    // Other timeframes, generate generic smooth data
-    const count = tf === '30 days' ? 30 : tf === '7 days' ? 7 : 24;
+  } else if (tf === '30 days') {
+    const count = 30;
     let pBase = maxPVal * 0.8;
     let asiBase = maxPVal * 0.7;
     for (let i = 0; i < count; i++) {
-      const pVal = i === count - 1 && finalPortfolioVal > 0 ? finalPortfolioVal : pBase + (Math.random() - 0.4) * (maxPVal * 0.05);
-      const asiVal = asiBase + (Math.random() - 0.5) * (maxPVal * 0.05);
+      const dt = new Date(now);
+      dt.setDate(now.getDate() - (count - 1 - i));
+      const showLabel = i % 5 === 0 || i === count - 1;
+      const label = showLabel ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+      const fullDate = dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      const pVal = i === count - 1 && finalPortfolioVal > 0 ? finalPortfolioVal : pBase + (Math.sin(i * 0.4) * 0.08 + (Math.random() - 0.5) * 0.02) * maxPVal;
+      const asiVal = asiBase + (Math.cos(i * 0.4) * 0.06 + (Math.random() - 0.5) * 0.02) * maxPVal;
       pBase = pVal; asiBase = asiVal;
-      points.push({ date: '', fullDate: '', pVal: finalPortfolioVal === 0 ? 0 : pVal, asiVal: finalPortfolioVal === 0 ? 0 : asiVal });
+      points.push({ date: label, fullDate, pVal: finalPortfolioVal === 0 ? 0 : pVal, asiVal: finalPortfolioVal === 0 ? 0 : asiVal });
+    }
+  } else if (tf === '7 days') {
+    const count = 7;
+    let pBase = maxPVal * 0.85;
+    let asiBase = maxPVal * 0.75;
+    for (let i = 0; i < count; i++) {
+      const dt = new Date(now);
+      dt.setDate(now.getDate() - (count - 1 - i));
+      const label = dt.toLocaleDateString('en-US', { weekday: 'short' });
+      const fullDate = dt.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+
+      const pVal = i === count - 1 && finalPortfolioVal > 0 ? finalPortfolioVal : pBase + (Math.sin(i * 0.8) * 0.06 + (Math.random() - 0.5) * 0.02) * maxPVal;
+      const asiVal = asiBase + (Math.cos(i * 0.8) * 0.05 + (Math.random() - 0.5) * 0.02) * maxPVal;
+      pBase = pVal; asiBase = asiVal;
+      points.push({ date: label, fullDate, pVal: finalPortfolioVal === 0 ? 0 : pVal, asiVal: finalPortfolioVal === 0 ? 0 : asiVal });
+    }
+  } else {
+    // 24 hours
+    const count = 24;
+    let pBase = maxPVal * 0.9;
+    let asiBase = maxPVal * 0.8;
+    for (let i = 0; i < count; i++) {
+      const dt = new Date(now);
+      dt.setHours(now.getHours() - (count - 1 - i));
+      const showLabel = i % 4 === 0 || i === count - 1;
+      const label = showLabel ? dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+      const fullDate = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      const pVal = i === count - 1 && finalPortfolioVal > 0 ? finalPortfolioVal : pBase + (Math.sin(i * 0.5) * 0.03 + (Math.random() - 0.5) * 0.01) * maxPVal;
+      const asiVal = asiBase + (Math.cos(i * 0.5) * 0.02 + (Math.random() - 0.5) * 0.01) * maxPVal;
+      pBase = pVal; asiBase = asiVal;
+      points.push({ date: label, fullDate, pVal: finalPortfolioVal === 0 ? 0 : pVal, asiVal: finalPortfolioVal === 0 ? 0 : asiVal });
     }
   }
   return points;
@@ -180,9 +217,9 @@ export default function PortfolioTracker() {
 
     return {
       ticker: h.ticker,
+      color: DONUT_COLORS[i % DONUT_COLORS.length],
       percentage,
       path: describeArc(100, 100, 75, startAngle, startAngle + angle),
-      color: DONUT_COLORS[i % DONUT_COLORS.length],
     };
   });
 
@@ -190,24 +227,24 @@ export default function PortfolioTracker() {
     <div className="space-y-6 text-[#E0E0E0] font-dm-sans min-h-screen">
       
       {/* ── TOP SECTION (GRID) ── */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* LEFT COLUMN: Main Chart (col-span-8) */}
-        <div className="md:col-span-8 rounded-[14px] border border-white/5 overflow-hidden flex flex-col" style={{ background: '#171622' }}>
-          <div className="p-6 flex-1 flex flex-col relative">
+        <div className="lg:col-span-8 rounded-[14px] border border-white/5 overflow-hidden flex flex-col pb-4" style={{ background: '#171622' }}>
+          <div className="p-4 sm:p-6 pb-12 flex-1 flex flex-col relative">
             
             {/* Header row */}
-            <div className="flex justify-between items-start mb-8 z-10 relative">
+            <div className="flex flex-col xl:flex-row justify-between items-start gap-4 mb-8 z-10 relative">
               <div>
-                <div className="text-[11px] font-bold text-white/50 mb-2">Total Valuation</div>
-                <div className="text-4xl font-extrabold text-[#CFA343] font-sora tracking-tight mb-2">
+                <div className="text-[11px] font-bold text-white/50 mb-1.5">Total Valuation</div>
+                <div className="text-3xl sm:text-4xl font-extrabold text-[#CFA343] font-sora tracking-tight mb-2">
                   ₦{totalCurrentValue.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                 </div>
                 <div className="text-[11px] text-white/60">
                   Cost basis: <span className="font-bold text-white">₦{totalCostBasis.toLocaleString('en-NG')}</span>
                 </div>
                 
-                <div className="flex items-center gap-5 mt-6">
+                <div className="flex items-center gap-4 sm:gap-5 mt-4 sm:mt-6 flex-wrap">
                    <div className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></div>
                       <span className="text-[11px] text-white/60 font-semibold">Portfolio Performance</span>
@@ -219,17 +256,17 @@ export default function PortfolioTracker() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                 <div className="flex items-center rounded-md border border-white/10 bg-transparent overflow-hidden">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                 <div className="flex items-center rounded-md border border-white/10 bg-transparent overflow-x-auto max-w-full">
                     {(['12 month', '30 days', '7 days', '24 hours'] as Timeframe[]).map((tf) => (
                       <button key={tf} onClick={() => setTimeframe(tf)}
-                        className={`px-3 py-1.5 text-[10px] font-bold border-r border-white/10 last:border-r-0 transition-colors ${timeframe === tf ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>
+                        className={`px-2.5 sm:px-3 py-1.5 text-[10px] font-bold border-r border-white/10 last:border-r-0 whitespace-nowrap transition-colors ${timeframe === tf ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>
                         {tf}
                       </button>
                     ))}
                  </div>
                  
-                 <button onClick={() => setIsDatePickerOpen(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 bg-transparent hover:bg-white/5 transition-colors">
+                 <button onClick={() => setIsDatePickerOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-white/10 bg-transparent hover:bg-white/5 transition-colors whitespace-nowrap">
                     <Calendar className="h-3.5 w-3.5 text-white/60" />
                     <span className="text-[10px] font-bold text-white">Select dates</span>
                  </button>
@@ -237,7 +274,7 @@ export default function PortfolioTracker() {
             </div>
             
             {/* SVG Chart Area */}
-            <div className="relative w-full h-[320px] mt-auto">
+            <div className="relative w-full h-[260px] sm:h-[280px] mt-auto mb-8">
                
                {/* Horizontal grid lines */}
                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
@@ -281,22 +318,22 @@ export default function PortfolioTracker() {
                    )}
                  </svg>
                  
-                 {/* X Axis Labels */}
-                 <div className="absolute -bottom-8 left-0 right-0 flex justify-between px-2">
+                 {/* X Axis Date Labels under graph */}
+                 <div className="absolute top-[106%] left-0 right-0 h-6 pointer-events-none">
                     {activeData.map((d, i) => {
                       if (!d.date) return null;
                       const x = (i / (activeData.length - 1)) * 100;
                       return (
-                        <div key={i} className="absolute text-[10px] text-white/50 -translate-x-1/2" style={{ left: `${x}%` }}>
+                        <div key={i} className="absolute text-[10px] sm:text-[11px] font-bold text-white/50 -translate-x-1/2 whitespace-nowrap tracking-wider" style={{ left: `${x}%` }}>
                           {d.date}
                         </div>
-                      )
+                      );
                     })}
                  </div>
 
                  {/* Custom Tooltip text on hover */}
                  {hoveredIdx !== null && activeData[hoveredIdx] && activeData[hoveredIdx].fullDate && (
-                    <div className="absolute text-[10px] text-white pointer-events-none" style={{ left: `${svgCoords[hoveredIdx].x}%`, top: '-10px', transform: 'translateX(-50%)' }}>
+                    <div className="absolute text-[10px] font-bold text-white bg-[#0E0B14] border border-white/10 px-2 py-1 rounded shadow-lg pointer-events-none z-20" style={{ left: `${svgCoords[hoveredIdx].x}%`, top: '-28px', transform: 'translateX(-50%)' }}>
                        {activeData[hoveredIdx].fullDate}
                     </div>
                  )}
@@ -307,7 +344,7 @@ export default function PortfolioTracker() {
         </div>
         
         {/* RIGHT COLUMN: 3 Stacked Cards (col-span-4) */}
-        <div className="md:col-span-4 flex flex-col gap-5">
+        <div className="lg:col-span-4 flex flex-col gap-5">
            
            {/* Card 1: Today's Return */}
            <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center bg-[#171622]">
