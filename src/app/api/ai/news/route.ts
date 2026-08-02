@@ -15,7 +15,7 @@ export async function GET() {
 
     const rawItems: Array<{ title: string; description: string; pubDate: string; source: string }> = [];
 
-    for (const feed of feeds) {
+    const fetchPromises = feeds.map(async (feed) => {
       try {
         const res = await fetch(feed.url, {
           cache: 'no-store',
@@ -30,6 +30,7 @@ export async function GET() {
           const itemRegex = /<item>([\s\S]*?)<\/item>/g;
           let match;
           let feedCount = 0;
+          const items = [];
           while ((match = itemRegex.exec(xml)) !== null && feedCount < 3) {
             const itemContent = match[1];
             
@@ -53,7 +54,7 @@ export async function GET() {
             const dateMatch = itemContent.match(/<pubDate>([\s\S]*?)<\/pubDate>/);
 
             if (titleMatch) {
-              rawItems.push({
+              items.push({
                 title: cleanText(titleMatch[1]),
                 description: descMatch ? cleanText(descMatch[1]) : '',
                 pubDate: dateMatch ? cleanText(dateMatch[1]) : new Date().toUTCString(),
@@ -62,11 +63,18 @@ export async function GET() {
               feedCount++;
             }
           }
+          return items;
         }
       } catch (e) {
         console.warn(`Failed to fetch live RSS feed from ${feed.url}:`, e);
       }
-    }
+      return [];
+    });
+
+    const results = await Promise.all(fetchPromises);
+    results.forEach(items => {
+      rawItems.push(...items);
+    });
 
     // Fallback if feeds were empty/failed
     if (rawItems.length === 0) {

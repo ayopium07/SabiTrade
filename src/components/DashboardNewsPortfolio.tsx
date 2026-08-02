@@ -8,8 +8,15 @@ export default function DashboardNewsPortfolio() {
   const portfolio = useAppStore((s) => s.portfolio);
   const watchlist = useAppStore((s) => s.watchlist);
   const stocks = useAppStore((s) => s.stocks);
+  const setView = useAppStore((s) => s.setView);
+  const setSelectedNewsArticle = useAppStore((s) => s.setSelectedNewsArticle);
 
   const [portfolioTab, setPortfolioTab] = useState<'portfolio' | 'watchlist' | 'newsletters'>('portfolio');
+
+  const handleNewsClick = (item: any) => {
+    setSelectedNewsArticle(item);
+    setView('news-detail');
+  };
 
   // Split news for the two columns
   const analysisNews = news.slice(0, 4);
@@ -26,7 +33,7 @@ export default function DashboardNewsPortfolio() {
           <div className="p-2">
             {analysisNews.map((item, idx) => (
               <React.Fragment key={item.id}>
-                <div className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                <div onClick={() => handleNewsClick(item)} className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
                   <div className="flex flex-col justify-between flex-1 min-w-0">
                     <div>
                       {item.category === 'Featured' && (
@@ -63,7 +70,7 @@ export default function DashboardNewsPortfolio() {
           <div className="p-2">
             {marketNews.map((item, idx) => (
               <React.Fragment key={item.id}>
-                <div className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                <div onClick={() => handleNewsClick(item)} className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
                   <div className="flex flex-col justify-between flex-1 min-w-0">
                     <div>
                       {idx === 0 && (

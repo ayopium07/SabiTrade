@@ -490,7 +490,8 @@ export const useAppStore = create<AppState>()(
         if (data.news && Array.isArray(data.news)) {
           set(state => {
             const userNews = state.news.filter(n => n.id.startsWith('news-user-'));
-            return { news: [...userNews, ...data.news] };
+            const existingOtherNews = state.news.filter(n => !n.id.startsWith('news-user-') && !data.news.some((dn: any) => dn.id === n.id));
+            return { news: [...userNews, ...data.news, ...existingOtherNews] };
           });
         }
       }
