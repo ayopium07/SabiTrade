@@ -891,11 +891,18 @@ export default function StockDetail() {
           </span>
           <span className="text-[10px] text-text-secondary font-medium">NGX Listed</span>
         </div>
-        <h1 className="text-3xl font-extrabold font-sora tracking-tight"
-          style={{ color, textShadow: `0 0 24px ${color}40` }}>
-          {stock.ticker}
-        </h1>
-        <p className="text-sm font-medium text-text-secondary font-dm-sans mt-0.5">{stock.name}</p>
+        <div className="flex items-center gap-3">
+          {stock.logoUrl && (
+            <img src={stock.logoUrl} alt={`${stock.ticker} logo`} className="w-10 h-10 rounded-full object-contain bg-white/5 p-1" />
+          )}
+          <div>
+            <h1 className="text-3xl font-extrabold font-sora tracking-tight"
+              style={{ color, textShadow: `0 0 24px ${color}40` }}>
+              {stock.ticker}
+            </h1>
+            <p className="text-sm font-medium text-text-secondary font-dm-sans mt-0.5">{stock.name}</p>
+          </div>
+        </div>
       </div>
 
       {/* ── Main Grid with Left Menu Tab ────────────────── */}

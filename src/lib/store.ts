@@ -147,7 +147,7 @@ export const useAppStore = create<AppState>()(
     { ticker: 'DANGCEM', shares: 200, buyPrice: 620.00, date: '2026-05-01' }
   ],
   demoPortfolio: [],
-  cashBalance: 10000000,
+  cashBalance: 1000000,
   chatMessages: [
     {
       sender: 'ai',
@@ -690,6 +690,7 @@ export const useAppStore = create<AppState>()(
       cashBalance: state.cashBalance,
       marketSectorFilter: state.marketSectorFilter,
     }),
+    version: 1, // bump version to invalidate old local storage with 10,000,000 cash balance
   }
 )
 );

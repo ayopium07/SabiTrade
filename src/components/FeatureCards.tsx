@@ -34,7 +34,7 @@ const services = [
     icon: BarChart2,
     iconBg: '#6B1F1F',
     title: 'Portfolio & Demo Trade',
-    desc: 'Practice investing without financial risk. Upon signup, receive a virtual portfolio funded with ₦10,000,000 to simulate buying and selling NGX-listed stocks. Build the confidence and discipline needed for real-market decisions.',
+    desc: 'Practice investing without financial risk. Upon signup, receive a virtual portfolio funded with ₦1,000,000 to simulate buying and selling NGX-listed stocks. Build the confidence and discipline needed for real-market decisions.',
     tag: 'SIMULATION',
     tagColor: '#EF4444',
   },

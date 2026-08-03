@@ -1808,29 +1808,27 @@ export default function Page() {
                 {/* Row 1 */}
                 <div className="flex items-center justify-center gap-2.5 sm:gap-4 flex-wrap max-w-full">
                   {[
-                    { id: 1, name: 'Apple', icon: <span className="font-extrabold text-2xl sm:text-3xl" style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #A2AAAD 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></span> },
-                    { id: 2, name: 'Zenith', icon: <div className="font-extrabold text-xl sm:text-2xl flex items-center gap-1"><div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#E84142]" /><span className="text-white">Z</span></div> },
-                    { id: 3, name: 'Nvidia', icon: <span className="font-black text-lg sm:text-xl italic tracking-tighter" style={{ color: '#76B900' }}>NVIDIA</span> },
-                    { id: 4, name: 'SpaceX', icon: <span className="font-medium text-[10px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.3em] text-white uppercase">SpaceX</span> },
-                    { id: 5, name: 'Tesla', icon: <span className="font-black text-2xl sm:text-3xl" style={{ color: '#E31937', fontFamily: 'serif' }}>T</span> },
-                    { id: 6, name: 'Dangote Food', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[11px] sm:text-[13px] text-white uppercase">Dangote</span><span className="text-[8px] text-[#CFA343] font-bold">FOOD</span></div> },
+                    { id: 1, name: 'Zenith Bank', img: 'https://upload.wikimedia.org/wikipedia/en/d/d6/Zenith_Bank_logo.svg' },
+                    { id: 2, name: 'Airtel', img: 'https://upload.wikimedia.org/wikipedia/commons/d/da/Airtel_Africa_logo.svg' },
+                    { id: 3, name: 'MTN', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOlf7z4fg2HKMz2wx0EcootM0lPeIhvVPhqfaTZwSUCrwQ7UC_yUkJtWHz&s=10' },
+                    { id: 4, name: 'BUA', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Logo_BUA_Foods.svg' },
+                    { id: 5, name: 'Dangote', img: 'https://upload.wikimedia.org/wikipedia/en/0/0b/Dangote_Group_Logo.svg' },
                   ].map(item => (
-                    <div key={item.id} className="w-14 h-14 sm:w-20 sm:h-20 rounded-[18px] sm:rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-105 sm:hover:scale-110 hover:bg-white/5 transition-all duration-300">
-                      {item.icon}
+                    <div key={item.id} className="w-14 h-14 sm:w-20 sm:h-20 rounded-[18px] sm:rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-105 sm:hover:scale-110 hover:bg-white/5 transition-all duration-300 p-2">
+                      <img src={item.img} alt={item.name} className="w-full h-full object-contain mix-blend-screen" />
                     </div>
                   ))}
                 </div>
                 {/* Row 2 */}
                 <div className="flex items-center justify-center gap-2.5 sm:gap-4 flex-wrap max-w-full">
                   {[
-                    { id: 7, name: 'Buafood', icon: <span className="font-black text-xl sm:text-2xl tracking-tighter" style={{ background: 'linear-gradient(to right, #00B4C9, #00E4FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BUA</span> },
-                    { id: 8, name: 'Airtel', icon: <span className="font-black text-lg sm:text-xl italic" style={{ color: '#E84142' }}>airtel</span> },
-                    { id: 9, name: 'FIRSTHOLDCO', icon: <div className="flex flex-col leading-none text-center"><span className="font-black text-[12px] sm:text-[14px] text-white">FIRST</span><span className="text-[7px] sm:text-[8px] text-[#CFA343] font-bold tracking-widest uppercase">Holdco</span></div> },
-                    { id: 10, name: 'Meta', icon: <span className="font-black text-xl sm:text-2xl tracking-tight" style={{ color: '#2764FF' }}>Meta</span> },
-                    { id: 11, name: 'Alphabet', icon: <span className="font-bold text-[12px] sm:text-[14px] font-sora text-white tracking-tight">Alphabet</span> },
+                    { id: 6, name: 'First Bank', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrPJt7t-HsQWEZs6Vvsnl0ojmeAliQP2W2JKC_3ASSsBKhfFpHOJAUHU&s=10' },
+                    { id: 7, name: 'Seplat', img: 'https://yt3.googleusercontent.com/rs2EEuf4IxWvfcckxrG2AnjskptlD-x_xl4aIUYwA11IkZThlNSIvedSYMSPfddnHkEQo3aUZ4c=s900-c-k-c0x00ffffff-no-rj' },
+                    { id: 8, name: 'Nestle', img: 'https://d1jcea4y7xhp7l.cloudfront.net/wp-content/uploads/2023/11/NESTLElogo-with-wordmark-oak-1.png' },
+                    { id: 9, name: 'Presco', img: 'https://cdn.guardian.ng/wp-content/uploads/2025/11/ng-presco-logo.png' },
                   ].map(item => (
-                    <div key={item.id} className="w-14 h-14 sm:w-20 sm:h-20 rounded-[18px] sm:rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-105 sm:hover:scale-110 hover:bg-white/5 transition-all duration-300">
-                      {item.icon}
+                    <div key={item.id} className="w-14 h-14 sm:w-20 sm:h-20 rounded-[18px] sm:rounded-[24px] bg-[#221F2A]/80 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/5 backdrop-blur-xl hover:scale-105 sm:hover:scale-110 hover:bg-white/5 transition-all duration-300 p-2">
+                      <img src={item.img} alt={item.name} className="w-full h-full object-contain mix-blend-screen" />
                     </div>
                   ))}
                 </div>

@@ -28,7 +28,7 @@ const team = [
     role: 'Co-Founder & CTO',
     bio: 'A versatile tech innovator and systems architect with multi-disciplinary knowledge across different sectors. Joshua has worked closely with different sectors to build efficient technical solutions. At EquityStack, he translates complex market intelligence models into a production-ready web platform, directing the EquityStack AI logic implementation.',
     initials: 'JAA',
-    image: '/Temisann.png',
+    image: '/Ayofe.png',
     color: '#10B981',
     linkedin: 'https://linkedin.com',
     email: 'maceyjoshua07@gmail.com',
@@ -41,71 +41,9 @@ interface AboutUsProps {
 }
 
 export default function AboutUs({ onJoinClick }: AboutUsProps) {
-  const [activeMember, setActiveMember] = useState<typeof team[0] | null>(null);
+  const [activeMember, setActiveMember] = useState<typeof team[0]>(team[0]);
 
-  if (activeMember) {
-    const IconComp = activeMember.icon;
-    return (
-      <div className="w-full max-w-5xl mx-auto px-5 sm:px-8 py-12 lg:py-20 font-dm-sans animate-in slide-in-from-bottom-8 duration-500 relative z-10">
-        <button 
-          onClick={() => setActiveMember(null)}
-          className="group flex items-center gap-3 text-sm font-bold text-text-secondary hover:text-white transition-colors mb-12 focus:outline-none"
-        >
-          <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-colors shadow-sm">
-            <ArrowRight className="h-4 w-4 rotate-180" />
-          </div>
-          Back to About Us
-        </button>
 
-        <div className="flex flex-col md:flex-row gap-10 md:gap-16 mb-16">
-          {/* Picture top left */}
-          <div className="w-full md:w-5/12 flex-shrink-0">
-            <div className="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl" style={{ aspectRatio: '3/4' }}>
-              <div className="absolute top-0 left-0 right-0 h-1 z-10" style={{ background: `linear-gradient(90deg, ${activeMember.color}, transparent)` }} />
-              <img src={activeMember.image} alt={activeMember.name} className="w-full h-full object-cover object-top" />
-            </div>
-          </div>
-
-          {/* Name and title right */}
-          <div className="w-full md:w-7/12 flex flex-col justify-center">
-            <div className="mb-6">
-              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest border px-4 py-2 rounded-full mb-6"
-                style={{ color: activeMember.color, borderColor: `${activeMember.color}30`, background: `${activeMember.color}10` }}>
-                <IconComp className="h-4 w-4" />
-                {activeMember.role}
-              </span>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white font-sora tracking-tight leading-[1.1] mb-8">
-                {activeMember.name}
-              </h1>
-              
-              {/* Bio Below */}
-              <div className="max-w-2xl">
-                <p className="text-base sm:text-lg text-text-secondary/90 leading-[1.8] font-medium mb-10">
-                  {activeMember.bio}
-                </p>
-              </div>
-              
-              {/* Social links */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-white/10">
-                <a href={activeMember.linkedin} target="_blank" rel="noreferrer"
-                  className="flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-white/10 text-sm font-bold text-white/80 hover:text-white hover:bg-white/5 transition-all shadow-sm">
-                  <LinkedInIcon className="h-4 w-4" />
-                  Connect on LinkedIn
-                </a>
-                <a href={`mailto:${activeMember.email}`}
-                  className="flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold text-bg-base transition-all shadow-lg hover:scale-[1.02]"
-                  style={{ background: `linear-gradient(135deg, ${activeMember.color}, ${activeMember.color}CC)` }}>
-                  <Mail className="h-4 w-4" />
-                  Send Email
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    );
-  }
 
   return (
     <div className="w-full flex flex-col font-dm-sans -mt-8 relative z-10 pb-20">
@@ -180,72 +118,70 @@ export default function AboutUs({ onJoinClick }: AboutUsProps) {
         </div>
 
         {/* ── 4. Team Section ──────────────────────────────────── */}
-        <div className="space-y-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/30">
-            <div className="max-w-2xl">
-              <p className="text-[11px] font-extrabold text-brand-primary uppercase tracking-[0.2em] font-dm-sans mb-3">
-                Leadership Team
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora leading-tight">
-                Meet the Minds Building EquityStack
-              </h2>
-            </div>
-            <Users className="h-10 w-10 text-border/50 hidden md:block" />
+        <div className="space-y-16">
+          <div className="text-center">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-text-primary font-sora tracking-tight leading-tight">
+              Meet the Minds Building EquityStack
+            </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {team.map((member) => {
-              const IconComp = member.icon;
-              return (
-                <button
-                  key={member.name}
-                  onClick={() => setActiveMember(member)}
-                  className="group text-left rounded-[2rem] overflow-hidden border border-border/50 transition-all duration-500 hover:-translate-y-2 focus:outline-none relative"
-                  style={{ background: 'rgba(8, 29, 56, 0.5)' }}
-                >
-                  {/* Subtle glowing border on hover */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-[2rem]"
-                    style={{ boxShadow: `inset 0 0 0 1px ${member.color}40`, background: `radial-gradient(circle at top right, ${member.color}15, transparent 50%)` }} />
-                  
-                  {/* Profile Image Area */}
-                  <div className="relative w-full overflow-hidden bg-[#041226]" style={{ height: '420px' }}>
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-[1.03] group-hover:opacity-90"
-                      style={{ display: 'block' }}
-                    />
-                    
-                    {/* Dark gradient fade at the bottom of the image for text readability */}
-                    <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
-                      style={{ background: 'linear-gradient(to top, rgba(8, 29, 56, 1) 0%, transparent 100%)' }} />
-                    
-                    {/* Centered Hover CTA */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 bg-black/20 backdrop-blur-[2px]">
-                      <span className="px-6 py-3 rounded-full text-sm font-extrabold text-bg-base flex items-center gap-2 shadow-2xl translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
-                        style={{ background: member.color }}>
-                        View Full Profile
-                        <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </div>
+          <div className="flex flex-col md:flex-row gap-10 md:gap-16 items-stretch md:items-start max-w-6xl mx-auto">
+            {/* Left: Large Image */}
+            <div className="w-full md:w-5/12 flex-shrink-0 animate-in fade-in zoom-in duration-500" key={activeMember.name + "-img"}>
+              <div className="relative rounded-[2rem] overflow-hidden shadow-2xl aspect-[3/4]">
+                <img src={activeMember.image} alt={activeMember.name} className="w-full h-full object-cover object-top" />
+              </div>
+            </div>
 
-                  {/* Text Container */}
-                  <div className="px-8 py-6 relative z-10 bg-[rgba(8,29,56,1)]">
-                    <div className="flex flex-col gap-1.5">
-                      <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest"
-                        style={{ color: member.color }}>
-                        <IconComp className="h-3.5 w-3.5" />
-                        {member.role}
-                      </span>
-                      <h4 className="text-2xl font-extrabold text-text-primary font-sora group-hover:text-white transition-colors">
-                        {member.name}
-                      </h4>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
+            {/* Right: Info and Thumbnails */}
+            <div className="w-full md:w-7/12 flex flex-col justify-between py-2 md:py-6 animate-in fade-in slide-in-from-right-8 duration-500" key={activeMember.name + "-info"}>
+              <div>
+                {/* 5 Stars */}
+                <div className="flex gap-1 mb-8">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-[#CFA343] fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                
+                {/* Bio */}
+                <p className="text-lg sm:text-xl text-text-secondary leading-[1.8] font-medium mb-12 max-w-2xl">
+                  "{activeMember.bio}"
+                </p>
+
+                {/* Name and Role */}
+                <div className="mb-16">
+                  <div className="w-12 h-1 mb-6 rounded-full" style={{ background: activeMember.color }}></div>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-sora mb-2">{activeMember.name}</h3>
+                  <p className="text-text-secondary/80 font-medium tracking-wide uppercase text-sm">{activeMember.role}</p>
+                </div>
+              </div>
+
+              {/* Thumbnails */}
+              <div className="flex flex-wrap gap-4 md:gap-6 mt-auto">
+                {team.map((member) => {
+                  const isActive = activeMember.name === member.name;
+                  return (
+                    <button
+                      key={member.name}
+                      onClick={() => setActiveMember(member)}
+                      className={`relative w-20 h-28 sm:w-28 sm:h-36 rounded-2xl overflow-hidden transition-all duration-300 ${
+                        isActive 
+                          ? 'scale-105 shadow-xl z-10' 
+                          : 'opacity-50 hover:opacity-100 hover:scale-105'
+                      }`}
+                      style={{ 
+                        boxShadow: isActive ? `0 0 0 4px #041226, 0 0 0 6px ${member.color}` : 'none'
+                      }}
+                    >
+                      <img src={member.image} alt={member.name} className="w-full h-full object-cover object-top" />
+                      {!isActive && <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -257,7 +193,7 @@ export default function AboutUs({ onJoinClick }: AboutUsProps) {
               Ready to Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#CFA343] to-[#E5C06F]">Generational Wealth?</span>
             </h2>
             <p className="text-sm sm:text-base text-text-secondary/90 font-medium mb-10 max-w-xl">
-              Join our exclusive beta program today. Start with a virtual ₦10,000,000 portfolio, access AI-powered market intelligence, and connect with a community of ambitious Nigerian investors.
+              Join our exclusive beta program today. Start with a virtual ₦1,000,000 portfolio, access AI-powered market intelligence, and connect with a community of ambitious Nigerian investors.
             </p>
             <button
               onClick={onJoinClick}

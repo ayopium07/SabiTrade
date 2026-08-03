@@ -37,8 +37,15 @@ const SECTOR_COLORS: Record<string, { bg: string; text: string }> = {
   Conglomerates: { bg: '#1A2A2A', text: '#53D6D6' },
 };
 
-function StockAvatar({ ticker, sector }: { ticker: string; sector: string }) {
+function StockAvatar({ ticker, sector, logoUrl }: { ticker: string; sector: string; logoUrl?: string }) {
   const colors = SECTOR_COLORS[sector] ?? { bg: '#1E1E2E', text: '#888' };
+  
+  if (logoUrl) {
+    return (
+      <img src={logoUrl} alt={`${ticker} logo`} className="w-9 h-9 rounded-full object-contain bg-white/5 p-1 flex-shrink-0" />
+    );
+  }
+
   return (
     <div
       className="w-9 h-9 rounded-full flex items-center justify-center text-[10px] font-extrabold font-sora flex-shrink-0"
@@ -308,7 +315,7 @@ export default function StockExplorer() {
                       onClick={() => setSelectedTicker(stock.ticker)}
                     >
                       <div className="flex items-center gap-3 min-w-[130px] md:min-w-[160px]">
-                        <StockAvatar ticker={stock.ticker} sector={stock.sector} />
+                        <StockAvatar ticker={stock.ticker} sector={stock.sector} logoUrl={stock.logoUrl} />
                         <div>
                           <div className="text-[11px] md:text-[13px] font-extrabold text-white font-sora leading-none">{stock.ticker}</div>
                           <div className="text-[10px] font-medium text-[#7B7E8E] mt-0.5">{(stock.name || '').split(' ')[0].toUpperCase()}</div>

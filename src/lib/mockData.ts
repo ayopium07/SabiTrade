@@ -24,6 +24,7 @@ export interface Stock {
   bvps: number;
   targetPrice: number;
   rating: 'Outperform' | 'Neutral' | 'Underperform';
+  logoUrl?: string;
 }
 
 export interface NewsItem {
@@ -87,7 +88,8 @@ export const ngxStocks: Stock[] = [
   {
     ticker: 'DANGCEM',
     name: 'Dangote Cement PLC',
-    price: 650.00,
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0b/Dangote_Group_Logo.svg',
+    price: 652.50,
     change: 3.42,
     changeAmount: 21.50,
     volume: '8.4M',
@@ -114,7 +116,8 @@ export const ngxStocks: Stock[] = [
   {
     ticker: 'MTNN',
     name: 'MTN Nigeria Communications PLC',
-    price: 215.50,
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOlf7z4fg2HKMz2wx0EcootM0lPeIhvVPhqfaTZwSUCrwQ7UC_yUkJtWHz&s=10',
+    price: 240.00,
     change: -1.82,
     changeAmount: -4.00,
     volume: '15.2M',
@@ -141,7 +144,8 @@ export const ngxStocks: Stock[] = [
   {
     ticker: 'ZENITHBANK',
     name: 'Zenith Bank PLC',
-    price: 38.20,
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d6/Zenith_Bank_logo.svg',
+    price: 36.50,
     change: 4.66,
     changeAmount: 1.70,
     volume: '24.8M',
@@ -168,6 +172,7 @@ export const ngxStocks: Stock[] = [
   {
     ticker: 'GTCO',
     name: 'Guaranty Trust Holding Company PLC',
+    logoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPFIrKmTBegB7D5rAqXtzi42Su7Be7q78hyyd6Pkh6CQ&s=10',
     price: 45.10,
     change: 5.12,
     changeAmount: 2.20,
@@ -195,7 +200,8 @@ export const ngxStocks: Stock[] = [
   {
     ticker: 'SEPLAT',
     name: 'Seplat Energy PLC',
-    price: 3450.00,
+    logoUrl: 'https://yt3.googleusercontent.com/rs2EEuf4IxWvfcckxrG2AnjskptlD-x_xl4aIUYwA11IkZThlNSIvedSYMSPfddnHkEQo3aUZ4c=s900-c-k-c0x00ffffff-no-rj',
+    price: 3250.00,
     change: -2.82,
     changeAmount: -100.00,
     volume: '0.4M',
@@ -222,6 +228,7 @@ export const ngxStocks: Stock[] = [
   {
     ticker: 'BUAFOODS',
     name: 'BUA Foods PLC',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Logo_BUA_Foods.svg',
     price: 380.00,
     change: 0.00,
     changeAmount: 0.00,
@@ -275,8 +282,9 @@ export const ngxStocks: Stock[] = [
   },
   {
     ticker: 'NESTLE',
-    name: 'Nestle Nigeria PLC',
-    price: 820.00,
+    name: 'Nestlé Nigeria PLC',
+    logoUrl: 'https://d1jcea4y7xhp7l.cloudfront.net/wp-content/uploads/2023/11/NESTLElogo-with-wordmark-oak-1.png',
+    price: 900.00,
     change: -5.75,
     changeAmount: -50.00,
     volume: '1.2M',

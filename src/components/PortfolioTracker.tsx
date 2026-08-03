@@ -223,6 +223,8 @@ export default function PortfolioTracker() {
     };
   });
 
+  const cardStyle = { background: 'linear-gradient(135deg, #09081B 0%, #2B2681 100%)' };
+
   return (
     <div className="space-y-6 text-[#E0E0E0] font-dm-sans min-h-screen">
       
@@ -230,7 +232,7 @@ export default function PortfolioTracker() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* LEFT COLUMN: Main Chart (col-span-8) */}
-        <div className="lg:col-span-8 rounded-[14px] border border-white/5 overflow-hidden flex flex-col pb-4" style={{ background: '#171622' }}>
+        <div className="lg:col-span-8 rounded-[14px] border border-white/5 overflow-hidden flex flex-col pb-4" style={cardStyle}>
           <div className="p-4 sm:p-6 pb-12 flex-1 flex flex-col relative">
             
             {/* Header row */}
@@ -347,7 +349,7 @@ export default function PortfolioTracker() {
         <div className="lg:col-span-4 flex flex-col gap-5">
            
            {/* Card 1: Today's Return */}
-           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center bg-[#171622]">
+           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center" style={cardStyle}>
               <div className="text-[11px] font-bold text-white/50 mb-3">Today's Return</div>
               <div className={`text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalTodayChange >= 0 ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
                  {totalTodayChange >= 0 ? '+' : ''}₦{totalTodayChange.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
@@ -362,7 +364,7 @@ export default function PortfolioTracker() {
            </div>
            
            {/* Card 2: All-Time P&L */}
-           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center bg-[#171622]">
+           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center" style={cardStyle}>
               <div className="text-[11px] font-bold text-white/50 mb-3">All-Time P&L</div>
               <div className={`text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalAllTimePnl >= 0 ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
                  {totalAllTimePnl >= 0 ? '+' : ''}₦{totalAllTimePnl.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
@@ -377,7 +379,7 @@ export default function PortfolioTracker() {
            </div>
            
            {/* Card 3: Donut */}
-           <div className="rounded-[14px] border border-white/5 p-6 flex-1 flex items-center bg-[#171622] gap-4">
+           <div className="rounded-[14px] border border-white/5 p-6 flex-1 flex items-center gap-4" style={cardStyle}>
               <div className="relative w-[130px] h-[130px] flex-shrink-0">
                  <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
                    <circle cx="100" cy="100" r="75" fill="none" stroke="#23214C" strokeWidth="22" />
@@ -411,7 +413,7 @@ export default function PortfolioTracker() {
       </div>
       
       {/* ── BOTTOM SECTION: Tracked Holdings ── */}
-      <div className="rounded-[14px] border border-white/5 bg-[#171622] p-6">
+      <div className="rounded-[14px] border border-white/5 p-6" style={cardStyle}>
          <div className="flex items-center justify-between mb-6">
             <h3 className="text-xs font-extrabold text-white/60 uppercase tracking-widest">
               Tracked Holdings
@@ -515,7 +517,7 @@ export default function PortfolioTracker() {
       </div>
       
       {/* ── BOTTOM SECTION 2: Portfolio News and Analysis ── */}
-      <div className="rounded-[14px] border border-white/5 bg-[#171622] p-6 mt-6">
+      <div className="rounded-[14px] border border-white/5 p-6 mt-6" style={cardStyle}>
          <div className="flex items-center justify-between mb-6">
             <h3 className="text-xs font-extrabold text-white/60 uppercase tracking-widest">
               Portfolio News and Analysis
@@ -557,7 +559,7 @@ export default function PortfolioTracker() {
       {/* ... Add Modal ... */}
       {isAddOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-2xl p-6 space-y-4 bg-[#171622] border border-white/10 shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl p-6 space-y-4 border border-white/10 shadow-2xl" style={cardStyle}>
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <h3 className="text-sm font-extrabold text-[#CFA343] font-sora flex items-center gap-2">
                 <Briefcase className="h-4 w-4" /> Record Buy Transaction
@@ -592,7 +594,7 @@ export default function PortfolioTracker() {
       {isDatePickerOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
            {/* Re-use exact design from MarketStatus, simplified */}
-           <div className="bg-[#171622] border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+           <div className="border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4" style={cardStyle}>
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                  <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-[#CFA343]" /><h3 className="text-sm font-bold text-white font-sora">Select Date Range</h3></div>
                  <button onClick={() => setIsDatePickerOpen(false)} className="text-white/40 hover:text-white p-1"><X className="h-4 w-4" /></button>
