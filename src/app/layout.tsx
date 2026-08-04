@@ -17,6 +17,9 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "EquityStack | Nigerian Financial Intelligence Platform",
   description: "Your Nigerian market intelligence, simplified. Track NGX stocks, read AI-generated market summaries, and learn investing — in a clear, modern interface built for Nigerian retail investors.",
+  verification: {
+    google: "F9zAnTEMzUZMN1H6Ws6F0soqrvtuJIf2RM8C-6YCO5c",
+  },
 };
 
 export default function RootLayout({
