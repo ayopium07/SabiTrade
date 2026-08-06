@@ -110,7 +110,7 @@ export default function TradePage() {
         {/* ── Header ───────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
+            <h1 className="text-xl font-bold tracking-tight text-white mb-1">
               Simulated Trade Desk
             </h1>
             <p className="text-sm text-gray-400 font-medium">
@@ -144,7 +144,7 @@ export default function TradePage() {
               <div className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
                 SIMULATED CASH
               </div>
-              <div className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+              <div className="text-xl font-extrabold text-white tracking-tight truncate">
                 ₦{cashBalance.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </div>
               <div className="text-xs text-gray-400 tracking-wider uppercase mt-2">READY TO DEPLOY</div>
@@ -157,7 +157,7 @@ export default function TradePage() {
               <div className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
                 PORTFOLIO EQUITIES VALUE
               </div>
-              <div className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+              <div className="text-xl font-extrabold text-white tracking-tight truncate">
                 ₦{totalCurrentValue.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </div>
               <div className="text-sm text-gray-400 font-medium">Cost basis: <span className="font-bold text-white">₦{totalCostBasis.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span></div>
@@ -172,7 +172,7 @@ export default function TradePage() {
                  <div className={`p-1.5 rounded-lg border ${totalAllTimePnl >= 0 ? 'border-[#10B981] text-[#10B981]' : 'border-red-500 text-red-500'}`}>
                    {totalAllTimePnl >= 0 ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
                  </div>
-                 <div className={`text-4xl md:text-5xl font-extrabold tracking-tight ${totalAllTimePnl >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
+                 <div className={`text-xl font-extrabold tracking-tight truncate ${totalAllTimePnl >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
                    {totalAllTimePnl >= 0 ? '+' : ''}₦{totalAllTimePnl.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                  </div>
               </div>
@@ -373,7 +373,7 @@ export default function TradePage() {
               <div className="flex items-center justify-between pb-6 border-b border-[#1E1E2D]">
                 <div className="flex items-center gap-4">
                   <Briefcase className="h-7 w-7 text-[#DEAB52]" />
-                  <h4 className="text-xl font-bold text-[#DEAB52]">Demo Portfolio Holdings</h4>
+                  <h4 className="text-lg font-bold text-[#DEAB52]">Demo Portfolio Holdings</h4>
                 </div>
                 <span className="text-sm font-medium text-gray-400">
                   {demoPortfolio.length} Assets
@@ -444,8 +444,8 @@ export default function TradePage() {
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center p-12 text-center rounded-[2rem] mt-8 border border-[#28283B] bg-transparent">
                   <LineChart className="h-10 w-10 text-white mb-6" />
-                  <p className="font-bold text-white text-xl mb-3 tracking-tight">Your Demo Portfolio is empty</p>
-                  <p className="text-[15px] text-gray-400 max-w-lg leading-relaxed">
+                  <p className="font-bold text-white text-lg mb-3 tracking-tight">Your Demo Portfolio is empty</p>
+                  <p className="text-sm text-gray-400 max-w-lg leading-relaxed">
                     Select a stock from the simulator, enter a quantity, and execute a buy order to
                     begin tracking your virtual yields.
                   </p>

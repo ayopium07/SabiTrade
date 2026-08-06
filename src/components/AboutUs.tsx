@@ -17,7 +17,7 @@ const team = [
     role: 'Founder & CEO',
     bio: 'A dynamic financial analyst and investment intelligence architect with extensive knowledge in investment banking. Currently working for one of the Big 4 professional services firms in Nigeria, he advises leading corporate portfolios. Timilehin is passionate about retail equity accessibility, and conceptualized EquityStack to build robust financial intelligence interfaces that speak the language of everyday retail investors.',
     initials: 'TO',
-    image: '/Timilehin.jpg',
+    image: '/ceo.jpeg',
     color: '#CFA343',
     linkedin: 'https://linkedin.com',
     email: 'timilehinolaniyi193@gmail.com',
@@ -33,6 +33,17 @@ const team = [
     linkedin: 'https://linkedin.com',
     email: 'maceyjoshua07@gmail.com',
     icon: Code,
+  },
+  {
+    name: 'Waliyullah "West" Adekunle',
+    role: 'Co-Founder & COO / UI-UX Lead',
+    bio: 'A Lagos-based web developer and product designer with deep expertise across Shopify, Framer, and WordPress ecosystems, West brings a rare blend of technical fluency and design sensibility to EquityStack. As Co-Founder and COO, he leads the platform\'s full UI-UX redesign — translating complex NGX market intelligence into a clean, intuitive experience across all core screens. His work draws on years of hands-on freelance experience building conversion-focused, e-commerce-grade web platforms for clients worldwide, giving EquityStack\'s product both technical rigor and real-world polish.',
+    initials: 'WA',
+    image: '/West.jpeg',
+    color: '#00B8FF',
+    linkedin: 'https://linkedin.com',
+    email: 'west@equitystack.com',
+    icon: Compass,
   },
 ];
 

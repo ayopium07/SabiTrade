@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Sora, DM_Sans } from "next/font/google";
 import "./globals.css";
-
+import AIChatWidget from "@/components/AIChatWidget";
 const sora = Sora({
   subsets: ["latin"],
   variable: "--font-sora",
@@ -34,6 +34,7 @@ export default function RootLayout({
         style={{ background: '#041226' }}
       >
         {children}
+        <AIChatWidget />
       </body>
     </html>
   );

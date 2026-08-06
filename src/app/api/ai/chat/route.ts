@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     const { messages, experienceLevel } = await request.json();
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'Gemini API key is not configured on the server. Please add GEMINI_API_KEY to your environment variables.' },
+        { error: 'Gemini API key is not configured on the server. Please add GOOGLE_GENERATIVE_AI_API_KEY to your environment variables.' },
         { status: 500 }
       );
     }
@@ -48,7 +50,7 @@ CRITICAL INSTRUCTIONS:
     });
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
