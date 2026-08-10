@@ -16,6 +16,7 @@ html {
   color-scheme: dark;
   max-width: 100vw;
   overflow-x: hidden;
+  font-size: 14px; /* Scales down the entire website (rem-based) */
 }
 
 body {

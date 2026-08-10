@@ -191,12 +191,12 @@ function NGXTickerCarousel() {
 
 // ─── US Markets Carousel ─────────────────────────────
 const usStockData = [
-  { id: 'AAPL', name: 'Apple',     badge: 'AAPL', price: '$142.7', change: '+0.66%', up: true,  bg: '#555555', sparkPath: 'M0 20 C14 17,24 18,40 13 S60 10,76 12 S90 9,100 11' },
-  { id: 'TSLA', name: 'Tesla',     badge: 'TSLA', price: '$245.9', change: '-1.22%', up: false, bg: '#CC0000', sparkPath: 'M0 8 C12 11,22 10,38 15 S58 18,74 16 S90 20,100 19' },
-  { id: 'MSFT', name: 'Microsoft', badge: 'MSFT', price: '$378.5', change: '+0.44%', up: true,  bg: '#00A4EF', sparkPath: 'M0 18 C14 15,24 17,40 12 S60 9,76 11 S90 8,100 10' },
-  { id: 'META', name: 'Meta',      badge: 'META', price: '$528.3', change: '+1.84%', up: true,  bg: '#0082FB', sparkPath: 'M0 22 C12 18,22 20,38 14 S58 10,74 12 S90 9,100 11' },
-  { id: 'AMZN', name: 'Amazon',    badge: 'AMZN', price: '$192.7', change: '+2.11%', up: true,  bg: '#FF9900', sparkPath: 'M0 22 C10 17,22 19,38 12 S58 8,74 10 S90 7,100 9'  },
-  { id: 'NVDA', name: 'Nvidia',    badge: 'NVDA', price: '$875.4', change: '+3.56%', up: true,  bg: '#76B900', sparkPath: 'M0 23 C10 18,22 20,38 13 S58 9,74 11 S90 7,100 9'  },
+  { id: 'AAPL', name: 'Apple', badge: 'AAPL', price: '$142.7', change: '+0.66%', up: true, bg: '#555555', sparkPath: 'M0 20 C14 17,24 18,40 13 S60 10,76 12 S90 9,100 11' },
+  { id: 'TSLA', name: 'Tesla', badge: 'TSLA', price: '$245.9', change: '-1.22%', up: false, bg: '#CC0000', sparkPath: 'M0 8 C12 11,22 10,38 15 S58 18,74 16 S90 20,100 19' },
+  { id: 'MSFT', name: 'Microsoft', badge: 'MSFT', price: '$378.5', change: '+0.44%', up: true, bg: '#00A4EF', sparkPath: 'M0 18 C14 15,24 17,40 12 S60 9,76 11 S90 8,100 10' },
+  { id: 'META', name: 'Meta', badge: 'META', price: '$528.3', change: '+1.84%', up: true, bg: '#0082FB', sparkPath: 'M0 22 C12 18,22 20,38 14 S58 10,74 12 S90 9,100 11' },
+  { id: 'AMZN', name: 'Amazon', badge: 'AMZN', price: '$192.7', change: '+2.11%', up: true, bg: '#FF9900', sparkPath: 'M0 22 C10 17,22 19,38 12 S58 8,74 10 S90 7,100 9' },
+  { id: 'NVDA', name: 'Nvidia', badge: 'NVDA', price: '$875.4', change: '+3.56%', up: true, bg: '#76B900', sparkPath: 'M0 23 C10 18,22 20,38 13 S58 9,74 11 S90 7,100 9' },
 ];
 
 function USMarketsCarousel() {
@@ -312,10 +312,10 @@ function RatingSystemDeepDive() {
       </div>
 
       {/* 4 Sentiments */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-14">
         {sentiments.map((s) => (
-          <div key={s.name} className="rounded-xl p-6 flex flex-col items-center justify-start text-center" style={{ background: s.bg }}>
-            <h3 className="text-[14px] font-bold text-white font-sora tracking-wide mb-3">{s.name}</h3>
+          <div key={s.name} className="rounded-xl p-4 sm:p-5 flex flex-col items-center justify-start text-center" style={{ background: s.bg }}>
+            <h3 className="text-[13px] font-bold text-white font-sora tracking-wide mb-2">{s.name}</h3>
             <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
               {s.desc}
             </p>
@@ -328,21 +328,21 @@ function RatingSystemDeepDive() {
         <p className="text-[13px] font-semibold text-white mb-6">
           The 7 scoring pillars behind every ratings:
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {pillars.map((p, idx) => (
-            <div 
-              key={p.title} 
-              className={`rounded-xl p-5 flex items-center gap-4 ${idx === 6 ? 'lg:col-start-2' : ''}`}
+            <div
+              key={p.title}
+              className={`rounded-xl p-4 flex items-center gap-3 ${idx === 6 ? 'lg:col-start-2' : ''}`}
               style={{ background: '#111116', border: '1px solid rgba(255,255,255,0.03)' }}
             >
-              <div className="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center bg-[#2B273A] relative">
-                <span className="text-white font-bold text-xl italic font-serif">e</span>
-                <span className="absolute bottom-2.5 right-2 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#2B273A] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center bg-[#2B273A] relative">
+                <span className="text-white font-bold text-lg italic font-serif">e</span>
+                <span className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#2B273A] flex items-center justify-center">
                   <span className="w-1 h-1 rounded-full bg-[#2B273A]"></span>
                 </span>
               </div>
               <div>
-                <h4 className="text-[13px] font-bold text-white font-sora mb-1">{p.title}</h4>
+                <h4 className="text-[12px] font-bold text-white font-sora mb-0.5">{p.title}</h4>
                 <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.45)' }}>{p.desc}</p>
               </div>
             </div>
@@ -391,20 +391,20 @@ function MarketReportSection() {
         {/* Right Side: Card Mockup */}
         <div className="rounded-2xl border border-white/5" style={{ background: '#111116' }}>
           {/* Card Header */}
-          <div className="p-6 sm:p-8 flex items-start justify-between">
+          <div className="p-5 sm:p-6 flex items-start justify-between">
             <div>
-              <h4 className="text-white font-bold text-[15px] font-sora mb-1.5">EquityStack Weekly Market Report</h4>
+              <h4 className="text-white font-bold text-[14px] font-sora mb-1">EquityStack Weekly Market Report</h4>
               <p className="text-[11px] text-white/40">Week ended 21 June 2026 &middot; Delivered Saturday</p>
             </div>
             <div className="px-3 py-1 rounded-md text-[10px] font-bold text-[#CFA343] border border-[#CFA343]/20" style={{ background: 'rgba(207,163,67,0.05)' }}>
               Issue #24
             </div>
           </div>
-          
+
           <div className="w-full border-t border-white/5" />
 
           {/* Card Data */}
-          <div className="p-6 sm:p-8 space-y-5">
+          <div className="p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[12px] text-white/50">NGX All-Share Index</span>
               <span className="text-[13px] font-semibold text-[#10B981]">104,256.80 <span className="text-[10px]">▲</span>1.4%</span>
@@ -438,7 +438,7 @@ function MarketReportSection() {
           <div className="w-full border-t border-white/5" />
 
           {/* Card Footer */}
-          <div className="p-5 sm:px-8 text-[11px] text-white/30 text-center sm:text-left rounded-b-2xl" style={{ background: 'rgba(255,255,255,0.01)' }}>
+          <div className="p-4 sm:px-6 text-[11px] text-white/30 text-center sm:text-left rounded-b-2xl" style={{ background: 'rgba(255,255,255,0.01)' }}>
             Next report: Saturday, 28 June 2026 &middot; Delivered 8:00 AM WAT
           </div>
         </div>
@@ -502,11 +502,11 @@ function NewsSection() {
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        
+
         {/* Large Feature Card (Spans 2 columns) */}
         <div className="col-span-1 md:col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative flex flex-col justify-end p-8" style={{ background: 'linear-gradient(135deg, #2d184a, #150a24)', minHeight: '320px' }}>
           <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
-          
+
           <div className="relative z-10 space-y-4">
             <h3 className="text-2xl sm:text-3xl font-bold text-white font-sora leading-tight group-hover:text-[#CFA343] transition-colors">
               All about Investing in NGX Equities and related risks
@@ -552,7 +552,7 @@ function FooterSection() {
     <div className="w-full bg-[#0B0C10] pt-20 pb-8 mt-12 border-t border-white/5 relative z-10">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-          
+
           {/* Brand Column */}
           <div className="col-span-1 md:col-span-4 lg:col-span-5">
             <div className="flex items-center gap-3 mb-6">
@@ -592,7 +592,7 @@ function FooterSection() {
                 <li><a href="#" className="hover:text-white transition-colors">Legal & privacy</a></li>
               </ul>
             </div>
-            
+
             {/* Markets */}
             <div>
               <h4 className="text-[13px] font-bold text-white mb-6">Markets</h4>
@@ -1026,287 +1026,287 @@ export default function Page() {
     return (
       <>
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start relative">
-        
-        {/* Mobile Menu Toggle */}
-        <div className="lg:hidden w-full">
-          <button 
-            onClick={() => setIsHomeMenuOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#191A1D] rounded-xl text-[13px] font-bold text-white border border-white/5 focus:outline-none"
-          >
-            <Menu className="w-4 h-4 text-brand-primary" />
-            Dashboard Menu
-          </button>
-        </div>
 
-        {/* ─── Left Sidebar (Off-canvas on mobile) ─── */}
-        {isHomeMenuOpen && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setIsHomeMenuOpen(false)} />
-        )}
-        <div className={`fixed top-0 bottom-0 left-0 z-50 lg:static lg:z-auto w-[280px] lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6 h-full lg:h-auto overflow-y-auto lg:overflow-visible transition-transform duration-300 ${isHomeMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`} style={{ background: '#121212' }}>
-          {/* Mobile Close Header */}
-          <div className="lg:hidden flex justify-end p-4 border-b border-[#2C2D30]">
-            <button onClick={() => setIsHomeMenuOpen(false)} className="p-2 text-white/50 hover:text-white rounded-lg bg-white/5">
-              <X className="w-5 h-5" />
+          {/* Mobile Menu Toggle */}
+          <div className="lg:hidden w-full">
+            <button
+              onClick={() => setIsHomeMenuOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#191A1D] rounded-xl text-[13px] font-bold text-white border border-white/5 focus:outline-none"
+            >
+              <Menu className="w-4 h-4 text-brand-primary" />
+              Dashboard Menu
             </button>
           </div>
-          {/* Menu Navigation */}
-          <div className="p-5 pb-6 border-b border-[#2C2D30]">
-            <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans mb-5">
-              Menu
-            </h3>
-            <div className="flex flex-col gap-2">
-              {([
-                { id: 'report', label: 'Daily Market Report', color: '#D4AF37' },
-                { id: 'dividend', label: 'Best Dividend Paying Stocks', color: '#EC4899' },
-                { id: 'growth', label: 'Fast Growing Companies', color: '#A855F7' },
-                { id: 'analyst', label: 'Top Analyst Picks', color: '#FCD34D' },
-                { id: 'safe', label: 'Play Safe Stocks', color: '#F87171' }
-              ] as const).map((tab) => {
-                const isSelected = activeHomeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      setActiveHomeTab(tab.id);
-                      setIsHomeMenuOpen(false); // Auto-close on mobile
-                    }}
-                    className="flex items-center justify-between px-3 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 focus:outline-none"
-                    style={isSelected
-                      ? { backgroundColor: '#2D2619', color: '#FFFFFF' }
-                      : { color: '#8B95A5' }}
-                  >
-                    <div className="flex items-center gap-3 w-full">
-                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: tab.color }} />
-                      <span className="flex-1 text-left">{tab.label}</span>
-                      {!isSelected && <ChevronDown className="h-4 w-4 text-[#8B95A5]/70 flex-shrink-0" />}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
 
-          {/* Watchlist Preview Sidebar */}
-          <div className="p-5 pt-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans">
-                Watchlist Preview
+          {/* ─── Left Sidebar (Off-canvas on mobile) ─── */}
+          {isHomeMenuOpen && (
+            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setIsHomeMenuOpen(false)} />
+          )}
+          <div className={`fixed top-0 bottom-0 left-0 z-50 lg:static lg:z-auto w-[280px] lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6 h-full lg:h-auto overflow-y-auto lg:overflow-visible transition-transform duration-300 ${isHomeMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`} style={{ background: '#121212' }}>
+            {/* Mobile Close Header */}
+            <div className="lg:hidden flex justify-end p-4 border-b border-[#2C2D30]">
+              <button onClick={() => setIsHomeMenuOpen(false)} className="p-2 text-white/50 hover:text-white rounded-lg bg-white/5">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {/* Menu Navigation */}
+            <div className="p-5 pb-6 border-b border-[#2C2D30]">
+              <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans mb-5">
+                Menu
               </h3>
-            </div>
-            
-            <div className="flex flex-col gap-1">
-              {watchStocks.slice(0, 6).map((stock) => {
-                const getCryptoIcon = (ticker: string) => {
-                  switch (ticker.toUpperCase()) {
-                    case 'MTNN':
-                      return (
-                        <div className="w-7 h-7 rounded-full bg-[#F7931A] flex items-center justify-center text-white">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M16.624 10.648c.84-1.282.884-2.828.118-4.047-1.026-1.636-3.136-2.072-5.143-1.666V2.368h-1.57v2.441c-.428.082-.86.177-1.293.284V2.368H7.166v2.966c-.958.256-1.888.55-2.775.877l.676 1.832c.571-.21 1.157-.406 1.748-.588v7.925c-.53.125-1.055.263-1.57.412l.628 1.954c.954-.265 1.954-.537 2.973-.787v3.08h1.57v-3.355c.446-.091.895-.182 1.346-.269v3.614h1.57v-3.878c2.408-.344 4.708-1.266 5.617-3.523.63-1.558.117-2.915-.65-3.921zm-4.321 4.542c-1.391.31-2.996.55-4.225.772v-3.79c1.196-.242 2.723-.526 4.015-.815 1.488-.333 2.502.164 2.766 1.134.256.945-.63 2.302-2.556 2.699zm.507-4.831c-1.229.288-2.593.53-3.729.743v-3.327c1.077-.22 2.348-.445 3.468-.674 1.258-.258 2.075.147 2.296.88.22.735-.41 1.996-2.035 2.378z"/>
-                          </svg>
-                        </div>
-                      );
-                    case 'DANGCEM':
-                      return (
-                        <div className="w-7 h-7 rounded-full bg-[#10B981] flex items-center justify-center text-white">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" transform="rotate(-15)">
-                            <path d="M16.624 10.648c.84-1.282.884-2.828.118-4.047-1.026-1.636-3.136-2.072-5.143-1.666V2.368h-1.57v2.441c-.428.082-.86.177-1.293.284V2.368H7.166v2.966c-.958.256-1.888.55-2.775.877l.676 1.832c.571-.21 1.157-.406 1.748-.588v7.925c-.53.125-1.055.263-1.57.412l.628 1.954c.954-.265 1.954-.537 2.973-.787v3.08h1.57v-3.355c.446-.091.895-.182 1.346-.269v3.614h1.57v-3.878c2.408-.344 4.708-1.266 5.617-3.523.63-1.558.117-2.915-.65-3.921zm-4.321 4.542c-1.391.31-2.996.55-4.225.772v-3.79c1.196-.242 2.723-.526 4.015-.815 1.488-.333 2.502.164 2.766 1.134.256.945-.63 2.302-2.556 2.699zm.507-4.831c-1.229.288-2.593.53-3.729.743v-3.327c1.077-.22 2.348-.445 3.468-.674 1.258-.258 2.075.147 2.296.88.22.735-.41 1.996-2.035 2.378z"/>
-                          </svg>
-                        </div>
-                      );
-                    case 'ZENITHBANK':
-                      return (
-                        <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center overflow-hidden">
-                          <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                            <path fill="#E15132" d="M12 21.6A9.6 9.6 0 1012 2.4a9.6 9.6 0 000 19.2z"/>
-                            <path fill="#FFF" d="M9 13.5c1.5-1.5 4.5-1.5 6 0l2 2a7 7 0 01-10 0l2-2z"/>
-                            <circle fill="#000" cx="10" cy="11" r="1.5"/>
-                            <circle fill="#000" cx="14" cy="11" r="1.5"/>
-                            <path fill="#000" d="M11 13.5h2l-1 1.5z"/>
-                          </svg>
-                        </div>
-                      );
-                    case 'GTCO':
-                      return (
-                        <div className="w-7 h-7 rounded-full bg-[#EF4444] flex items-center justify-center">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                            <path d="M12 2L2 21h20L12 2zm0 4.5l6.5 12.5h-13L12 6.5z"/>
-                          </svg>
-                        </div>
-                      );
-                    default:
-                      return (
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: stock.change >= 0 ? '#10B981' : '#EF4444' }}>
-                          {stock.ticker.charAt(0)}
-                        </div>
-                      );
-                  }
-                };
-
-                const min = Math.min(...stock.sparkline);
-                const max = Math.max(...stock.sparkline);
-                const range = max - min || 1;
-                const W = 60;
-                const H = 20;
-
-                const points = stock.sparkline.map((val, idx) => ({
-                  x: (idx / (stock.sparkline.length - 1)) * W,
-                  y: H - 2 - ((val - min) / range) * (H - 4),
-                }));
-                const linePath = points.reduce((d, p, i) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
-                const lineColor = stock.change >= 0 ? '#10B981' : '#EF4444';
-
-                return (
-                  <button key={stock.ticker} onClick={() => setSelectedTicker(stock.ticker)}
-                    className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors focus:outline-none text-left w-full group gap-4">
-                    <div className="flex items-center gap-4">
-                      {getCryptoIcon(stock.ticker)}
-                      <span className="text-[14px] font-bold text-[#8B95A5]">
-                        {stock.ticker}
-                      </span>
-                    </div>
-                    <div className="flex-1 h-6 opacity-80 group-hover:opacity-100 transition-opacity">
-                      <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-                        <path d={linePath} fill="none" stroke={lineColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  </button>
-                );
-              })}
+              <div className="flex flex-col gap-2">
+                {([
+                  { id: 'report', label: 'Daily Market Report', color: '#D4AF37' },
+                  { id: 'dividend', label: 'Best Dividend Paying Stocks', color: '#EC4899' },
+                  { id: 'growth', label: 'Fast Growing Companies', color: '#A855F7' },
+                  { id: 'analyst', label: 'Top Analyst Picks', color: '#FCD34D' },
+                  { id: 'safe', label: 'Play Safe Stocks', color: '#F87171' }
+                ] as const).map((tab) => {
+                  const isSelected = activeHomeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setActiveHomeTab(tab.id);
+                        setIsHomeMenuOpen(false); // Auto-close on mobile
+                      }}
+                      className="flex items-center justify-between px-3 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 focus:outline-none"
+                      style={isSelected
+                        ? { backgroundColor: '#2D2619', color: '#FFFFFF' }
+                        : { color: '#8B95A5' }}
+                    >
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: tab.color }} />
+                        <span className="flex-1 text-left">{tab.label}</span>
+                        {!isSelected && <ChevronDown className="h-4 w-4 text-[#8B95A5]/70 flex-shrink-0" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            <button onClick={() => setView('markets')}
-              className="mt-6 text-[12px] font-bold text-[#D4AF37] hover:underline font-dm-sans focus:outline-none w-full text-left px-2">
-              Manage all stocks &gt;
-            </button>
+            {/* Watchlist Preview Sidebar */}
+            <div className="p-5 pt-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans">
+                  Watchlist Preview
+                </h3>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                {watchStocks.slice(0, 6).map((stock) => {
+                  const getCryptoIcon = (ticker: string) => {
+                    switch (ticker.toUpperCase()) {
+                      case 'MTNN':
+                        return (
+                          <div className="w-7 h-7 rounded-full bg-[#F7931A] flex items-center justify-center text-white">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M16.624 10.648c.84-1.282.884-2.828.118-4.047-1.026-1.636-3.136-2.072-5.143-1.666V2.368h-1.57v2.441c-.428.082-.86.177-1.293.284V2.368H7.166v2.966c-.958.256-1.888.55-2.775.877l.676 1.832c.571-.21 1.157-.406 1.748-.588v7.925c-.53.125-1.055.263-1.57.412l.628 1.954c.954-.265 1.954-.537 2.973-.787v3.08h1.57v-3.355c.446-.091.895-.182 1.346-.269v3.614h1.57v-3.878c2.408-.344 4.708-1.266 5.617-3.523.63-1.558.117-2.915-.65-3.921zm-4.321 4.542c-1.391.31-2.996.55-4.225.772v-3.79c1.196-.242 2.723-.526 4.015-.815 1.488-.333 2.502.164 2.766 1.134.256.945-.63 2.302-2.556 2.699zm.507-4.831c-1.229.288-2.593.53-3.729.743v-3.327c1.077-.22 2.348-.445 3.468-.674 1.258-.258 2.075.147 2.296.88.22.735-.41 1.996-2.035 2.378z" />
+                            </svg>
+                          </div>
+                        );
+                      case 'DANGCEM':
+                        return (
+                          <div className="w-7 h-7 rounded-full bg-[#10B981] flex items-center justify-center text-white">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" transform="rotate(-15)">
+                              <path d="M16.624 10.648c.84-1.282.884-2.828.118-4.047-1.026-1.636-3.136-2.072-5.143-1.666V2.368h-1.57v2.441c-.428.082-.86.177-1.293.284V2.368H7.166v2.966c-.958.256-1.888.55-2.775.877l.676 1.832c.571-.21 1.157-.406 1.748-.588v7.925c-.53.125-1.055.263-1.57.412l.628 1.954c.954-.265 1.954-.537 2.973-.787v3.08h1.57v-3.355c.446-.091.895-.182 1.346-.269v3.614h1.57v-3.878c2.408-.344 4.708-1.266 5.617-3.523.63-1.558.117-2.915-.65-3.921zm-4.321 4.542c-1.391.31-2.996.55-4.225.772v-3.79c1.196-.242 2.723-.526 4.015-.815 1.488-.333 2.502.164 2.766 1.134.256.945-.63 2.302-2.556 2.699zm.507-4.831c-1.229.288-2.593.53-3.729.743v-3.327c1.077-.22 2.348-.445 3.468-.674 1.258-.258 2.075.147 2.296.88.22.735-.41 1.996-2.035 2.378z" />
+                            </svg>
+                          </div>
+                        );
+                      case 'ZENITHBANK':
+                        return (
+                          <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center overflow-hidden">
+                            <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                              <path fill="#E15132" d="M12 21.6A9.6 9.6 0 1012 2.4a9.6 9.6 0 000 19.2z" />
+                              <path fill="#FFF" d="M9 13.5c1.5-1.5 4.5-1.5 6 0l2 2a7 7 0 01-10 0l2-2z" />
+                              <circle fill="#000" cx="10" cy="11" r="1.5" />
+                              <circle fill="#000" cx="14" cy="11" r="1.5" />
+                              <path fill="#000" d="M11 13.5h2l-1 1.5z" />
+                            </svg>
+                          </div>
+                        );
+                      case 'GTCO':
+                        return (
+                          <div className="w-7 h-7 rounded-full bg-[#EF4444] flex items-center justify-center">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                              <path d="M12 2L2 21h20L12 2zm0 4.5l6.5 12.5h-13L12 6.5z" />
+                            </svg>
+                          </div>
+                        );
+                      default:
+                        return (
+                          <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: stock.change >= 0 ? '#10B981' : '#EF4444' }}>
+                            {stock.ticker.charAt(0)}
+                          </div>
+                        );
+                    }
+                  };
+
+                  const min = Math.min(...stock.sparkline);
+                  const max = Math.max(...stock.sparkline);
+                  const range = max - min || 1;
+                  const W = 60;
+                  const H = 20;
+
+                  const points = stock.sparkline.map((val, idx) => ({
+                    x: (idx / (stock.sparkline.length - 1)) * W,
+                    y: H - 2 - ((val - min) / range) * (H - 4),
+                  }));
+                  const linePath = points.reduce((d, p, i) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
+                  const lineColor = stock.change >= 0 ? '#10B981' : '#EF4444';
+
+                  return (
+                    <button key={stock.ticker} onClick={() => setSelectedTicker(stock.ticker)}
+                      className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors focus:outline-none text-left w-full group gap-4">
+                      <div className="flex items-center gap-4">
+                        {getCryptoIcon(stock.ticker)}
+                        <span className="text-[14px] font-bold text-[#8B95A5]">
+                          {stock.ticker}
+                        </span>
+                      </div>
+                      <div className="flex-1 h-6 opacity-80 group-hover:opacity-100 transition-opacity">
+                        <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+                          <path d={linePath} fill="none" stroke={lineColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button onClick={() => setView('markets')}
+                className="mt-6 text-[12px] font-bold text-[#D4AF37] hover:underline font-dm-sans focus:outline-none w-full text-left px-2">
+                Manage all stocks &gt;
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* ─── Main Content Area ─── */}
-        <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
-          {activeHomeTab === 'report' && (
-            <div className="space-y-6 animate-in fade-in duration-300 text-left">
-              <MarketStatus />
-              
+          {/* ─── Main Content Area ─── */}
+          <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
+            {activeHomeTab === 'report' && (
+              <div className="space-y-6 animate-in fade-in duration-300 text-left">
+                <MarketStatus />
 
 
-              <TopMovers />
-            </div>
-          )}
 
-          {activeHomeTab === 'dividend' && (
-            <div className="space-y-4 animate-in fade-in duration-300 text-left">
-              <div>
-                <h3 className="text-sm font-extrabold text-text-primary font-sora">Best Dividend Paying Stocks</h3>
-                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Top-yielding equities on the NGX offering defensive income payouts</p>
+                <TopMovers />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {dividendStocks.map((stock) =>
-                  renderDashboardStockCard({
-                    stock,
-                    metricLabel: 'Dividend Yield',
-                    metricValue: `${stock.dividendYield} Yield`,
-                    metricSub: stock.peRatio > 0 ? `${stock.peRatio}x P/E` : 'N/A P/E',
-                    color: '#10B981',
-                    badge: (
-                      <span className="px-1.5 py-0.5 bg-gain/10 text-gain border border-gain/20 rounded-md text-[9px] font-extrabold uppercase">
-                        Yield Leader
-                      </span>
-                    ),
-                  })
-                )}
-              </div>
-            </div>
-          )}
+            )}
 
-          {activeHomeTab === 'growth' && (
-            <div className="space-y-4 animate-in fade-in duration-300 text-left">
-              <div>
-                <h3 className="text-sm font-extrabold text-text-primary font-sora">Fast Growing Companies you should invest in</h3>
-                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Equities experiencing high revenue growth, operational scale, or transformational catalysts</p>
+            {activeHomeTab === 'dividend' && (
+              <div className="space-y-4 animate-in fade-in duration-300 text-left">
+                <div>
+                  <h3 className="text-sm font-extrabold text-text-primary font-sora">Best Dividend Paying Stocks</h3>
+                  <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Top-yielding equities on the NGX offering defensive income payouts</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {dividendStocks.map((stock) =>
+                    renderDashboardStockCard({
+                      stock,
+                      metricLabel: 'Dividend Yield',
+                      metricValue: `${stock.dividendYield} Yield`,
+                      metricSub: stock.peRatio > 0 ? `${stock.peRatio}x P/E` : 'N/A P/E',
+                      color: '#10B981',
+                      badge: (
+                        <span className="px-1.5 py-0.5 bg-gain/10 text-gain border border-gain/20 rounded-md text-[9px] font-extrabold uppercase">
+                          Yield Leader
+                        </span>
+                      ),
+                    })
+                  )}
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {growthStocks.map((stock) =>
-                  renderDashboardStockCard({
-                    stock,
-                    metricLabel: 'Growth Catalyst',
-                    metricValue: stock.catalyst,
-                    metricSub: stock.eps > 0 ? `₦${stock.eps.toFixed(1)} EPS` : 'N/A',
-                    color: '#A855F7',
-                    badge: (
-                      <span className="px-1.5 py-0.5 bg-brand-primary/10 text-[#A855F7] border border-[#A855F7]/30 rounded-md text-[9px] font-extrabold uppercase">
-                        Expansion
-                      </span>
-                    ),
-                  })
-                )}
-              </div>
-            </div>
-          )}
+            )}
 
-          {activeHomeTab === 'analyst' && (
-            <div className="space-y-4 animate-in fade-in duration-300 text-left">
-              <div>
-                <h3 className="text-sm font-extrabold text-text-primary font-sora">Top stock pick from analysts</h3>
-                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">NGX equities showing the highest analyst consensus target upside from current market price</p>
+            {activeHomeTab === 'growth' && (
+              <div className="space-y-4 animate-in fade-in duration-300 text-left">
+                <div>
+                  <h3 className="text-sm font-extrabold text-text-primary font-sora">Fast Growing Companies you should invest in</h3>
+                  <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Equities experiencing high revenue growth, operational scale, or transformational catalysts</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {growthStocks.map((stock) =>
+                    renderDashboardStockCard({
+                      stock,
+                      metricLabel: 'Growth Catalyst',
+                      metricValue: stock.catalyst,
+                      metricSub: stock.eps > 0 ? `₦${stock.eps.toFixed(1)} EPS` : 'N/A',
+                      color: '#A855F7',
+                      badge: (
+                        <span className="px-1.5 py-0.5 bg-brand-primary/10 text-[#A855F7] border border-[#A855F7]/30 rounded-md text-[9px] font-extrabold uppercase">
+                          Expansion
+                        </span>
+                      ),
+                    })
+                  )}
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {analystPicks.map((stock) =>
-                  renderDashboardStockCard({
-                    stock,
-                    metricLabel: 'Analyst Target Upside',
-                    metricValue: `+${stock.upside.toFixed(1)}% Upside`,
-                    metricSub: `Target ₦${stock.targetPrice.toFixed(0)}`,
-                    color: '#00B8FF',
-                    badge: (
-                      <span className="px-1.5 py-0.5 bg-bg-base border border-brand-primary/20 text-[#00B8FF] rounded-md text-[9px] font-extrabold uppercase">
-                        {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string, string>)[stock.rating] ?? stock.rating}
-                      </span>
-                    ),
-                  })
-                )}
+            )}
+
+            {activeHomeTab === 'analyst' && (
+              <div className="space-y-4 animate-in fade-in duration-300 text-left">
+                <div>
+                  <h3 className="text-sm font-extrabold text-text-primary font-sora">Top stock pick from analysts</h3>
+                  <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">NGX equities showing the highest analyst consensus target upside from current market price</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {analystPicks.map((stock) =>
+                    renderDashboardStockCard({
+                      stock,
+                      metricLabel: 'Analyst Target Upside',
+                      metricValue: `+${stock.upside.toFixed(1)}% Upside`,
+                      metricSub: `Target ₦${stock.targetPrice.toFixed(0)}`,
+                      color: '#00B8FF',
+                      badge: (
+                        <span className="px-1.5 py-0.5 bg-bg-base border border-brand-primary/20 text-[#00B8FF] rounded-md text-[9px] font-extrabold uppercase">
+                          {({ Outperform: 'Bullish', Neutral: 'Watch', Underperform: 'Bearish' } as Record<string, string>)[stock.rating] ?? stock.rating}
+                        </span>
+                      ),
+                    })
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {activeHomeTab === 'safe' && (
-            <div className="space-y-4 animate-in fade-in duration-300 text-left">
-              <div>
-                <h3 className="text-sm font-extrabold text-text-primary font-sora">Play Safe Stocks</h3>
-                <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Stable defensive anchors with dominant market share, resilient utility-like cash flows, or inelastic consumer demand</p>
+            {activeHomeTab === 'safe' && (
+              <div className="space-y-4 animate-in fade-in duration-300 text-left">
+                <div>
+                  <h3 className="text-sm font-extrabold text-text-primary font-sora">Play Safe Stocks</h3>
+                  <p className="text-[10px] text-text-secondary font-dm-sans mt-0.5">Stable defensive anchors with dominant market share, resilient utility-like cash flows, or inelastic consumer demand</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {safeStocks.map((stock) =>
+                    renderDashboardStockCard({
+                      stock,
+                      metricLabel: 'Defensive Anchor',
+                      metricValue: stock.safetyReason,
+                      metricSub: `Cap ${stock.marketCap}`,
+                      color: '#FFB800',
+                      badge: (
+                        <span className="px-1.5 py-0.5 bg-warning/10 text-warning border border-warning/20 rounded-md text-[9px] font-extrabold uppercase">
+                          Low Volatility
+                        </span>
+                      ),
+                    })
+                  )}
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {safeStocks.map((stock) =>
-                  renderDashboardStockCard({
-                    stock,
-                    metricLabel: 'Defensive Anchor',
-                    metricValue: stock.safetyReason,
-                    metricSub: `Cap ${stock.marketCap}`,
-                    color: '#FFB800',
-                    badge: (
-                      <span className="px-1.5 py-0.5 bg-warning/10 text-warning border border-warning/20 rounded-md text-[9px] font-extrabold uppercase">
-                        Low Volatility
-                      </span>
-                    ),
-                  })
-                )}
-              </div>
-            </div>
-          )}
+            )}
 
-          {/* AI News Snapshot (only show on report tab for cleanliness, or always?) Let's keep it below */}
-        </div>
-
-      </div>
-
-      {activeHomeTab === 'report' && (
-        <div className="w-full mt-6 space-y-6 animate-in fade-in duration-300 text-left">
-          <AIDailyBrief />
-          <div className="w-full">
-            <DashboardNewsPortfolio />
+            {/* AI News Snapshot (only show on report tab for cleanliness, or always?) Let's keep it below */}
           </div>
+
         </div>
-      )}
+
+        {activeHomeTab === 'report' && (
+          <div className="w-full mt-6 space-y-6 animate-in fade-in duration-300 text-left">
+            <AIDailyBrief />
+            <div className="w-full">
+              <DashboardNewsPortfolio />
+            </div>
+          </div>
+        )}
       </>
     );
   };
@@ -1459,7 +1459,7 @@ export default function Page() {
                       className="flex-1 py-2 rounded-lg text-[12px] font-bold transition-all focus:outline-none"
                       style={{
                         background: authMode === m ? '#CFA343' : 'transparent',
-                        color:      authMode === m ? '#0E0B14' : '#7B7E8E',
+                        color: authMode === m ? '#0E0B14' : '#7B7E8E',
                       }}
                     >
                       {m === 'signup' ? 'Create Account' : 'Sign In'}
@@ -1550,7 +1550,7 @@ export default function Page() {
                     {authMode === 'signup' && passwordInput && (
                       <div className="mt-2">
                         <div className="flex gap-1 mb-1">
-                          {[1,2,3,4].map(i => (
+                          {[1, 2, 3, 4].map(i => (
                             <div key={i} className="h-1 flex-1 rounded-full transition-all" style={{ background: i <= pwStrength ? pwColors[pwStrength - 1] : 'rgba(255,255,255,0.08)' }} />
                           ))}
                         </div>
@@ -1889,7 +1889,7 @@ export default function Page() {
                       steps[(activeStep + 3) % 5],
                     ].map((item, localIdx) => {
                       const isActive = localIdx === 0;
-                      
+
                       // Fallback icons
                       let IconObj = FileText;
                       if (item.title === 'Education') IconObj = GraduationCap;
@@ -1902,18 +1902,17 @@ export default function Page() {
                         <div
                           key={item.title}
                           onClick={() => setActiveStep(steps.indexOf(item))}
-                          className={`flex-1 rounded-2xl p-6 sm:p-8 cursor-pointer transition-all duration-300 flex flex-col items-start min-w-[220px] sm:min-w-[260px] ${
-                            isActive
+                          className={`flex-1 rounded-2xl p-5 sm:p-6 cursor-pointer transition-all duration-300 flex flex-col items-start min-w-[220px] sm:min-w-[260px] ${isActive
                               ? 'bg-[#CFA343]'
                               : 'bg-[#111116]'
-                          }`}
+                            }`}
                           style={!isActive ? { background: '#111116' } : {}}
                         >
                           {/* Icon */}
                           <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-12 ${isActive ? 'bg-[#2B273A]' : 'bg-[#2B273A]'}`}>
-                             <IconObj className="w-6 h-6 text-white" />
+                            <IconObj className="w-6 h-6 text-white" />
                           </div>
-                          
+
                           {/* Text */}
                           <h3 className={`text-lg font-bold mb-3 font-sora ${isActive ? 'text-[#111]' : 'text-white'}`}>
                             {item.title}
@@ -1921,7 +1920,7 @@ export default function Page() {
                           <p className={`text-xs leading-relaxed font-medium flex-1 ${isActive ? 'text-[#333]' : 'text-white/60'}`}>
                             {item.desc}
                           </p>
-                          
+
                           <div className={`mt-6 text-[11px] font-bold flex items-center gap-1 ${isActive ? 'text-[#111]' : 'text-[#CFA343]'}`}>
                             See Explained <ArrowRight className="w-3 h-3 inline" />
                           </div>

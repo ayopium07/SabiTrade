@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageSquare, X, Send, Sparkles, Bot } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, RotateCcw, ChevronDown } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 
 export default function AIChatbot() {
@@ -11,48 +11,44 @@ export default function AIChatbot() {
   const clearChat     = useAppStore((s) => s.clearChat);
 
   const [inputText, setInputText] = useState('');
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const chatEndRef  = useRef<HTMLDivElement | null>(null);
+  const inputRef    = useRef<HTMLInputElement | null>(null);
 
   // ── Drag state ────────────────────────────────────────────
-  // Start anchored at bottom-right (default position)
-  const [pos, setPos] = useState({ x: 24, y: 24 }); // distance from bottom-right
+  const [pos, setPos] = useState({ x: 24, y: 24 });
   const isDragging  = useRef(false);
-  const hasDragged  = useRef(false);           // distinguish drag vs click
+  const hasDragged  = useRef(false);
   const dragStart   = useRef({ mx: 0, my: 0, bx: 0, by: 0 });
   const orbRef      = useRef<HTMLButtonElement | null>(null);
 
-  // Set initial Y offset on mobile to avoid overlapping the bottom tab bar
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setPos({ x: 16, y: 76 });
     }
   }, []);
 
-  // Scroll chat to bottom on new messages
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages, isChatTyping]);
+
+  // Focus input when chat opens
+  useEffect(() => {
+    if (isChatOpen) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [isChatOpen]);
 
   // ── Drag handlers ─────────────────────────────────────────
   const onDragMove = useCallback((clientX: number, clientY: number) => {
     if (!isDragging.current) return;
     const dx = clientX - dragStart.current.mx;
     const dy = clientY - dragStart.current.my;
-
-    // If moved more than 4px in any direction, mark as a real drag
     if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasDragged.current = true;
-
     const W = window.innerWidth;
     const H = window.innerHeight;
-    const SIZE = 56; // orb diameter
-
-    // Convert from bottom-right anchor → absolute coords → clamp → back to bottom-right
-    let newX = dragStart.current.bx - dx; // subtract because anchor is from right
-    let newY = dragStart.current.by - dy; // subtract because anchor is from bottom
-
-    newX = Math.max(8, Math.min(newX, W - SIZE - 8));
-    newY = Math.max(8, Math.min(newY, H - SIZE - 8));
-
+    const SIZE = 56;
+    let newX = Math.max(8, Math.min(dragStart.current.bx - dx, W - SIZE - 8));
+    let newY = Math.max(8, Math.min(dragStart.current.by - dy, H - SIZE - 8));
     setPos({ x: newX, y: newY });
   }, []);
 
@@ -62,13 +58,10 @@ export default function AIChatbot() {
     document.body.style.cursor = '';
   }, []);
 
-  // Mouse
   const onMouseMove = useCallback((e: MouseEvent) => onDragMove(e.clientX, e.clientY), [onDragMove]);
   const onMouseUp   = useCallback(() => onDragEnd(), [onDragEnd]);
-
-  // Touch
   const onTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging.current) return; // don't block page scroll when not dragging
+    if (!isDragging.current) return;
     e.preventDefault();
     onDragMove(e.touches[0].clientX, e.touches[0].clientY);
   }, [onDragMove]);
@@ -96,14 +89,16 @@ export default function AIChatbot() {
   }, [onMouseMove, onMouseUp, onTouchMove, onTouchEnd]);
 
   const handleOrbClick = () => {
-    // Only fire toggle if the user didn't drag
     if (!hasDragged.current) toggleChat();
   };
 
   // ── Chat helpers ──────────────────────────────────────────
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputText.trim()) { sendChatMessage(inputText.trim()); setInputText(''); }
+    if (inputText.trim() && !isChatTyping) {
+      sendChatMessage(inputText.trim());
+      setInputText('');
+    }
   };
 
   const handleClose = () => {
@@ -112,7 +107,10 @@ export default function AIChatbot() {
   };
 
   const parseMarkdown = (text: string) => {
-    return text.split('\n').map((line, lineIdx) => {
+    // Strip the disclaimer line for cleaner display
+    const cleaned = text.replace(/\*Disclaimer:[\s\S]*?\*/g, '').trim();
+    return cleaned.split('\n').map((line, lineIdx) => {
+      if (!line.trim()) return null;
       const isBullet = line.startsWith('* ') || line.startsWith('- ');
       const content  = isBullet ? line.substring(2) : line;
       const boldRegex = /\*\*(.*?)\*\*/g;
@@ -120,30 +118,36 @@ export default function AIChatbot() {
       let lastIndex = 0, match;
       while ((match = boldRegex.exec(content)) !== null) {
         if (match.index > lastIndex) parts.push(content.substring(lastIndex, match.index));
-        parts.push(<strong key={match.index} className="font-extrabold text-brand-primary">{match[1]}</strong>);
+        parts.push(<strong key={match.index} className="font-extrabold" style={{ color: '#CFA343' }}>{match[1]}</strong>);
         lastIndex = boldRegex.lastIndex;
       }
       if (lastIndex < content.length) parts.push(content.substring(lastIndex));
       const elements = parts.length > 0 ? parts : content;
       if (isBullet) return <li key={lineIdx} className="ml-4 list-disc pl-1 text-[13px] leading-relaxed my-1">{elements}</li>;
       return <p key={lineIdx} className="text-[13px] leading-relaxed mb-2 last:mb-0">{elements}</p>;
-    });
+    }).filter(Boolean);
   };
 
-  // Chat panel position — opens above/beside the orb
-  const PANEL_W   = 380;
-  const PANEL_H   = 500;
+  // ── Panel sizing ──────────────────────────────────────────
   const ORB_SIZE  = 56;
+  const isMobile  = typeof window !== 'undefined' && window.innerWidth < 640;
+  const PANEL_W   = isMobile ? (typeof window !== 'undefined' ? window.innerWidth - 16 : 360) : 400;
+  const PANEL_H   = isMobile ? 520 : 540;
   const viewport  = typeof window !== 'undefined' ? { w: window.innerWidth, h: window.innerHeight } : { w: 1200, h: 800 };
 
-  // Panel sits above orb; if too high, flip to below
   const panelBottom = pos.y + ORB_SIZE + 12;
-  let panelRight  = pos.x;
+  let panelRight    = pos.x;
+  if (viewport.w - pos.x - PANEL_W < 0) panelRight = viewport.w - PANEL_W - 8;
 
-  // If panel would overflow left, shift it
-  if (viewport.w - pos.x - PANEL_W < 0) {
-    panelRight = viewport.w - PANEL_W - 8;
-  }
+  // Quick reply chips — shown only when conversation is fresh
+  const quickReplies = [
+    '📊 What is P/E Ratio?',
+    '🏦 Explain ZENITHBANK stock',
+    '📈 How do dividends work?',
+    '🚀 Best NGX stocks to watch?',
+    '📉 What causes stock price to fall?',
+    '💡 What is market cap?',
+  ];
 
   return (
     <>
@@ -154,7 +158,7 @@ export default function AIChatbot() {
         onMouseDown={(e) => { e.preventDefault(); startDrag(e.clientX, e.clientY); }}
         onTouchStart={(e) => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
         onClick={handleOrbClick}
-        className="fixed z-40 p-0 rounded-full focus:outline-none"
+        className="fixed z-40 p-0 rounded-full focus:outline-none group"
         style={{
           width:  `${ORB_SIZE}px`,
           height: `${ORB_SIZE}px`,
@@ -162,8 +166,8 @@ export default function AIChatbot() {
           bottom: `${pos.y}px`,
           background: 'linear-gradient(135deg, #CFA343, #B58C35)',
           boxShadow: isChatOpen
-            ? '0 0 30px rgba(207,163,67,0.5), 0 0 60px rgba(207,163,67,0.2)'
-            : '0 0 20px rgba(207,163,67,0.35), 0 8px 30px rgba(0,0,0,0.5)',
+            ? '0 0 30px rgba(207,163,67,0.6), 0 0 60px rgba(207,163,67,0.2)'
+            : '0 0 20px rgba(207,163,67,0.4), 0 8px 30px rgba(0,0,0,0.5)',
           cursor: isDragging.current ? 'grabbing' : 'grab',
           transition: isDragging.current ? 'none' : 'box-shadow 0.2s ease',
           display: 'flex',
@@ -171,7 +175,10 @@ export default function AIChatbot() {
           justifyContent: 'center',
         }}
       >
-        <MessageSquare className="h-5 w-5 text-bg-base pointer-events-none" />
+        {isChatOpen
+          ? <ChevronDown className="h-5 w-5 text-[#0E0B14] pointer-events-none" />
+          : <MessageSquare className="h-5 w-5 text-[#0E0B14] pointer-events-none" />
+        }
 
         {/* Pulse ring */}
         {!isChatOpen && (
@@ -180,84 +187,101 @@ export default function AIChatbot() {
         )}
 
         {/* Online dot */}
-        <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-bg-base pointer-events-none"
+        <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0E0B14] pointer-events-none"
           style={{ background: '#10B981' }} />
-
-        {/* Drag hint tooltip — shows briefly on first hover */}
-        <span
-          className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-bold text-text-secondary opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity px-2 py-0.5 rounded-lg"
-          style={{ background: 'rgba(8,29,56,0.9)', border: '1px solid #11325D' }}
-        >
-          drag me
-        </span>
       </button>
 
       {/* ── Chat Panel ──────────────────────────────────────── */}
       {isChatOpen && (
         <div
-          className="fixed z-50 flex flex-col rounded-2xl overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-250"
+          className="fixed z-50 flex flex-col rounded-2xl overflow-hidden"
           style={{
             width:  `${Math.min(PANEL_W, viewport.w - 16)}px`,
             height: `${PANEL_H}px`,
             right:  `${panelRight}px`,
             bottom: `${panelBottom}px`,
-            background: 'rgba(8, 29, 56, 0.97)',
+            background: 'rgba(6, 20, 42, 0.98)',
             backdropFilter: 'blur(32px)',
-            border: '1px solid rgba(207,163,67,0.15)',
-            boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.8)',
+            border: '1px solid rgba(207,163,67,0.18)',
+            boxShadow: '0 0 0 1px rgba(207,163,67,0.05), 0 40px 80px rgba(0,0,0,0.85)',
+            animation: 'chatSlideIn 0.25s cubic-bezier(0.34,1.56,0.64,1)',
           }}
         >
-          {/* Top gradient border */}
+          {/* Top gradient bar */}
           <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-            style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #CFA343 40%, transparent)' }} />
 
-          {/* Header */}
-          <div className="px-4 py-3.5 flex items-center justify-between border-b border-border/60 flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, rgba(207,163,67,0.06), transparent)' }}>
+          {/* ── Header ── */}
+          <div
+            className="px-4 py-3 flex items-center justify-between flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, rgba(207,163,67,0.07), rgba(8,29,56,0.5))', borderBottom: '1px solid rgba(207,163,67,0.1)' }}
+          >
             <div className="flex items-center gap-2.5">
               <div className="relative">
-                <div className="bg-brand-primary/15 border border-brand-primary/25 p-1.5 rounded-lg">
-                  <Bot className="h-4 w-4 text-brand-primary" />
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
+                  <Sparkles className="h-4 w-4 text-[#0E0B14]" />
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-bg-base"
-                  style={{ background: '#10B981' }} />
+                <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2"
+                  style={{ background: '#10B981', borderColor: '#06142A' }} />
               </div>
               <div>
-                <h4 className="text-sm font-bold font-sora text-text-primary">EquityStack Assistant</h4>
-                <span className="text-[9px] font-semibold text-brand-primary uppercase tracking-widest block font-dm-sans">
+                <h4 className="text-[13px] font-bold font-sora text-white leading-none">EquityStack Assistant</h4>
+                <span className="text-[9px] font-semibold uppercase tracking-widest mt-0.5 block" style={{ color: '#CFA343' }}>
                   NGX Intelligence · 🇳🇬
                 </span>
               </div>
             </div>
-            <button onClick={handleClose}
-              className="text-text-secondary hover:text-danger bg-bg-hover hover:bg-danger/10 p-1.5 rounded-lg transition-all focus:outline-none">
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => clearChat()}
+                className="p-1.5 rounded-lg transition-all focus:outline-none"
+                style={{ color: 'rgba(255,255,255,0.4)' }}
+                title="Clear chat"
+                onMouseEnter={e => (e.currentTarget.style.color = '#CFA343')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={handleClose}
+                className="p-1.5 rounded-lg transition-all focus:outline-none"
+                style={{ color: 'rgba(255,255,255,0.4)' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#FF4D4F')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
-          {/* Messages */}
-          <div className="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar"
-            style={{ background: 'rgba(7,6,21,0.4)' }}>
+          {/* ── Messages ── */}
+          <div
+            className="flex-grow overflow-y-auto p-4 space-y-3 custom-scrollbar"
+            style={{ background: 'rgba(4,12,28,0.5)' }}
+          >
             {chatMessages.map((msg, idx) => {
               const isAi = msg.sender === 'ai';
               return (
-                <div key={idx} className={`flex items-start gap-2.5 ${isAi ? '' : 'justify-end'}`}>
+                <div key={idx} className={`flex items-end gap-2 ${isAi ? '' : 'justify-end'}`}>
                   {isAi && (
-                    <div className="h-7 w-7 rounded-full flex items-center justify-center text-bg-base flex-shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
-                      <Sparkles className="h-3.5 w-3.5" />
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mb-0.5"
+                      style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}
+                    >
+                      <Sparkles className="h-3 w-3 text-[#0E0B14]" />
                     </div>
                   )}
-                  <div className={`max-w-[78%] rounded-2xl p-3 text-xs font-dm-sans ${
-                    isAi ? 'rounded-tl-none text-text-primary/90' : 'rounded-tr-none text-bg-base'
-                  }`}
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-[13px] font-dm-sans ${isAi ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
                     style={isAi
-                      ? { background: 'rgba(8,29,56,0.9)', border: '1px solid rgba(207,163,67,0.1)' }
-                      : { background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.25)' }
-                    }>
+                      ? { background: 'rgba(8,29,56,0.9)', border: '1px solid rgba(207,163,67,0.1)', color: 'rgba(255,255,255,0.88)' }
+                      : { background: 'linear-gradient(135deg, #CFA343, #B58C35)', color: '#0E0B14', fontWeight: 600 }
+                    }
+                  >
                     {isAi
-                      ? parseMarkdown(msg.text)
-                      : <p className="text-[13px] font-medium leading-normal">{msg.text}</p>
+                      ? <>{parseMarkdown(msg.text)}</>
+                      : <p className="leading-snug">{msg.text}</p>
                     }
                   </div>
                 </div>
@@ -266,15 +290,15 @@ export default function AIChatbot() {
 
             {/* Typing indicator */}
             {isChatTyping && (
-              <div className="flex items-start gap-2.5">
-                <div className="h-7 w-7 rounded-full flex items-center justify-center text-bg-base flex-shrink-0"
+              <div className="flex items-end gap-2">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
-                  <Sparkles className="h-3.5 w-3.5" />
+                  <Sparkles className="h-3 w-3 text-[#0E0B14]" />
                 </div>
-                <div className="rounded-2xl rounded-tl-none p-3 flex items-center gap-1.5 h-9"
+                <div className="rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5"
                   style={{ background: 'rgba(8,29,56,0.9)', border: '1px solid rgba(207,163,67,0.1)' }}>
-                  {[0, 150, 300].map((delay) => (
-                    <span key={delay} className="h-1.5 w-1.5 rounded-full animate-bounce"
+                  {[0, 140, 280].map((delay) => (
+                    <span key={delay} className="h-2 w-2 rounded-full animate-bounce"
                       style={{ background: '#CFA343', animationDelay: `${delay}ms` }} />
                   ))}
                 </div>
@@ -283,49 +307,75 @@ export default function AIChatbot() {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Quick replies */}
-          {chatMessages.length === 1 && !isChatTyping && (
-            <div className="px-3 py-2 border-t border-border/40 flex flex-wrap gap-1.5 flex-shrink-0"
-              style={{ background: 'rgba(7,6,21,0.6)' }}>
-              {['What is P/E Ratio? 📊', 'How do I start? 🚀', 'What is NGX? 🏢'].map((q) => (
-                <button key={q}
-                  onClick={() => sendChatMessage(q.replace(/ [^\w\s]/g, '').trim())}
-                  className="px-2.5 py-1 rounded-full text-[10px] font-extrabold text-brand-primary transition-all focus:outline-none"
-                  style={{ background: 'rgba(207,163,67,0.08)', border: '1px solid rgba(207,163,67,0.2)' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(207,163,67,0.15)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(207,163,67,0.08)')}>
+          {/* ── Quick replies (shown when fresh) ── */}
+          {chatMessages.length <= 1 && !isChatTyping && (
+            <div
+              className="px-3 py-2.5 flex flex-wrap gap-1.5 flex-shrink-0"
+              style={{ background: 'rgba(4,12,28,0.7)', borderTop: '1px solid rgba(207,163,67,0.08)' }}
+            >
+              {quickReplies.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => sendChatMessage(q.replace(/^[^a-zA-Z]+/, '').trim())}
+                  className="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all focus:outline-none whitespace-nowrap"
+                  style={{ background: 'rgba(207,163,67,0.08)', border: '1px solid rgba(207,163,67,0.18)', color: '#CFA343' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(207,163,67,0.16)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(207,163,67,0.08)'; }}
+                >
                   {q}
                 </button>
               ))}
             </div>
           )}
 
-          {/* Disclaimer */}
-          <div className="px-4 py-2 border-t border-border/40 text-[9px] text-text-secondary leading-relaxed font-dm-sans bg-bg-base/40 text-left">
-            This information is for educational and research purposes only and should not be considered financial advice.
+          {/* ── Disclaimer ── */}
+          <div
+            className="px-4 py-1.5 text-[9px] leading-relaxed font-dm-sans text-left flex-shrink-0"
+            style={{ background: 'rgba(4,12,28,0.8)', borderTop: '1px solid rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.3)' }}
+          >
+            For educational &amp; research purposes only. Not financial advice.
           </div>
 
-          {/* Input */}
-          <form onSubmit={handleSend} className="p-3 border-t border-border/40 flex gap-2 flex-shrink-0"
-            style={{ background: 'rgba(7,6,21,0.8)' }}>
+          {/* ── Input ── */}
+          <form
+            onSubmit={handleSend}
+            className="p-3 flex gap-2 flex-shrink-0"
+            style={{ background: 'rgba(4,12,28,0.95)', borderTop: '1px solid rgba(207,163,67,0.1)' }}
+          >
             <input
+              ref={inputRef}
               type="text"
               placeholder="Ask in simple Nigerian terms..."
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="flex-grow px-3.5 py-2 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none text-text-primary placeholder:text-text-secondary"
-              style={{ background: 'rgba(8,29,56,0.8)', border: '1px solid rgba(207,163,67,0.12)' }}
-              onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.35)')}
-              onBlur={e => (e.target.style.borderColor = 'rgba(207,163,67,0.12)')}
+              disabled={isChatTyping}
+              className="flex-grow px-4 py-2.5 rounded-xl text-[12px] font-semibold focus:ring-0 focus:outline-none text-white placeholder:text-white/30 disabled:opacity-50"
+              style={{
+                background: 'rgba(8,29,56,0.9)',
+                border: '1px solid rgba(207,163,67,0.15)',
+                transition: 'border-color 0.2s',
+              }}
+              onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.45)')}
+              onBlur={e => (e.target.style.borderColor = 'rgba(207,163,67,0.15)')}
             />
-            <button type="submit"
-              className="p-2 rounded-xl text-bg-base focus:outline-none flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 10px rgba(207,163,67,0.3)' }}>
-              <Send className="h-4 w-4" />
+            <button
+              type="submit"
+              disabled={!inputText.trim() || isChatTyping}
+              className="p-2.5 rounded-xl flex-shrink-0 focus:outline-none disabled:opacity-40 transition-opacity"
+              style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)', boxShadow: '0 0 12px rgba(207,163,67,0.3)' }}
+            >
+              <Send className="h-4 w-4 text-[#0E0B14]" />
             </button>
           </form>
         </div>
       )}
+
+      <style>{`
+        @keyframes chatSlideIn {
+          from { opacity: 0; transform: translateY(16px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
     </>
   );
 }

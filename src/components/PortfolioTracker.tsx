@@ -260,7 +260,7 @@ export default function PortfolioTracker() {
               
               <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                  <div className="flex items-center rounded-md border border-white/10 bg-transparent overflow-x-auto max-w-full">
-                    {(['12 month', '30 days', '7 days', '24 hours'] as Timeframe[]).map((tf) => (
+                    {(['24 hours', '7 days', '30 days', '12 month'] as Timeframe[]).map((tf) => (
                       <button key={tf} onClick={() => setTimeframe(tf)}
                         className={`px-2.5 sm:px-3 py-1.5 text-[10px] font-bold border-r border-white/10 last:border-r-0 whitespace-nowrap transition-colors ${timeframe === tf ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>
                         {tf}

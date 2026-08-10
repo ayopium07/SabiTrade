@@ -62,10 +62,10 @@ export async function GET() {
     const summaryMatch = homeHtml.match(/The Nigerian Exchange ([\s\S]*?) As of ([\s\S]*?)\./);
     if (summaryMatch) {
       const text = summaryMatch[1];
-      const asiMatch = text.match(/All-Share Index (?:shed|gained|rose|fell) ([\d,.-]+) points \(([\d,.-]+)%\) to close at ([\d,.-]+)/);
-      const capMatch = text.match(/Market capitalisation (?:fell|rose) by ₦([\d,.-]+) (trillion|billion) to ₦([\d,.-]+) (trillion|billion)/);
+      const asiMatch = text.match(/All-Share Index (?:is\s+)?(?:up|down|shed|gained|rose|fell|declined)\s+([\d,.-]+)\s+points\s+\(([\d,.+-]+)%\)\s+(?:to close\s+)?at\s+([\d,.-]+)/i);
+      const capMatch = text.match(/Market capitalisation (?:is\s+)?(?:up|down|fell|rose|declined)(?:\s+by)? ₦([\d,.-]+)\s+(trillion|billion)\s+(?:to|at)\s+₦([\d,.-]+)\s+(trillion|billion)/i);
       const volMatch = text.match(/total volume ([\d,.-]+\s*(?:m|b|k)?\s*shares)/i);
-      const valMatch = text.match(/value traded ₦([\d,.-]+\s*(?:billion|trillion|million))/i);
+      const valMatch = text.match(/value traded ₦([\d,.-]+)\s*(billion|trillion|million|m|b|t)/i);
       const dealsMatch = text.match(/([\d,.-]+)\s*deals/i);
 
       if (asiMatch) {
@@ -73,7 +73,7 @@ export async function GET() {
         indexData.changeAmount = parseFloat(asiMatch[1].replace(/,/g, ''));
         indexData.allShareIndex = parseFloat(asiMatch[3].replace(/,/g, ''));
         
-        const isDown = text.includes('declined') || text.includes('shed') || text.includes('fell');
+        const isDown = text.match(/(?:declined|shed|fell|down)/i);
         if (isDown) {
           indexData.change = -Math.abs(indexData.change);
           indexData.changeAmount = -Math.abs(indexData.changeAmount);
@@ -82,10 +82,16 @@ export async function GET() {
 
       // Format custom stats if present
       if (capMatch) {
-        indexData.marketCap = `₦${capMatch[3]}T`;
+        const unit = capMatch[4].toLowerCase().startsWith('t') ? 'T' : 'B';
+        indexData.marketCap = `₦${capMatch[3]}${unit}`;
       }
       if (valMatch) {
-        indexData.volume = `₦${valMatch[1]}B`;
+        const num = valMatch[1];
+        const unitStr = valMatch[2].toLowerCase();
+        let shortUnit = 'B';
+        if (unitStr.startsWith('t')) shortUnit = 'T';
+        else if (unitStr.startsWith('m')) shortUnit = 'M';
+        indexData.volume = `₦${num}${shortUnit}`;
       }
       if (dealsMatch) {
         indexData.deals = dealsMatch[1];

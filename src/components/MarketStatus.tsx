@@ -305,7 +305,7 @@ export default function MarketStatus() {
 
               {/* Timeframe selector buttons */}
               <div className="flex items-center border border-white/10 rounded-lg p-0.5 bg-[#181528] overflow-hidden">
-                {(['12 month', '30 days', '7 days', '24 hours'] as Timeframe[]).map((tf) => (
+                {(['24 hours', '7 days', '30 days', '12 month'] as Timeframe[]).map((tf) => (
                   <button
                     key={tf}
                     onClick={() => { setTimeframe(tf); setHoveredIdx(null); }}
