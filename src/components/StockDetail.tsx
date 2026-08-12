@@ -256,7 +256,7 @@ const SevenPillarsSection = ({ ticker }: { ticker: string }) => {
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {pillarsData.map((pillar) => (
-          <div key={pillar.id} className="p-5 rounded-2xl border border-border/40" style={{ background: 'linear-gradient(180deg, #09081B 0%, #2B2681 100%)' }}>
+          <div key={pillar.id} className="p-5 rounded-2xl border border-border/40" style={{ background: 'linear-gradient(180deg, #141020 0%, #0A0810 100%)' }}>
             <div className="flex justify-between items-start mb-4">
               <div>
                 <div className="text-[10px] font-bold text-brand-primary uppercase tracking-widest font-dm-sans mb-1">
@@ -374,7 +374,7 @@ export default function StockDetail() {
   const hoveredPoint = hoverIndex !== null ? points[hoverIndex] : null;
 
   const cardStyle = {
-    background: 'linear-gradient(180deg, #09081B 0%, #2B2681 100%)',
+    background: 'linear-gradient(180deg, #141020 0%, #0A0810 100%)',
     border: '1px solid rgba(207, 163, 67, 0.2)',
     boxShadow: '0 10px 30px rgba(207, 163, 67, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.02)',
   };
@@ -514,7 +514,7 @@ export default function StockDetail() {
             <div className="p-6 rounded-3xl" style={cardStyle}>
                <div className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest font-dm-sans mb-6">NEXT EARNINGS</div>
                
-               <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F] text-center mb-6">
+               <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20 text-center mb-6">
                   <div className="text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans mb-2">H1 2025 RESULTS</div>
                   <div className="text-base font-serif font-bold text-text-primary mb-1">August 2025</div>
                   <div className="text-xs text-text-secondary">Estimated release window</div>
@@ -548,14 +548,14 @@ export default function StockDetail() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">CONSENSUS TARGET</div>
                 <div className="text-3xl font-bold font-sora text-text-primary mb-1">₦{stock.targetPrice.toFixed(2)}</div>
                 <div className={`text-sm font-bold ${upside >= 0 ? 'text-[#22C55E]' : 'text-[#EF4444]'}`}>
                   {upside >= 0 ? '+' : ''}{upside.toFixed(1)}% {upside >= 0 ? 'upside' : 'downside'}
                 </div>
              </div>
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">FY2025 EPS EST.</div>
                 <div className="text-3xl font-bold font-sora text-text-primary mb-1">₦{(baseEps * 1.15).toFixed(2)}</div>
                 <div className="text-sm font-bold text-[#22C55E]">+15.0% growth</div>
@@ -802,40 +802,53 @@ export default function StockDetail() {
             </div>
           </div>
 
-          {/* Interactive Chart */}
-          <div className="p-5 rounded-3xl space-y-4" style={cardStyle}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider font-dm-sans">
-                Price Chart
-              </span>
-              <div className="flex p-0.5 rounded-lg border border-border/60 text-[10px]"
-                style={{ background: 'rgba(0,0,0,0.3)' }}>
+          {/* Interactive Chart — Premium Redesign */}
+          <div className="rounded-3xl overflow-hidden border border-brand-primary/15 shadow-[0_0_40px_rgba(0,0,0,0.6),0_0_1px_rgba(207,163,67,0.1)]" style={{ background: 'linear-gradient(160deg, #141020 0%, #0A0810 100%)' }}>
+            
+            {/* Chart Header */}
+            <div className="flex items-center justify-between px-5 pt-5 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-4 rounded-full" style={{ background: color }} />
+                <span className="text-[11px] font-extrabold text-text-primary uppercase tracking-widest font-dm-sans">
+                  Price Chart
+                </span>
+              </div>
+              {/* Time Range Pills */}
+              <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 {(['1D', '1W', '1M', '3M', '1Y'] as const).map((d) => (
                   <button key={d} onClick={() => setActiveDuration(d)}
-                    className="px-2.5 py-1 rounded font-bold font-dm-sans transition-all focus:outline-none"
+                    className="px-3 py-1.5 rounded-lg text-[10px] font-extrabold font-dm-sans transition-all duration-200 focus:outline-none"
                     style={activeDuration === d
-                      ? { background: '#CFA343', color: '#FFFFFF', boxShadow: '0 0 8px rgba(207,163,67,0.4)' }
-                      : { color: 'rgba(255,255,255,0.5)' }}>
+                      ? { background: color, color: '#0E0B14', boxShadow: `0 0 12px ${color}60` }
+                      : { color: 'rgba(255,255,255,0.35)' }}>
                     {d}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="relative rounded-xl p-2 h-[200px] border border-border/40"
-              style={{ background: 'rgba(0,0,0,0.3)' }}>
+            {/* Chart Body */}
+            <div className="relative h-[220px] px-4">
+              {/* Grid lines */}
+              <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
+                {[0.25, 0.5, 0.75].map((t, i) => (
+                  <line key={i}
+                    x1="0" y1={`${t * 100}%`}
+                    x2="100%" y2={`${t * 100}%`}
+                    stroke="rgba(255,255,255,0.04)" strokeWidth="1" strokeDasharray="4 4"
+                  />
+                ))}
+              </svg>
+
+              {/* Tooltip */}
               {hoveredPoint && (
-                <div className="absolute top-2 left-2 rounded-xl p-2.5 shadow-xl z-20 text-[10px] space-y-0.5 pointer-events-none animate-in fade-in duration-100"
-                  style={{ background: '#0E0D25', border: '1px solid #23214C' }}>
-                  <div className="flex items-center gap-1.5 text-text-secondary">
-                    Date: <span className="text-text-primary font-bold">{hoveredPoint.date}</span>
+                <div className="absolute top-3 left-6 rounded-2xl px-3 py-2.5 shadow-2xl z-20 text-[10px] space-y-1 pointer-events-none"
+                  style={{ background: 'rgba(14,11,20,0.96)', border: `1px solid ${color}30`, backdropFilter: 'blur(12px)' }}>
+                  <div className="text-text-secondary font-medium">{hoveredPoint.date}</div>
+                  <div className="font-extrabold text-[13px]" style={{ color }}>
+                    ₦{hoveredPoint.price.toLocaleString('en-NG')}
                   </div>
-                  <div className="flex items-center gap-1.5 text-text-secondary">
-                    Price: <span className="font-bold" style={{ color }}>{`₦${hoveredPoint.price.toLocaleString('en-NG')}`}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-text-secondary">
-                    Vol: <span className="font-bold text-text-primary">{(hoveredPoint.volume / 1000).toFixed(0)}k</span>
-                  </div>
+                  <div className="text-text-secondary">Vol: <span className="font-bold text-text-primary">{(hoveredPoint.volume / 1000).toFixed(0)}k</span></div>
                 </div>
               )}
 
@@ -844,22 +857,23 @@ export default function StockDetail() {
                 onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
                 <defs>
                   <linearGradient id="chartAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={color} stopOpacity="0.2" />
-                    <stop offset="100%" stopColor={color} stopOpacity="0.01" />
+                    <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+                    <stop offset="85%" stopColor={color} stopOpacity="0.02" />
+                    <stop offset="100%" stopColor={color} stopOpacity="0" />
                   </linearGradient>
                   <filter id="chart-glow">
-                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                    <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
                     <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
                   </filter>
                 </defs>
 
                 {points.map((p, idx) => {
                   const maxVol = Math.max(...points.map((pt) => pt.volume));
-                  const volH = (p.volume / maxVol) * 28;
+                  const volH = (p.volume / maxVol) * 24;
                   return (
                     <rect key={idx} x={p.x - 2} y={chartHeight - paddingY - volH}
                       width="4" height={volH}
-                      fill={color} opacity="0.08" rx="1" />
+                      fill={color} opacity="0.07" rx="2" />
                   );
                 })}
 
@@ -872,33 +886,40 @@ export default function StockDetail() {
                 {hoverX !== null && hoverY !== null && (
                   <>
                     <line x1={hoverX} y1={paddingY} x2={hoverX} y2={chartHeight - paddingY}
-                      stroke={color} strokeWidth="1" strokeDasharray="3 3" opacity="0.5" />
-                    <circle cx={hoverX} cy={hoverY} r="7" fill={color} opacity="0.15" />
-                    <circle cx={hoverX} cy={hoverY} r="4" fill={color} stroke="#070615" strokeWidth="2" />
+                      stroke={color} strokeWidth="1" strokeDasharray="4 4" opacity="0.4" />
+                    <circle cx={hoverX} cy={hoverY} r="8" fill={color} opacity="0.12" />
+                    <circle cx={hoverX} cy={hoverY} r="4.5" fill={color} stroke="#0A0810" strokeWidth="2.5" />
                   </>
                 )}
               </svg>
             </div>
 
-            <div className="flex items-center justify-between text-[9px] text-text-secondary font-bold uppercase tracking-wider font-dm-sans px-1">
+            {/* Date Labels */}
+            <div className="flex items-center justify-between text-[9px] text-text-muted font-bold uppercase tracking-wider font-dm-sans px-5 pb-4 pt-1">
               <span>{chartPoints[0]?.date}</span>
-              <span>₦{minPrice.toLocaleString()} – ₦{maxPrice.toLocaleString()}</span>
+              <span className="text-text-secondary">₦{minPrice.toLocaleString()} – ₦{maxPrice.toLocaleString()}</span>
               <span>{chartPoints[chartPoints.length - 1]?.date}</span>
             </div>
-            
-            <hr className="border-t border-border/40 my-3" />
-            <div className="px-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-2">52-Week Range</p>
-              <div className="flex justify-between text-[11px] text-text-secondary font-dm-sans mb-1.5">
-                <span>₦{(stock.price * 0.7).toFixed(2)} Low</span>
-                <span>₦{(stock.price * 1.4).toFixed(2)} High</span>
+
+            {/* 52-Week Range — Premium */}
+            <div className="px-5 pb-5 pt-2 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[9px] font-extrabold uppercase tracking-widest text-text-muted">52-Week Range</span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md" style={{ color, background: `${color}15`, border: `1px solid ${color}30` }}>65% of range</span>
               </div>
-              <div className="h-2.5 rounded-full bg-bg-surface relative border border-border/50">
-                <div className="absolute top-0 left-0 h-full rounded-full" style={{ width: '65%', background: `linear-gradient(90deg, ${color}30, ${color})` }} />
-                <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-[2.5px] shadow-[0_0_10px_rgba(34,197,94,0.5)]" style={{ left: '65%', borderColor: color }} />
+              <div className="flex justify-between text-[10px] font-bold text-text-secondary mb-2.5">
+                <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-text-muted inline-block"/>₦{(stock.price * 0.7).toFixed(2)} Low</span>
+                <span className="flex items-center gap-1">₦{(stock.price * 1.4).toFixed(2)} High<span className="w-1 h-1 rounded-full bg-text-muted inline-block"/></span>
               </div>
-              <div className="text-center text-[10px] text-text-secondary mt-2 font-medium">
-                Current ₦{stock.price.toFixed(2)} · <strong style={{ color }}>65% of range</strong>
+              {/* Track */}
+              <div className="relative h-2 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                {/* Filled portion */}
+                <div className="absolute left-0 top-0 h-full rounded-full" style={{ width: '65%', background: `linear-gradient(90deg, rgba(${color === '#10B981' ? '16,185,129' : '207,163,67'},0.2), ${color})` }} />
+                {/* Thumb */}
+                <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full shadow-lg" style={{ left: 'calc(65% - 8px)', background: '#fff', border: `2.5px solid ${color}`, boxShadow: `0 0 10px ${color}80` }} />
+              </div>
+              <div className="text-center text-[10px] text-text-muted mt-2.5">
+                Current <span className="text-text-secondary font-bold">₦{stock.price.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -932,7 +953,7 @@ export default function StockDetail() {
 
           {/* AI Insight */}
           <div className="p-5 rounded-3xl space-y-3 relative overflow-hidden border border-brand-primary/12"
-            style={{ background: 'linear-gradient(180deg, #09081B 0%, #2B2681 100%)' }}>
+            style={{ background: 'linear-gradient(180deg, #141020 0%, #0A0810 100%)' }}>
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #CFA343, transparent)' }} />
             <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(207,163,67,0.08) 0%, transparent 70%)' }} />
 
@@ -1101,7 +1122,7 @@ export default function StockDetail() {
                { label: 'NET PROFIT MARGIN', val: '25.9%', desc: 'FY2024', color: '#22C55E' },
                { label: 'EBITDA MARGIN', val: '41.2%', desc: 'FY2024', color: '#22C55E' },
              ].map((ratio, i) => (
-               <div key={i} className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+               <div key={i} className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                  <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">{ratio.label}</div>
                  <div className="text-3xl font-bold font-sora mb-2" style={{ color: ratio.color }}>{ratio.val}</div>
                  <div className="text-sm text-text-secondary">{ratio.desc}</div>
@@ -1263,37 +1284,37 @@ export default function StockDetail() {
            
            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
              {/* 6 Metric Cards */}
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">DIVIDEND YIELD</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{yieldPct.toFixed(1)}%</div>
                 <div className="text-sm text-text-secondary">vs NGX {stock.sector.toLowerCase()} avg {(yieldPct * 0.75).toFixed(1)}%</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">PAYOUT RATIO</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{payoutRatio.toFixed(1)}%</div>
                 <div className="text-sm text-text-secondary">{payoutRatio < 40 ? 'Very sustainable' : payoutRatio < 60 ? 'Sustainable' : 'High payout'}</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">DPS GROWTH (3Y)</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{dpsGrowth.toFixed(0)}%</div>
                 <div className="text-sm text-text-secondary">₦{dps3yAgo.toFixed(2)} → ₦{currentDps.toFixed(2)}</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">DIVIDEND COVER</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{cover.toFixed(1)}x</div>
                 <div className="text-sm text-text-secondary">Earnings vs dividend</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">EX-DIV DATE</div>
                 <div className="text-2xl font-bold font-sora text-text-primary mb-1 mt-2">May 2025</div>
                 <div className="text-sm text-text-secondary">FY2024 final</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">PAYMENT DATE</div>
                 <div className="text-2xl font-bold font-sora text-text-primary mb-1 mt-2">Jun 2025</div>
                 <div className="text-sm text-text-secondary">FY2024 final</div>
@@ -1464,12 +1485,12 @@ export default function StockDetail() {
           <p className="text-sm text-text-secondary mb-8">Derived from a blended DCF and peer multiple model, calibrated to NGX market conditions</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-2">FAIR VALUE ESTIMATE</div>
                 <div className="text-4xl font-bold font-sora text-[#C9A84C] mb-1">₦{stock.targetPrice.toFixed(2)}</div>
                 <div className="text-sm text-text-secondary">Intrinsic value (blended model)</div>
              </div>
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#1E3A5F]">
+             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-2">CURRENT PRICE</div>
                 <div className="text-4xl font-bold font-sora text-text-primary mb-2">₦{stock.price.toFixed(2)}</div>
                 <div className={`text-sm font-bold ${stock.price < stock.targetPrice ? 'text-[#22C55E]' : 'text-[#EF4444]'}`}>
@@ -1478,7 +1499,7 @@ export default function StockDetail() {
              </div>
           </div>
           
-          <div className="p-5 rounded-xl bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#C9A84C]/40 flex items-start gap-4">
+          <div className="p-5 rounded-xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/30 flex items-start gap-4">
              <span className="text-xl shrink-0">💡</span>
              <p className="text-sm text-text-secondary leading-relaxed">
                {stock.name}'s strong fundamentals justify a <strong className="text-[#C9A84C]">premium to fair value</strong>, but the gap is worth monitoring. The market may be pricing in continued earnings growth above consensus forecasts.
@@ -1772,7 +1793,7 @@ export default function StockDetail() {
         {/* Global Indices Area */}
         <div className="flex flex-wrap items-center gap-3 xl:justify-end">
           {/* EquityStack Rating Pill */}
-          <div className="flex items-center gap-3 bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#10b981]/30 rounded-xl px-4 py-2.5 shadow-lg shrink-0">
+          <div className="flex items-center gap-3 bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20 rounded-xl px-4 py-2.5 shadow-lg shrink-0">
             <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[#10b981] shadow-[inset_0_-2px_6px_rgba(0,0,0,0.3)]">
               <div className="w-4 h-4 rounded-full bg-[#34d399] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_3px_6px_rgba(0,0,0,0.4)]" />
             </div>
@@ -1798,7 +1819,7 @@ export default function StockDetail() {
               { label: 'DIV YIELD', value: stock.dividendYield, valColor: '#10b981' },
               { label: '1Y RETURN', value: `${stock.change > 0 ? '+' : ''}${(Math.abs(stock.change) * 4.2).toFixed(1)}%`, valColor: stock.change >= 0 ? '#10b981' : '#EF4444' }
             ].map((m, i) => (
-              <div key={i} className="bg-gradient-to-b from-[#09081B] to-[#2B2681] border border-[#172a45] rounded-xl px-3 py-2 flex flex-col items-center justify-center min-w-[75px] shrink-0 h-[64px]">
+              <div key={i} className="bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/15 rounded-xl px-3 py-2 flex flex-col items-center justify-center min-w-[75px] shrink-0 h-[64px]">
                 <div className="text-[9px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-1">
                   {m.label}
                 </div>
@@ -1814,7 +1835,7 @@ export default function StockDetail() {
       {/* ── Horizontal Navigation Menu ────────────────── */}
       <div className="w-full">
         <div className="p-2.5 rounded-3xl border border-border-bright/45 shadow-glow-indigo flex flex-row overflow-x-auto gap-2 scrollbar-none"
-          style={{ background: 'linear-gradient(90deg, #09081B 0%, #2B2681 100%)' }}>
+          style={{ background: 'linear-gradient(90deg, #141020 0%, #0A0810 100%)' }}>
           {([
             { id: 'overview', label: 'Overview', icon: BarChart2 },
             { id: 'earnings', label: 'Earnings', icon: TrendingUp },

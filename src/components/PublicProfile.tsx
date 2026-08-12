@@ -65,7 +65,7 @@ export default function PublicProfile() {
       <div 
         key={post.id} 
         onClick={() => viewThread(post.id)}
-        className="mb-4 rounded-2xl p-5 border border-brand-primary/10 bg-gradient-to-br from-bg-base/80 to-bg-base/40 backdrop-blur-md shadow-lg hover:shadow-[0_0_20px_rgba(207,163,67,0.1)] transition-all cursor-pointer group"
+        className="mb-4 rounded-2xl p-5 border border-brand-primary/15 bg-gradient-to-br from-[#141020] to-[#0E0B14] shadow-lg hover:shadow-[0_0_24px_rgba(207,163,67,0.12)] hover:border-brand-primary/30 transition-all cursor-pointer group"
       >
         {isLikeView && (
           <div className="flex items-center gap-2 text-xs font-bold text-brand-primary mb-3 pl-1">
@@ -87,7 +87,7 @@ export default function PublicProfile() {
                   @{displayAuthor.handle}
                 </span>
               </div>
-              <span className="text-text-secondary text-xs font-medium whitespace-nowrap ml-2 bg-white/5 px-2 py-1 rounded-lg">
+              <span className="text-text-secondary text-xs font-medium whitespace-nowrap ml-2 bg-[#1C1728] px-2 py-1 rounded-lg">
                 {timeAgo(post.createdAt)}
               </span>
             </div>
@@ -106,26 +106,26 @@ export default function PublicProfile() {
               </div>
             )}
 
-            <div className="flex items-center gap-6 mt-5 pt-4 border-t border-border/30 text-xs font-bold text-text-secondary">
-              <button className="flex items-center gap-2 hover:text-text-primary transition-colors bg-white/5 px-3 py-1.5 rounded-lg">
+            <div className="flex items-center gap-6 mt-5 pt-4 border-t border-[#1C1728] text-xs font-bold text-text-secondary">
+              <button className="flex items-center gap-2 hover:text-text-primary transition-colors bg-[#1C1728] px-3 py-1.5 rounded-lg">
                 <MessageSquare className="h-4 w-4" />
                 <span>{post.repliesCount || 0}</span>
               </button>
               <button 
                 onClick={(e) => { e.stopPropagation(); retweetPost(post.id, currentUserId); }}
-                className={`flex items-center gap-2 transition-colors px-3 py-1.5 rounded-lg ${isRetweeted ? 'text-gain bg-gain/10' : 'hover:text-gain hover:bg-gain/10 bg-white/5'}`}
+                className={`flex items-center gap-2 transition-colors px-3 py-1.5 rounded-lg ${isRetweeted ? 'text-gain bg-gain/10' : 'hover:text-gain hover:bg-gain/10 bg-[#1C1728]'}`}
               >
                 <Repeat2 className={`h-4 w-4 ${isRetweeted ? 'stroke-[3px]' : ''}`} />
                 <span>{post.retweets?.length || 0}</span>
               </button>
               <button 
                 onClick={(e) => { e.stopPropagation(); likePost(post.id, currentUserId); }}
-                className={`flex items-center gap-2 transition-colors px-3 py-1.5 rounded-lg ${isLiked ? 'text-brand-primary bg-brand-primary/10' : 'hover:text-brand-primary hover:bg-brand-primary/10 bg-white/5'}`}
+                className={`flex items-center gap-2 transition-colors px-3 py-1.5 rounded-lg ${isLiked ? 'text-brand-primary bg-brand-primary/10' : 'hover:text-brand-primary hover:bg-brand-primary/10 bg-[#1C1728]'}`}
               >
                 <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-brand-primary' : ''}`} />
                 <span>{post.likes.length}</span>
               </button>
-              <button className="flex items-center justify-center hover:text-[#B275FF] hover:bg-[#B275FF]/10 transition-colors ml-auto bg-white/5 h-8 w-8 rounded-lg">
+              <button className="flex items-center justify-center hover:text-[#B275FF] hover:bg-[#B275FF]/10 transition-colors ml-auto bg-[#1C1728] h-8 w-8 rounded-lg">
                 <Share className="h-4 w-4" />
               </button>
             </div>
@@ -146,7 +146,7 @@ export default function PublicProfile() {
       </div>
 
       {/* Dashboard Identity Card */}
-      <div className="rounded-[2rem] p-6 sm:p-8 border border-brand-primary/20 bg-gradient-to-br from-bg-base/80 to-[#070615] backdrop-blur-xl relative overflow-hidden shadow-[0_0_40px_rgba(207,163,67,0.05)]">
+      <div className="rounded-[2rem] p-6 sm:p-8 border border-brand-primary/25 bg-gradient-to-br from-[#141020] to-[#0A0810] relative overflow-hidden shadow-[0_0_60px_rgba(207,163,67,0.08),0_20px_60px_rgba(0,0,0,0.8)]">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 rounded-full blur-[80px] pointer-events-none" />
         
         <div className="flex flex-col md:flex-row gap-8 relative z-10">
@@ -200,7 +200,7 @@ export default function PublicProfile() {
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center shadow-inner">
+              <div className="bg-[#0E0B14] border border-brand-primary/15 rounded-2xl p-4 flex flex-col justify-center shadow-[inset_0_1px_0_rgba(207,163,67,0.05),0_4px_20px_rgba(0,0,0,0.5)]">
                 <div className="flex items-center gap-2 text-text-secondary mb-1">
                   <Activity className="h-4 w-4" />
                   <span className="text-xs font-bold uppercase tracking-wider">Insights</span>
@@ -208,7 +208,7 @@ export default function PublicProfile() {
                 <span className="text-2xl font-extrabold text-text-primary font-sora">{userPosts.length}</span>
               </div>
               
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center shadow-inner">
+              <div className="bg-[#0E0B14] border border-brand-primary/15 rounded-2xl p-4 flex flex-col justify-center shadow-[inset_0_1px_0_rgba(207,163,67,0.05),0_4px_20px_rgba(0,0,0,0.5)]">
                 <div className="flex items-center gap-2 text-text-secondary mb-1">
                   <Users className="h-4 w-4" />
                   <span className="text-xs font-bold uppercase tracking-wider">Followers</span>
@@ -216,7 +216,7 @@ export default function PublicProfile() {
                 <span className="text-2xl font-extrabold text-text-primary font-sora">{profileUser.followers.length}</span>
               </div>
 
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center shadow-inner">
+              <div className="bg-[#0E0B14] border border-brand-primary/15 rounded-2xl p-4 flex flex-col justify-center shadow-[inset_0_1px_0_rgba(207,163,67,0.05),0_4px_20px_rgba(0,0,0,0.5)]">
                 <div className="flex items-center gap-2 text-text-secondary mb-1">
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-xs font-bold uppercase tracking-wider">Following</span>
@@ -229,7 +229,7 @@ export default function PublicProfile() {
       </div>
 
       {/* Segmented Control Tabs */}
-      <div className="flex p-1.5 bg-bg-base/60 border border-border/50 rounded-2xl backdrop-blur-md">
+      <div className="flex p-1.5 bg-[#0E0B14] border border-brand-primary/15 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
         {(['posts', 'replies', 'likes'] as const).map(tab => (
           <button
             key={tab}
@@ -237,7 +237,7 @@ export default function PublicProfile() {
             className={`flex-1 py-3 text-sm font-extrabold capitalize transition-all rounded-xl ${
               activeTab === tab 
                 ? 'bg-brand-primary text-bg-base shadow-md scale-[1.02]' 
-                : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+                : 'text-text-secondary hover:text-text-primary hover:bg-[#1C1728]'
             }`}
           >
             {tab === 'posts' ? 'Market Insights' : tab === 'replies' ? 'Analysis Comments' : 'Endorsements'}
@@ -267,8 +267,8 @@ export default function PublicProfile() {
             </div>
           ) : (
             userReplies.map(reply => (
-              <div key={reply.id} className="mb-4 rounded-2xl p-5 border border-border/40 bg-white/[0.02] hover:bg-white/[0.04] transition-colors group">
-                <div className="text-[10px] uppercase tracking-widest font-bold text-text-secondary mb-3 flex items-center gap-1.5 bg-white/5 w-fit px-2 py-1 rounded-md">
+              <div key={reply.id} className="mb-4 rounded-2xl p-5 border border-brand-primary/10 bg-gradient-to-br from-[#141020] to-[#0E0B14] hover:border-brand-primary/20 hover:shadow-[0_0_20px_rgba(207,163,67,0.06)] transition-all group">
+                <div className="text-[10px] uppercase tracking-widest font-bold text-text-secondary mb-3 flex items-center gap-1.5 bg-[#0E0B14] border border-brand-primary/10 w-fit px-2 py-1 rounded-md">
                   <MessageSquare className="h-3 w-3" />
                   Commentary
                 </div>
@@ -281,7 +281,7 @@ export default function PublicProfile() {
                       <span className="font-bold text-text-primary">{profileUser.name}</span>
                       <span className="text-text-secondary text-xs">· {timeAgo(reply.createdAt)}</span>
                     </div>
-                    <p className="text-[14px] text-text-primary/90 font-medium leading-relaxed bg-white/5 p-3 rounded-xl border border-white/5">
+                    <p className="text-[14px] text-text-primary/90 font-medium leading-relaxed bg-[#0E0B14] p-3 rounded-xl border border-brand-primary/10">
                       {reply.content}
                     </p>
                   </div>
