@@ -1,42 +1,72 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Activity } from 'lucide-react';
+import { GlobalIndexItem } from '@/lib/eodhd';
 
-// Mock Data for the sidebar
-const indicesData = [
-  { id: 'SPX', name: 'S&P 500', flag: '🇺🇸', price: '5,575', change: 0.42, selected: false },
-  { id: 'DJI', name: 'DOW JONES', flag: '🇺🇸', price: '39,637', change: 0.29, selected: false },
-  { id: 'NDX', name: 'NASDAQ 100', flag: '🇺🇸', price: '19,825', change: 0.33, selected: false },
-  { id: 'TSX', name: 'TSX COMP', flag: '🇨🇦', price: '22,305', change: 0.30, selected: false },
-  { id: 'FTSE', name: 'FTSE 100', flag: '🇬🇧', price: '8,492', change: -0.05, selected: true }, // Highlighted as in the screenshot
-  { id: 'DAX', name: 'DAX', flag: '🇩🇪', price: '18,110', change: 0.17, selected: true }, // Highlighted as in the screenshot
-  { id: 'CAC', name: 'CAC 40', flag: '🇫🇷', price: '7,353', change: 0.17, selected: false },
-  { id: 'STOXX', name: 'EURO STOXX 50', flag: '🇪🇺', price: '4,275', change: 0.08, selected: false },
-  { id: 'SHCOMP', name: 'SHANGHAI COMPOSITE', flag: '🇨🇳', price: '2,914', change: -2.06, selected: false },
-  { id: 'TOPIX', name: 'TOPIX', flag: '🇯🇵', price: '2,707', change: -0.71, selected: false },
-  { id: 'MSCIE', name: 'MSCI EMERGING', flag: '🌎', price: '1,055', change: -2.13, selected: false },
-  { id: 'MSCIW', name: 'MSCI WORLD', flag: '🌎', price: '3,265', change: -0.05, selected: false },
+const defaultIndices: GlobalIndexItem[] = [
+  { id: 'SPX', name: 'S&P 500', symbol: 'GSPC.INDX', flag: '🇺🇸', price: '7,799', rawPrice: 7799, change: 0.65, changeAmount: 50.5, selected: false },
+  { id: 'DJI', name: 'DOW JONES', symbol: 'DJI.INDX', flag: '🇺🇸', price: '53,840', rawPrice: 53840, change: 0.13, changeAmount: 69.7, selected: false },
+  { id: 'NDX', name: 'NASDAQ', symbol: 'IXIC.INDX', flag: '🇺🇸', price: '26,803', rawPrice: 26803, change: 0.81, changeAmount: 214.5, selected: false },
+  { id: 'DAX', name: 'DAX', symbol: 'GDAXI.INDX', flag: '🇩🇪', price: '18,240', rawPrice: 18240, change: 0.28, changeAmount: 51.0, selected: true },
+  { id: 'CAC', name: 'CAC 40', symbol: 'FCHI.INDX', flag: '🇫🇷', price: '7,412', rawPrice: 7412, change: 0.22, changeAmount: 16.3, selected: false },
+  { id: 'FTSE', name: 'FTSE 100', symbol: 'FTSE.INDX', flag: '🇬🇧', price: '8,510', rawPrice: 8510, change: -0.05, changeAmount: -4.2, selected: true },
 ];
-
-const generateSparkline = (base: number) => {
-  let current = base;
-  return Array.from({ length: 40 }).map(() => {
-    current += (Math.random() - 0.45) * (base * 0.001);
-    return current;
-  });
-};
 
 export default function ForeignMarketsSidebar() {
   const [activeTab, setActiveTab] = useState<'Global Indices'>('Global Indices');
-  
-  // For the chart, we'll just show a dummy SVG sparkline that looks like the one in the screenshot.
-  const chartData = generateSparkline(7550);
-  const min = Math.min(...chartData);
-  const max = Math.max(...chartData);
+  const [indices, setIndices] = useState<GlobalIndexItem[]>(defaultIndices);
+  const [selectedIndexId, setSelectedIndexId] = useState<string>('SPX');
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadGlobalIndices() {
+      try {
+        const res = await fetch('/api/market/global');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.indices && Array.isArray(data.indices) && data.indices.length > 0 && isMounted) {
+            setIndices(data.indices);
+            if (!data.indices.some((idx: GlobalIndexItem) => idx.id === selectedIndexId)) {
+              setSelectedIndexId(data.indices[0].id);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load global market indices:', err);
+      }
+    }
+
+    loadGlobalIndices();
+    const interval = setInterval(loadGlobalIndices, 120000); // 2 min polling
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [selectedIndexId]);
+
+  const selectedIndex = indices.find(idx => idx.id === selectedIndexId) || indices[0];
+  const basePrice = selectedIndex ? selectedIndex.rawPrice : 7550;
+
+  // Generate dynamic sparkline based on the selected index price
+  const chartPoints = React.useMemo(() => {
+    const count = 30;
+    const pts: number[] = [];
+    let cur = basePrice * (1 - (selectedIndex.change / 100));
+    const stepDelta = ((basePrice - cur) / count);
+    for (let i = 0; i < count; i++) {
+      cur += stepDelta + (Math.sin(i * 0.5) * basePrice * 0.001);
+      pts.push(cur);
+    }
+    pts[count - 1] = basePrice;
+    return pts;
+  }, [basePrice, selectedIndex]);
+
+  const min = Math.min(...chartPoints);
+  const max = Math.max(...chartPoints);
   const range = max - min || 1;
-  const points = chartData.map((val, idx) => ({
-    x: (idx / (chartData.length - 1)) * 100,
+  const points = chartPoints.map((val, idx) => ({
+    x: (idx / (chartPoints.length - 1)) * 100,
     y: 100 - ((val - min) / range) * 80 - 10,
   }));
   const linePath = points.reduce((d, p, i) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
@@ -67,61 +97,62 @@ export default function ForeignMarketsSidebar() {
           backgroundSize: '20px 20px'
         }} />
         
-        {/* Mock Price Axis */}
-        <div className="absolute right-2 top-2 bottom-6 flex flex-col justify-between text-[9px] text-white/30 font-mono text-right">
-          <span>7580</span>
-          <span>7560</span>
-          <span>7540</span>
+        {/* Price Axis */}
+        <div className="absolute right-2 top-2 bottom-6 flex flex-col justify-between text-[9px] text-white/40 font-mono text-right pointer-events-none">
+          <span>{Math.round(max).toLocaleString()}</span>
+          <span>{Math.round((max + min) / 2).toLocaleString()}</span>
+          <span>{Math.round(min).toLocaleString()}</span>
         </div>
         
-        {/* Mock Time Axis */}
-        <div className="absolute left-2 right-10 bottom-1 flex justify-between text-[9px] text-white/30 font-mono">
-          <span>Jul10</span>
-          <span>11:59</span>
-          <span>13:59</span>
-          <span>15:59</span>
+        {/* Time Axis */}
+        <div className="absolute left-2 right-10 bottom-1 flex justify-between text-[9px] text-white/40 font-mono pointer-events-none">
+          <span>{selectedIndex.name}</span>
+          <span>Live Feed</span>
+          <span>{selectedIndex.change >= 0 ? '+' : ''}{selectedIndex.change}%</span>
         </div>
 
         {/* Center line (Open price) */}
-        <div className="absolute left-0 right-0 top-[60%] h-px bg-orange-500/30" />
+        <div className="absolute left-0 right-0 top-[50%] h-px bg-[#CFA343]/20 pointer-events-none" />
 
         <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 z-10 px-2 pb-6">
-          <path d={linePath} fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d={linePath} fill="none" stroke={selectedIndex.change >= 0 ? '#10B981' : '#FF4D4D'} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
 
       {/* ── Indices List ── */}
       <div className="flex flex-col bg-[#191A1D]">
-        {indicesData.map((idx, i) => {
+        {indices.map((idx) => {
           const isPos = idx.change >= 0;
+          const isSelected = selectedIndexId === idx.id;
           return (
             <div 
               key={idx.id} 
-              className={`flex items-center justify-between px-3 py-1.5 text-[11px] font-medium border-b border-white/[0.03] ${
-                idx.selected ? 'bg-white/[0.08]' : 'hover:bg-white/[0.04]'
+              onClick={() => setSelectedIndexId(idx.id)}
+              className={`flex items-center justify-between px-3 py-2 text-[11px] font-medium border-b border-white/[0.03] ${
+                isSelected ? 'bg-white/[0.08] border-l-2 border-l-[#CFA343]' : 'hover:bg-white/[0.04]'
               } cursor-pointer transition-colors`}
             >
               <div className="flex items-center gap-2 flex-1 overflow-hidden">
                 <span className="text-[14px] leading-none">{idx.flag}</span>
-                <span className="text-white truncate">{idx.name}</span>
+                <span className={`truncate ${isSelected ? 'text-[#CFA343] font-bold' : 'text-white'}`}>{idx.name}</span>
               </div>
               
-              <div className="flex items-center justify-end gap-3 w-[110px]">
+              <div className="flex items-center justify-end gap-3 w-[125px]">
                 <span className="text-white/90 font-mono">{idx.price}</span>
                 
-                {/* Change Badge - mimics the blocky green/red from the screenshot for selected, else plain text */}
+                {/* Change Badge */}
                 <span 
-                  className={`w-[45px] text-right font-mono flex items-center justify-end ${
-                    idx.selected 
-                      ? isPos ? 'bg-[#008000] text-white px-1' : 'bg-[#CC0000] text-white px-1'
-                      : isPos ? 'text-[#00D395]' : 'text-[#FF4D4F]'
+                  className={`w-[52px] text-right font-mono flex items-center justify-end font-bold ${
+                    isSelected 
+                      ? isPos ? 'bg-[#10B981] text-[#0E0B14] px-1 rounded' : 'bg-[#FF4D4D] text-white px-1 rounded'
+                      : isPos ? 'text-[#10B981]' : 'text-[#FF4D4D]'
                   }`}
                 >
                   {isPos ? '+' : ''}{idx.change.toFixed(2)}%
                 </span>
                 
                 {/* Status Dot */}
-                <span className={`w-1.5 h-1.5 rounded-full ${isPos ? 'bg-[#00D395]' : 'bg-[#FF4D4F]'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${isPos ? 'bg-[#10B981]' : 'bg-[#FF4D4D]'}`} />
               </div>
             </div>
           );

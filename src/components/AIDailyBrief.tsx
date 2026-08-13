@@ -1,22 +1,35 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Sparkles, ShieldAlert } from 'lucide-react';
-import { equityStackAIBrief } from '@/lib/mockData';
+import React, { useMemo } from 'react';
+import { Sparkles, ShieldAlert, TrendingUp, TrendingDown, Newspaper } from 'lucide-react';
+import { useAppStore } from '@/lib/store';
 
 export default function AIDailyBrief() {
-  const [briefText, setBriefText] = useState(equityStackAIBrief.morning);
+  const indexData = useAppStore((state) => state.indexData);
+  const stocks = useAppStore((state) => state.stocks);
+  const news = useAppStore((state) => state.news);
 
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) {
-      setBriefText(equityStackAIBrief.morning);
-    } else if (hour < 17) {
-      setBriefText(equityStackAIBrief.afternoon);
-    } else {
-      setBriefText(equityStackAIBrief.night);
-    }
-  }, []);
+  // Generate dynamic live market intelligence based on real-time data
+  const dynamicBrief = useMemo(() => {
+    const isPositive = (indexData.change || 0) >= 0;
+    const gainers = stocks.filter((s) => s.change > 0);
+    const losers = stocks.filter((s) => s.change < 0);
+    const topGainer = [...stocks].sort((a, b) => b.change - a.change)[0];
+    const topVolume = [...stocks].sort((a, b) => b.volumeRaw - a.volumeRaw)[0];
+    const latestStory = news.length > 0 ? news[0] : null;
+
+    const p1 = `The Nigerian Exchange (NGX) All-Share Index is currently standing at ${indexData.allShareIndex.toLocaleString('en-NG', { minimumFractionDigits: 2 })} points (${isPositive ? '+' : ''}${indexData.change.toFixed(2)}%), reflecting a total estimated equity valuation of ${indexData.marketCap}. Overall market breadth tracks ${gainers.length} advancing tickers against ${losers.length} declining counters.`;
+
+    const p2 = topGainer
+      ? `Leading momentum today is driven by ${topGainer.name} (${topGainer.ticker}) advancing +${topGainer.change.toFixed(1)}% to ₦${topGainer.price.toFixed(2)}, alongside heavy institutional volume in ${topVolume ? `${topVolume.name} (${topVolume.ticker}) with ${topVolume.volume} traded` : 'Tier-1 commercial banking names'}. Total daily exchange turnover sits at ${indexData.volume}.`
+      : `Market participation remains concentrated across key benchmark heavyweights in Industrial Goods and Banking sectors, with market turnover reaching ${indexData.volume}.`;
+
+    const p3 = latestStory
+      ? `Key Macro Driver: ${latestStory.originalHeadline} — ${latestStory.aiSummary || latestStory.whyItMatters}`
+      : `Macro Outlook: Institutional investors continue to evaluate domestic inflation metrics and monetary policy signals, balancing equity yield opportunities against sovereign debt yields.`;
+
+    return [p1, p2, p3];
+  }, [indexData, stocks, news]);
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-brand-primary/10"
@@ -47,8 +60,8 @@ export default function AIDailyBrief() {
               <h4 className="text-[20px] font-bold text-white font-sora">
                 EquityStack AI Brief
               </h4>
-              <span className="block text-[11px] font-bold text-white/60 uppercase tracking-widest font-sora">
-                LIVE MARKET INTELLIGENCE
+              <span className="block text-[11px] font-bold text-[#CFA343] uppercase tracking-widest font-sora">
+                LIVE MARKET INTELLIGENCE · {indexData.lastUpdated || 'REAL-TIME FEED'}
               </span>
             </div>
           </div>
@@ -59,7 +72,7 @@ export default function AIDailyBrief() {
           <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full"
             style={{ background: 'linear-gradient(180deg, #CFA343 0%, rgba(207,163,67,0.1) 100%)' }} />
           <div className="text-[14px] leading-[1.7] text-white/90 font-sora font-medium space-y-4">
-            {briefText.split('\n\n').map((paragraph, idx) => (
+            {dynamicBrief.map((paragraph, idx) => (
               <p key={idx}>{paragraph}</p>
             ))}
           </div>
@@ -68,7 +81,7 @@ export default function AIDailyBrief() {
         {/* Disclaimer */}
         <div className="mt-8 pt-5 border-t border-white/10 flex items-start sm:items-center gap-3 text-[12px] text-white/50 font-sora text-left">
           <ShieldAlert className="h-4 w-4 text-[#CFA343] flex-shrink-0" />
-          <span>This information is for educational and research purposes only and should not be considered financial advice.</span>
+          <span>Live market intelligence synthesized from active NGX price feeds, EODHD APIs, and real-time business news. For educational and research purposes only.</span>
         </div>
       </div>
     </div>

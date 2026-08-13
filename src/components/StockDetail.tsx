@@ -12,10 +12,8 @@ import {
   Layers,
   Newspaper,
   TrendingUp,
-  ShieldCheck,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { mockNews } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
 // ─── Management Mock Directory ─────────────────────────
@@ -306,7 +304,7 @@ export default function StockDetail() {
   const user = useAppStore((state) => state.user);
   const stocks = useAppStore((state) => state.stocks);
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'financials' | 'dividend' | 'valuation' | 'earnings' | 'management' | 'competitors' | 'news' | 'health'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'financials' | 'dividend' | 'valuation' | 'earnings' | 'management' | 'competitors' | 'news'>('overview');
   const [activeDuration, setActiveDuration] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1M');
 
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -319,7 +317,15 @@ export default function StockDetail() {
   const isWatched = watchlist.includes(stock.ticker);
   const color = isPositive ? '#10B981' : '#FF4D4D';
 
-  const relatedNews = mockNews.filter((news) => news.affectedStocks.includes(stock.ticker));
+  const newsList = useAppStore((state) => state.news);
+  const tickerRelatedNews = newsList.filter((n) =>
+    (n.affectedStocks && n.affectedStocks.includes(stock.ticker)) ||
+    (n.originalHeadline && (
+      n.originalHeadline.toLowerCase().includes(stock.ticker.toLowerCase()) ||
+      n.originalHeadline.toLowerCase().includes(stock.name.toLowerCase())
+    ))
+  );
+  const relatedNews = tickerRelatedNews.length > 0 ? tickerRelatedNews : newsList.slice(0, 3);
 
 
 
@@ -566,182 +572,6 @@ export default function StockDetail() {
       </div>
     );
   };
-  const renderHealth = () => {
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Left Column */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="p-6 rounded-3xl" style={cardStyle}>
-              <div className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest font-dm-sans mb-3">PILLAR 06 · BALANCE SHEET QUALITY</div>
-              <h3 className="text-base font-serif font-bold text-text-primary mb-2">How healthy is {stock.name}'s balance sheet?</h3>
-              <p className="text-sm text-text-secondary mb-10">A bank's health is measured by capital strength, asset quality, liquidity, and regulatory compliance.</p>
-              
-              <div className="space-y-8">
-                
-                {/* CAR */}
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="font-bold text-sm text-text-primary">Capital Adequacy Ratio (CAR)</div>
-                    <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E]">STRONG</div>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-text-secondary font-mono mb-2">
-                    <span>CBN Minimum: 15%</span>
-                    <span className="text-[#22C55E] font-bold">{stock.ticker}: 21.6%</span>
-                  </div>
-                  <div className="relative h-2 bg-[#112240] rounded-full overflow-visible flex items-center">
-                    <div className="absolute left-0 h-2 bg-[#22C55E] rounded-full" style={{ width: '75%' }}></div>
-                    <div className="absolute w-4 h-4 bg-white rounded-full shadow border-2 border-[#1E3A5F]" style={{ left: '75%', top: '50%', transform: 'translate(-50%, -50%)' }}></div>
-                  </div>
-                  <p className="text-xs text-text-secondary mt-3 leading-relaxed">
-                    {stock.ticker}'s CAR of 21.6% is 6.6 percentage points above the CBN minimum, providing a strong buffer against credit losses. This is the best CAR among Tier-1 banks.
-                  </p>
-                </div>
-                
-                {/* NPL */}
-                <div className="pt-8 border-t border-[#1E3A5F]/50">
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="font-bold text-sm text-text-primary">Non-Performing Loan (NPL) Ratio</div>
-                    <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#C9A84C]/10 border border-[#C9A84C]/30 text-[#C9A84C]">WATCH</div>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-text-secondary font-mono mb-2">
-                    <span>CBN Threshold: 5.0%</span>
-                    <span className="text-[#C9A84C] font-bold">{stock.ticker}: 4.4%</span>
-                  </div>
-                  <div className="relative h-2 bg-[#112240] rounded-full overflow-visible flex items-center">
-                    <div className="absolute left-0 h-2 bg-gradient-to-r from-[#EF4444] to-[#C9A84C] rounded-full" style={{ width: '85%' }}></div>
-                    <div className="absolute w-4 h-4 bg-white rounded-full shadow border-2 border-[#1E3A5F]" style={{ left: '85%', top: '50%', transform: 'translate(-50%, -50%)' }}></div>
-                  </div>
-                  <p className="text-xs text-text-secondary mt-3 leading-relaxed">
-                    NPL ratio ticked up slightly to 4.4% from 3.9%, staying below the CBN's 5% threshold. Loan growth (+72% YoY) contributed to the uptick. Bears monitoring closely.
-                  </p>
-                </div>
-
-                {/* Liquidity Ratio */}
-                <div className="pt-8 border-t border-[#1E3A5F]/50">
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="font-bold text-sm text-text-primary">Liquidity Ratio</div>
-                    <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E]">STRONG</div>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-text-secondary font-mono mb-2">
-                    <span>CBN Minimum: 30%</span>
-                    <span className="text-[#22C55E] font-bold">{stock.ticker}: 52.4%</span>
-                  </div>
-                  <div className="relative h-2 bg-[#112240] rounded-full overflow-visible flex items-center">
-                    <div className="absolute left-0 h-2 bg-[#22C55E] rounded-full" style={{ width: '85%' }}></div>
-                    <div className="absolute w-4 h-4 bg-white rounded-full shadow border-2 border-[#1E3A5F]" style={{ left: '85%', top: '50%', transform: 'translate(-50%, -50%)' }}></div>
-                  </div>
-                  <p className="text-xs text-text-secondary mt-3 leading-relaxed">
-                    Liquidity ratio of 52.4% is comfortably above the 30% regulatory minimum, indicating {stock.ticker} can meet short-term obligations and depositor withdrawals without stress.
-                  </p>
-                </div>
-
-                {/* Loan-to-Deposit */}
-                <div className="pt-8 border-t border-[#1E3A5F]/50">
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="font-bold text-sm text-text-primary">Loan-to-Deposit Ratio (LDR)</div>
-                    <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E]">HEALTHY</div>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-text-secondary font-mono mb-2">
-                    <span>CBN Minimum: 65%</span>
-                    <span className="text-[#C9A84C] font-bold">{stock.ticker}: 45.4%</span>
-                  </div>
-                  <div className="relative h-2 bg-[#112240] rounded-full overflow-visible flex items-center">
-                    <div className="absolute left-0 h-2 bg-[#C9A84C] rounded-full" style={{ width: '50%' }}></div>
-                    <div className="absolute w-4 h-4 bg-white rounded-full shadow border-2 border-[#1E3A5F]" style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}></div>
-                  </div>
-                  <p className="text-xs text-text-secondary mt-3 leading-relaxed">
-                    LDR of 45.4% is below the CBN's 65% minimum — meaning {stock.ticker} has significant headroom to grow its loan book further, which could drive future earnings growth.
-                  </p>
-                </div>
-
-                {/* Total Equity */}
-                <div className="pt-8 border-t border-[#1E3A5F]/50">
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="font-bold text-sm text-text-primary">Total Equity / Assets</div>
-                    <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E]">STRONG</div>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-text-secondary font-mono mb-2">
-                    <span>Industry median: 8%</span>
-                    <span className="text-[#22C55E] font-bold">{stock.ticker}: 10.5%</span>
-                  </div>
-                  <div className="relative h-2 bg-[#112240] rounded-full overflow-visible flex items-center">
-                    <div className="absolute left-0 h-2 bg-[#22C55E] rounded-full" style={{ width: '65%' }}></div>
-                    <div className="absolute w-4 h-4 bg-white rounded-full shadow border-2 border-[#1E3A5F]" style={{ left: '65%', top: '50%', transform: 'translate(-50%, -50%)' }}></div>
-                  </div>
-                  <p className="text-xs text-text-secondary mt-3 leading-relaxed">
-                    Equity of ₦2.97T against total assets of ₦28.4T gives a 10.5% equity ratio, above the sector median and well above CBN solvency requirements.
-                  </p>
-                </div>
-
-                {/* CBN Recap */}
-                <div className="pt-8 border-t border-[#1E3A5F]/50">
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="font-bold text-sm text-text-primary">CBN Recapitalisation Compliance</div>
-                    <div className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E]">ON TRACK</div>
-                  </div>
-                  <p className="text-xs text-text-secondary leading-relaxed">
-                    {stock.name} is on track to meet CBN's new minimum capital requirement of ₦500B for international banks by March 2026. The bank has already met 89% of the target through retained earnings and planned rights issue.
-                  </p>
-                </div>
-                
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="space-y-6">
-            
-            {/* Balance Sheet Score */}
-            <div className="p-6 rounded-3xl" style={cardStyle}>
-               <div className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest font-dm-sans mb-6">BALANCE SHEET SCORE</div>
-               
-               <div className="text-center mt-6 mb-8 border-b border-[#1E3A5F]/50 pb-8">
-                 <div className="text-6xl font-serif font-bold mb-2 text-[#C9A84C]">72</div>
-                 <div className="text-sm text-text-secondary mb-2">out of 100</div>
-                 <div className="text-base font-bold text-[#C9A84C]">Good</div>
-               </div>
-               
-               <p className="text-xs text-text-secondary leading-relaxed font-medium">
-                 {stock.name}'s balance sheet is broadly healthy — strong capital, excellent liquidity, and above-average equity ratios. The only watch item is NPL, which is still below the CBN threshold.
-               </p>
-            </div>
-
-            {/* Health Scorecard */}
-            <div className="p-6 rounded-3xl" style={cardStyle}>
-               <div className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest font-dm-sans mb-6">HEALTH SCORECARD</div>
-               
-               <div className="space-y-5 text-sm">
-                 <div className="flex justify-between items-center">
-                   <span className="text-text-secondary font-medium">Capital Adequacy</span>
-                   <span className="text-[#22C55E] font-bold text-xs bg-[#22C55E]/10 px-2 py-0.5 rounded">21.6%</span>
-                 </div>
-                 <div className="flex justify-between items-center">
-                   <span className="text-text-secondary font-medium">Liquidity Ratio</span>
-                   <span className="text-[#22C55E] font-bold text-xs bg-[#22C55E]/10 px-2 py-0.5 rounded">52.4%</span>
-                 </div>
-                 <div className="flex justify-between items-center">
-                   <span className="text-text-secondary font-medium">NPL Ratio</span>
-                   <span className="text-[#C9A84C] font-bold text-xs bg-[#C9A84C]/10 px-2 py-0.5 rounded">4.4%</span>
-                 </div>
-                 <div className="flex justify-between items-center">
-                   <span className="text-text-secondary font-medium">Loan-to-Deposit</span>
-                   <span className="text-[#C9A84C] font-bold text-xs bg-[#C9A84C]/10 px-2 py-0.5 rounded">45.4%</span>
-                 </div>
-                 <div className="flex justify-between items-center">
-                   <span className="text-text-secondary font-medium">Recapitalisation</span>
-                   <span className="text-[#22C55E] font-bold text-[10px] uppercase bg-[#22C55E]/10 px-2 py-0.5 rounded">On Track</span>
-                 </div>
-               </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const renderTabContent = () => {
     switch (activeTab) {
       case 'earnings':
@@ -758,8 +588,6 @@ export default function StockDetail() {
         return renderCompetitors();
       case 'news':
         return renderNews();
-      case 'health':
-        return renderHealth();
       default:
         return renderOverview();
     }
@@ -1842,7 +1670,6 @@ export default function StockDetail() {
             { id: 'financials', label: 'Financials', icon: FileText },
             { id: 'dividend', label: 'Dividend', icon: Gift },
             { id: 'valuation', label: 'Valuation', icon: Activity },
-            { id: 'health', label: 'Health', icon: ShieldCheck },
             { id: 'management', label: 'Management', icon: Users },
             { id: 'competitors', label: 'Competitors', icon: Layers },
             { id: 'news', label: 'Recent News', icon: Newspaper },

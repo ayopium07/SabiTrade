@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Briefcase, Plus, TrendingUp, TrendingDown, Trash2, LayoutGrid, Calendar, X, Check } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 
-const DONUT_COLORS = ['#FF7A68', '#00B8FF', '#FFD166', '#FF4D4D', '#A855F7', '#10B981'];
+const DONUT_COLORS = ['#CFA343', '#10B981', '#00B8FF', '#A855F7', '#FFB800', '#FF4D4D'];
 
 export type Timeframe = '12 month' | '30 days' | '7 days' | '24 hours';
 export interface DataPoint {
@@ -223,7 +223,12 @@ export default function PortfolioTracker() {
     };
   });
 
-  const cardStyle = { background: 'linear-gradient(135deg, #09081B 0%, #2B2681 100%)' };
+  const cardStyle = {
+    background: 'linear-gradient(145deg, #141020 0%, #0E0B14 100%)',
+    border: '1px solid rgba(207, 163, 67, 0.12)',
+    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03)',
+    borderRadius: '16px'
+  };
 
   return (
     <div className="space-y-6 text-[#E0E0E0] font-dm-sans min-h-screen">
@@ -232,44 +237,44 @@ export default function PortfolioTracker() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* LEFT COLUMN: Main Chart (col-span-8) */}
-        <div className="lg:col-span-8 rounded-[14px] border border-white/5 overflow-hidden flex flex-col pb-4" style={cardStyle}>
+        <div className="lg:col-span-8 rounded-2xl overflow-hidden flex flex-col pb-4" style={cardStyle}>
           <div className="p-4 sm:p-6 pb-12 flex-1 flex flex-col relative">
             
             {/* Header row */}
             <div className="flex flex-col xl:flex-row justify-between items-start gap-4 mb-8 z-10 relative">
               <div>
-                <div className="text-[11px] font-bold text-white/50 mb-1.5">Total Valuation</div>
+                <div className="text-[11px] font-bold text-white/50 mb-1.5 uppercase tracking-wider">Total Valuation</div>
                 <div className="text-3xl sm:text-4xl font-extrabold text-[#CFA343] font-sora tracking-tight mb-2">
                   ₦{totalCurrentValue.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                 </div>
-                <div className="text-[11px] text-white/60">
+                <div className="text-[11px] text-white/60 font-medium">
                   Cost basis: <span className="font-bold text-white">₦{totalCostBasis.toLocaleString('en-NG')}</span>
                 </div>
                 
                 <div className="flex items-center gap-4 sm:gap-5 mt-4 sm:mt-6 flex-wrap">
                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></div>
+                      <div className="w-2 h-2 rounded-full bg-[#10B981]"></div>
                       <span className="text-[11px] text-white/60 font-semibold">Portfolio Performance</span>
                    </div>
                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                      <div className="w-2 h-2 rounded-full bg-white/80"></div>
                       <span className="text-[11px] text-white/60 font-semibold">ASI line</span>
                    </div>
                 </div>
               </div>
               
               <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                 <div className="flex items-center rounded-md border border-white/10 bg-transparent overflow-x-auto max-w-full">
+                 <div className="flex items-center rounded-xl border border-white/10 bg-transparent overflow-hidden max-w-full">
                     {(['24 hours', '7 days', '30 days', '12 month'] as Timeframe[]).map((tf) => (
                       <button key={tf} onClick={() => setTimeframe(tf)}
-                        className={`px-2.5 sm:px-3 py-1.5 text-[10px] font-bold border-r border-white/10 last:border-r-0 whitespace-nowrap transition-colors ${timeframe === tf ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>
+                        className={`px-2.5 sm:px-3 py-1.5 text-[10px] font-bold border-r border-white/10 last:border-r-0 whitespace-nowrap transition-colors ${timeframe === tf ? 'bg-[#CFA343] text-[#14131A]' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
                         {tf}
                       </button>
                     ))}
                  </div>
                  
-                 <button onClick={() => setIsDatePickerOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-white/10 bg-transparent hover:bg-white/5 transition-colors whitespace-nowrap">
-                    <Calendar className="h-3.5 w-3.5 text-white/60" />
+                 <button onClick={() => setIsDatePickerOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-transparent hover:bg-white/5 transition-colors whitespace-nowrap">
+                    <Calendar className="h-3.5 w-3.5 text-[#CFA343]" />
                     <span className="text-[10px] font-bold text-white">Select dates</span>
                  </button>
               </div>
@@ -305,9 +310,9 @@ export default function PortfolioTracker() {
                    </defs>
                    
                    {/* ASI Line (White) */}
-                   <path d={aPath} fill="none" stroke="#FFFFFF" strokeWidth="1.2" vectorEffect="non-scaling-stroke" strokeOpacity="0.6" />
+                   <path d={aPath} fill="none" stroke="#FFFFFF" strokeWidth="1.2" vectorEffect="non-scaling-stroke" strokeOpacity="0.5" />
                    
-                   {/* Portfolio Line (Green) + Area */}
+                   {/* Portfolio Line (Emerald Green) + Area */}
                    <path d={areaPath} fill="url(#port-grad)" />
                    <path d={pPath} fill="none" stroke="#10B981" strokeWidth="2" vectorEffect="non-scaling-stroke" />
 
@@ -315,7 +320,7 @@ export default function PortfolioTracker() {
                    {hoveredIdx !== null && svgCoords[hoveredIdx] && (
                       <g>
                         <line x1={svgCoords[hoveredIdx].x} y1="0" x2={svgCoords[hoveredIdx].x} y2="100" stroke="#10B981" strokeWidth="0.5" strokeOpacity="0.7" vectorEffect="non-scaling-stroke" />
-                        <circle cx={svgCoords[hoveredIdx].x} cy={svgCoords[hoveredIdx].yP} r="3" fill="#171622" stroke="#10B981" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                        <circle cx={svgCoords[hoveredIdx].x} cy={svgCoords[hoveredIdx].yP} r="3" fill="#141020" stroke="#10B981" strokeWidth="2" vectorEffect="non-scaling-stroke" />
                       </g>
                    )}
                  </svg>
@@ -335,7 +340,7 @@ export default function PortfolioTracker() {
 
                  {/* Custom Tooltip text on hover */}
                  {hoveredIdx !== null && activeData[hoveredIdx] && activeData[hoveredIdx].fullDate && (
-                    <div className="absolute text-[10px] font-bold text-white bg-[#0E0B14] border border-white/10 px-2 py-1 rounded shadow-lg pointer-events-none z-20" style={{ left: `${svgCoords[hoveredIdx].x}%`, top: '-28px', transform: 'translateX(-50%)' }}>
+                    <div className="absolute text-[10px] font-bold text-white bg-[#141020] border border-[#CFA343]/30 px-2.5 py-1 rounded-lg shadow-2xl pointer-events-none z-20" style={{ left: `${svgCoords[hoveredIdx].x}%`, top: '-28px', transform: 'translateX(-50%)' }}>
                        {activeData[hoveredIdx].fullDate}
                     </div>
                  )}
@@ -349,40 +354,40 @@ export default function PortfolioTracker() {
         <div className="lg:col-span-4 flex flex-col gap-5">
            
            {/* Card 1: Today's Return */}
-           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center" style={cardStyle}>
-              <div className="text-[11px] font-bold text-white/50 mb-3">Today's Return</div>
-              <div className={`text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalTodayChange >= 0 ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+           <div className="rounded-2xl p-6 flex flex-col justify-center" style={cardStyle}>
+              <div className="text-[11px] font-bold text-white/50 uppercase tracking-wider mb-3">Today's Return</div>
+              <div className={`text-3xl sm:text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalTodayChange >= 0 ? 'text-[#10B981]' : 'text-[#FF4D4D]'}`}>
                  {totalTodayChange >= 0 ? '+' : ''}₦{totalTodayChange.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </div>
               <div className="flex items-center gap-2 mb-2">
-                 <span className={`flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full ${totalTodayChange >= 0 ? 'bg-[#00D395]/10 text-[#00D395]' : 'bg-[#FF4D4D]/10 text-[#FF4D4D]'}`}>
+                 <span className={`flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full ${totalTodayChange >= 0 ? 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20' : 'bg-[#FF4D4D]/10 text-[#FF4D4D] border border-[#FF4D4D]/20'}`}>
                     <TrendingUp className={`h-3 w-3 mr-1 ${totalTodayChange >= 0 ? '' : 'rotate-180'}`} />
                     {totalTodayChange >= 0 ? '+' : ''}{totalTodayPnlPercent.toFixed(2)}%
                  </span>
               </div>
-              <div className="text-[10px] text-white/40">Since NGX open</div>
+              <div className="text-[10px] text-white/40 font-medium">Since NGX open</div>
            </div>
            
            {/* Card 2: All-Time P&L */}
-           <div className="rounded-[14px] border border-white/5 p-6 flex flex-col justify-center" style={cardStyle}>
-              <div className="text-[11px] font-bold text-white/50 mb-3">All-Time P&L</div>
-              <div className={`text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalAllTimePnl >= 0 ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+           <div className="rounded-2xl p-6 flex flex-col justify-center" style={cardStyle}>
+              <div className="text-[11px] font-bold text-white/50 uppercase tracking-wider mb-3">All-Time P&L</div>
+              <div className={`text-3xl sm:text-4xl font-extrabold font-sora tracking-tight mb-3 ${totalAllTimePnl >= 0 ? 'text-[#10B981]' : 'text-[#FF4D4D]'}`}>
                  {totalAllTimePnl >= 0 ? '+' : ''}₦{totalAllTimePnl.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </div>
               <div className="flex items-center gap-2 mb-2">
-                 <span className={`flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full ${totalAllTimePnl >= 0 ? 'bg-[#00D395]/10 text-[#00D395]' : 'bg-[#FF4D4D]/10 text-[#FF4D4D]'}`}>
+                 <span className={`flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full ${totalAllTimePnl >= 0 ? 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20' : 'bg-[#FF4D4D]/10 text-[#FF4D4D] border border-[#FF4D4D]/20'}`}>
                     <TrendingUp className={`h-3 w-3 mr-1 ${totalAllTimePnl >= 0 ? '' : 'rotate-180'}`} />
                     {totalAllTimePnl >= 0 ? '+' : ''}{totalAllTimePnlPercent.toFixed(2)}%
                  </span>
               </div>
-              <div className="text-[10px] text-white/40">Unrealised ledger P&L</div>
+              <div className="text-[10px] text-white/40 font-medium">Unrealised ledger P&L</div>
            </div>
            
            {/* Card 3: Donut */}
-           <div className="rounded-[14px] border border-white/5 p-6 flex-1 flex items-center gap-4" style={cardStyle}>
+           <div className="rounded-2xl p-6 flex-1 flex items-center gap-4" style={cardStyle}>
               <div className="relative w-[130px] h-[130px] flex-shrink-0">
                  <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
-                   <circle cx="100" cy="100" r="75" fill="none" stroke="#23214C" strokeWidth="22" />
+                   <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="22" />
                    {donutSlices.map(s => (
                       <path key={s.ticker} d={s.path} fill="none" stroke={s.color} strokeWidth="22" />
                    ))}
@@ -398,7 +403,7 @@ export default function PortfolioTracker() {
                     <div key={slice.ticker} className="flex items-start gap-2">
                        <div className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0" style={{ backgroundColor: slice.color }}></div>
                        <div className="flex flex-col">
-                          <span className="text-[11px] font-bold text-white tracking-wide">{slice.ticker}</span>
+                          <span className="text-[11px] font-bold text-white font-sora tracking-wide">{slice.ticker}</span>
                           <span className="text-[10px] text-white/50">{(slice.percentage * 100).toFixed(0)}%</span>
                        </div>
                     </div>
@@ -413,19 +418,19 @@ export default function PortfolioTracker() {
       </div>
       
       {/* ── BOTTOM SECTION: Tracked Holdings ── */}
-      <div className="rounded-[14px] border border-white/5 p-6" style={cardStyle}>
+      <div className="rounded-2xl p-6" style={cardStyle}>
          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xs font-extrabold text-white/60 uppercase tracking-widest">
+            <h3 className="text-xs font-bold text-white/60 uppercase tracking-widest font-sora">
               Tracked Holdings
             </h3>
             <button onClick={() => setIsAddOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold focus:outline-none transition-all text-black bg-[#FFD166] hover:bg-[#CFA343]">
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold font-sora focus:outline-none transition-all text-[#14131A] bg-[#CFA343] hover:bg-[#B58C35] shadow-lg shadow-[#CFA343]/15">
               <Plus className="h-4 w-4" />
               Record Purchase
             </button>
          </div>
          
-         <div className="w-full overflow-x-auto pb-4">
+         <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
             <div className="min-w-[800px]">
                {/* Table Header */}
                <div className="grid grid-cols-12 gap-4 pb-4 border-b border-white/5 text-[9px] font-bold text-white/40 uppercase tracking-widest text-left">
@@ -442,37 +447,36 @@ export default function PortfolioTracker() {
                   {holdingsDetails.length === 0 ? (
                      <div className="py-12 text-center">
                         <LayoutGrid className="h-8 w-8 text-white/20 mx-auto mb-3" />
-                        <p className="text-sm font-bold text-white mb-1">Portfolio is Empty</p>
+                        <p className="text-sm font-bold text-white font-sora mb-1">Portfolio is Empty</p>
                         <p className="text-xs text-white/40 max-w-sm mx-auto">
                            Track your NGX holdings manually. Record your first buy to analyze yields!
                         </p>
                      </div>
                   ) : (
-                     holdingsDetails.map((h, idx) => {
+                     holdingsDetails.map((h) => {
                         const isPos = h.pnl >= 0;
-                        // Use exact matching for colors based on donut order to maintain visual consistency
                         const colorIndex = sortedHoldings.findIndex(sh => sh.ticker === h.ticker);
                         const color = DONUT_COLORS[colorIndex % DONUT_COLORS.length];
                         
                         return (
-                          <div key={h.ticker} className="grid grid-cols-12 gap-4 py-5 items-center hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-lg">
+                          <div key={h.ticker} className="grid grid-cols-12 gap-4 py-5 items-center hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-xl">
                              
                              {/* EQUITY */}
                              <div className="col-span-3 flex items-center gap-3">
                                 <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }}></div>
                                 <div className="flex flex-col">
-                                   <span className="text-sm font-extrabold text-white tracking-wide font-sora cursor-pointer hover:underline"
+                                   <span className="text-sm font-extrabold text-white tracking-wide font-sora cursor-pointer hover:text-[#CFA343] transition-colors"
                                          onClick={() => setSelectedTicker(h.ticker)}>
                                      {h.ticker}
                                    </span>
-                                   <span className="text-xs text-[#00B8FF] opacity-80 truncate" style={{ color }}>{h.stock.name}</span>
+                                   <span className="text-xs text-white/50 truncate">{h.stock.name}</span>
                                 </div>
                              </div>
                              
                              {/* CURRENT PRICE */}
                              <div className="col-span-2 flex flex-col items-center">
                                 <span className="text-sm font-extrabold text-white font-sora">₦{h.stock.price.toLocaleString('en-NG')}</span>
-                                <span className="text-[10px] text-white/40 font-bold mt-0.5">N{(h.shares * h.stock.price).toLocaleString('en-NG')}</span>
+                                <span className="text-[10px] text-white/40 font-bold mt-0.5">₦{(h.shares * h.stock.price).toLocaleString('en-NG')}</span>
                              </div>
                              
                              {/* HOLDINGS */}
@@ -484,7 +488,7 @@ export default function PortfolioTracker() {
                              {/* COST PRICE */}
                              <div className="col-span-2 flex flex-col items-center">
                                 <span className="text-sm font-extrabold text-white font-sora">₦{h.buyPrice.toLocaleString()}</span>
-                                <span className="text-[10px] text-white/40 font-bold mt-0.5">N{h.costBasis.toLocaleString('en-NG')}</span>
+                                <span className="text-[10px] text-white/40 font-bold mt-0.5">₦{h.costBasis.toLocaleString('en-NG')}</span>
                              </div>
                              
                              {/* CURRENT VAL */}
@@ -495,14 +499,14 @@ export default function PortfolioTracker() {
                              {/* P&L / DEL */}
                              <div className="col-span-2 flex items-center justify-end gap-3 pr-2">
                                 <div className="flex flex-col items-end">
-                                   <span className={`text-sm font-extrabold font-sora ${isPos ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+                                   <span className={`text-sm font-extrabold font-sora ${isPos ? 'text-[#10B981]' : 'text-[#FF4D4D]'}`}>
                                       {isPos ? '+' : ''}₦{h.pnl.toLocaleString('en-NG')}
                                    </span>
-                                   <span className={`text-[10px] font-bold mt-0.5 ${isPos ? 'text-[#00D395]' : 'text-[#FF4D4D]'}`}>
+                                   <span className={`text-[10px] font-bold mt-0.5 ${isPos ? 'text-[#10B981]' : 'text-[#FF4D4D]'}`}>
                                       {isPos ? '+' : ''}{h.pnlPercent.toFixed(1)}%
                                    </span>
                                 </div>
-                                <button onClick={() => removeHolding(h.ticker)} className="p-1.5 rounded bg-white/5 hover:bg-[#FF4D4D]/20 text-white/30 hover:text-[#FF4D4D] transition-colors">
+                                <button onClick={() => removeHolding(h.ticker)} className="p-1.5 rounded-lg bg-white/5 hover:bg-[#FF4D4D]/20 text-white/40 hover:text-[#FF4D4D] transition-colors focus:outline-none">
                                    <Trash2 className="h-3.5 w-3.5" />
                                 </button>
                              </div>
@@ -517,9 +521,9 @@ export default function PortfolioTracker() {
       </div>
       
       {/* ── BOTTOM SECTION 2: Portfolio News and Analysis ── */}
-      <div className="rounded-[14px] border border-white/5 p-6 mt-6" style={cardStyle}>
+      <div className="rounded-2xl p-6 mt-6" style={cardStyle}>
          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xs font-extrabold text-white/60 uppercase tracking-widest">
+            <h3 className="text-xs font-bold text-white/60 uppercase tracking-widest font-sora">
               Portfolio News and Analysis
             </h3>
          </div>
@@ -527,14 +531,14 @@ export default function PortfolioTracker() {
             {news
               .filter(n => n.affectedStocks?.some(ticker => portfolio.some(h => h.ticker === ticker)))
               .map((item) => (
-               <div key={item.id} className="py-5 flex gap-4 hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-lg cursor-pointer">
+               <div key={item.id} className="py-5 flex gap-4 hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-xl cursor-pointer group">
                   {item.imageUrl && (
-                     <div className="w-[120px] h-[80px] rounded-lg overflow-hidden flex-shrink-0 border border-white/10 hidden sm:block">
+                     <div className="w-[120px] h-[80px] rounded-xl overflow-hidden flex-shrink-0 border border-white/10 hidden sm:block">
                         <img src={item.imageUrl} alt={item.originalHeadline} className="w-full h-full object-cover" />
                      </div>
                   )}
                   <div className="flex flex-col flex-1 justify-center">
-                     <h4 className="text-sm font-bold text-[#00B8FF] hover:underline mb-1">
+                     <h4 className="text-sm font-bold text-white font-sora group-hover:text-[#CFA343] transition-colors mb-1">
                         {item.originalHeadline}
                      </h4>
                      <p className="text-[10px] text-white/40 mb-2">
@@ -548,7 +552,7 @@ export default function PortfolioTracker() {
             ))}
             {news.filter(n => n.affectedStocks?.some(ticker => portfolio.some(h => h.ticker === ticker))).length === 0 && (
                <div className="py-8 text-center">
-                  <p className="text-sm font-bold text-white mb-1">No News Available</p>
+                  <p className="text-sm font-bold text-white font-sora mb-1">No News Available</p>
                   <p className="text-xs text-white/40">Add assets to your portfolio to track related news and analysis.</p>
                </div>
             )}
@@ -556,10 +560,9 @@ export default function PortfolioTracker() {
       </div>
       
       {/* ── Modals (Add Holding, DatePicker) ── */}
-      {/* ... Add Modal ... */}
       {isAddOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-2xl p-6 space-y-4 border border-white/10 shadow-2xl" style={cardStyle}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-2xl p-6 space-y-4 shadow-2xl" style={{ background: 'linear-gradient(145deg, #181426 0%, #0E0B14 100%)', border: '1px solid rgba(207, 163, 67, 0.25)' }}>
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <h3 className="text-sm font-extrabold text-[#CFA343] font-sora flex items-center gap-2">
                 <Briefcase className="h-4 w-4" /> Record Buy Transaction
@@ -569,21 +572,21 @@ export default function PortfolioTracker() {
             <form onSubmit={handleAdd} className="space-y-4">
               <div>
                 <label className="block text-[10px] text-white/50 font-bold uppercase mb-1.5">Select NGX Asset</label>
-                <select value={tickerSelect} onChange={e => setTickerSelect(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-white bg-[#0E0D25] border border-white/10">
-                  {stocks.map(s => <option key={s.ticker} value={s.ticker}>{s.ticker} — {s.name} (₦{s.price.toFixed(2)})</option>)}
+                <select value={tickerSelect} onChange={e => setTickerSelect(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#CFA343] text-white bg-[#141020] border border-white/10">
+                  {stocks.map(s => <option key={s.ticker} value={s.ticker} className="bg-[#141020] text-white">{s.ticker} — {s.name} (₦{s.price.toFixed(2)})</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-[10px] text-white/50 font-bold uppercase mb-1.5">Shares Purchased</label>
-                <input type="number" required placeholder="e.g. 5,000" value={sharesInput} onChange={e => setSharesInput(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-white bg-[#0E0D25] border border-white/10" />
+                <input type="number" required placeholder="e.g. 5,000" value={sharesInput} onChange={e => setSharesInput(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#CFA343] text-white bg-[#141020] border border-white/10" />
               </div>
               <div>
                 <label className="block text-[10px] text-white/50 font-bold uppercase mb-1.5">Buy Price per Share (₦)</label>
-                <input type="number" step="0.01" placeholder="Leave empty for current price" value={priceInput} onChange={e => setPriceInput(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none text-white bg-[#0E0D25] border border-white/10" />
+                <input type="number" step="0.01" placeholder="Leave empty for current price" value={priceInput} onChange={e => setPriceInput(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#CFA343] text-white bg-[#141020] border border-white/10" />
               </div>
               <div className="pt-2 flex justify-end gap-2.5">
-                <button type="button" onClick={() => setIsAddOpen(false)} className="px-4 py-2 rounded-xl text-xs font-bold text-white/60 hover:text-white border border-white/10">Cancel</button>
-                <button type="submit" className="px-5 py-2 rounded-xl text-xs font-bold text-black bg-[#CFA343] hover:bg-[#FFD166] transition-colors">Add Transaction</button>
+                <button type="button" onClick={() => setIsAddOpen(false)} className="px-4 py-2 rounded-xl text-xs font-bold text-white/60 hover:text-white border border-white/10 hover:bg-white/5">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl text-xs font-bold font-sora text-[#14131A] bg-[#CFA343] hover:bg-[#B58C35] transition-colors shadow-lg shadow-[#CFA343]/15">Add Transaction</button>
               </div>
             </form>
           </div>
@@ -592,15 +595,14 @@ export default function PortfolioTracker() {
       
       {/* ... Date Picker Modal ... */}
       {isDatePickerOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-           {/* Re-use exact design from MarketStatus, simplified */}
-           <div className="border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4" style={cardStyle}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+           <div className="rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4" style={{ background: 'linear-gradient(145deg, #181426 0%, #0E0B14 100%)', border: '1px solid rgba(207, 163, 67, 0.25)' }}>
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                  <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-[#CFA343]" /><h3 className="text-sm font-bold text-white font-sora">Select Date Range</h3></div>
                  <button onClick={() => setIsDatePickerOpen(false)} className="text-white/40 hover:text-white p-1"><X className="h-4 w-4" /></button>
               </div>
               <div className="text-xs text-white/50">Date picker feature disabled in demo. Select a quick timeframe.</div>
-              <div className="flex justify-end pt-2"><button onClick={() => setIsDatePickerOpen(false)} className="px-4 py-2 rounded-xl text-xs font-bold text-black bg-[#CFA343] hover:bg-[#FFD166]">Close</button></div>
+              <div className="flex justify-end pt-2"><button onClick={() => setIsDatePickerOpen(false)} className="px-4 py-2 rounded-xl text-xs font-bold font-sora text-[#14131A] bg-[#CFA343] hover:bg-[#B58C35]">Close</button></div>
            </div>
         </div>
       )}

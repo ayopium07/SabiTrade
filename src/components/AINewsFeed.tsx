@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info, Calendar, PenTool } from 'lucide-react';
-import { mockNews, NewsItem } from '@/lib/mockData';
+import { NewsItem } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
 
 const sentimentConfig = {

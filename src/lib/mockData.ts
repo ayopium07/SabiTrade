@@ -48,15 +48,41 @@ export interface NewsItem {
   commentsList?: { id: string; user: string; avatar: string; text: string; timeAgo: string }[];
 }
 
-export const ngxIndexData = {
-  allShareIndex: 98425.10,
-  change: +1.24,
-  changeAmount: +1205.80,
-  status: 'Open' as 'Open' | 'Closed',
+export interface IndexData {
+  allShareIndex: number;
+  change: number;
+  changeAmount: number;
+  status: 'Open' | 'Closed';
+  lastUpdated: string;
+  marketCap: string;
+  volume: string;
+  deals: string;
+  open?: number;
+  high?: number;
+  low?: number;
+  candles?: {
+    date: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    adjusted_close?: number;
+    volume: number;
+  }[];
+}
+
+export const ngxIndexData: IndexData = {
+  allShareIndex: 243416.59,
+  change: -0.23,
+  changeAmount: -550.50,
+  status: 'Closed' as 'Open' | 'Closed',
   lastUpdated: 'Just now',
-  marketCap: '₦58.7T',
-  volume: '₦4.2B',
+  marketCap: '₦145.2T',
+  volume: '588.1M shares',
   deals: '14,382',
+  open: 243967.09,
+  high: 243974.82,
+  low: 243296.35,
 };
 
 // Generates 30 days of stock chart data with volatility

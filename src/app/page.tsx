@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
-import { ngxStocks, mockNews, Stock } from '@/lib/mockData';
+import { Stock } from '@/lib/mockData';
 
 import MarketStatus from '@/components/MarketStatus';
 import TopMovers from '@/components/TopMovers';

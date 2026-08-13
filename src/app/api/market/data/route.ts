@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { ngxStocks, ngxIndexData, Stock } from '@/lib/mockData';
+import { ngxStocks, ngxIndexData, Stock, IndexData } from '@/lib/mockData';
+import { fetchEodhdAllShareIndex, getEodhdApiKey } from '@/lib/eodhd';
 
 export const dynamic = 'force-dynamic';
 
 // Cache market data in memory for 10 minutes (600,000 ms)
-let cachedData: { indexData: typeof ngxIndexData; stocks: Stock[] } | null = null;
+let cachedData: { indexData: IndexData; stocks: Stock[] } | null = null;
 let lastFetchTime = 0;
 const CACHE_DURATION = 600000; // 10 minutes
 
@@ -20,7 +21,21 @@ export async function GET() {
   }
 
   try {
-    // 1. Fetch sectors from ngx-listed-companies
+    // 1. Fetch live All-Share Index (ASI) from EODHD
+    let indexData: IndexData = { ...ngxIndexData };
+    try {
+      if (getEodhdApiKey()) {
+        const eodhdAsi = await fetchEodhdAllShareIndex();
+        indexData = {
+          ...indexData,
+          ...eodhdAsi,
+        };
+      }
+    } catch (eodhdErr: any) {
+      console.warn('EODHD ASI fetch error, falling back to scraping/mock:', eodhdErr.message || eodhdErr);
+    }
+
+    // 2. Fetch sectors from ngx-listed-companies
     const dirRes = await fetch('https://ngxpulse.ng/ngx-listed-companies', {
       headers: { 
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' 
@@ -43,7 +58,7 @@ export async function GET() {
       }
     }
 
-    // 2. Fetch prices & ASI from home page
+    // 3. Fetch prices from home page
     const homeRes = await fetch('https://ngxpulse.ng/', {
       headers: { 
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' 
@@ -57,44 +72,44 @@ export async function GET() {
 
     const homeHtml = await homeRes.text();
 
-    // 3. Parse ASI summary
-    let indexData = { ...ngxIndexData };
-    const summaryMatch = homeHtml.match(/The Nigerian Exchange ([\s\S]*?) As of ([\s\S]*?)\./);
-    if (summaryMatch) {
-      const text = summaryMatch[1];
-      const asiMatch = text.match(/All-Share Index (?:is\s+)?(?:up|down|shed|gained|rose|fell|declined)\s+([\d,.-]+)\s+points\s+\(([\d,.+-]+)%\)\s+(?:to close\s+)?at\s+([\d,.-]+)/i);
-      const capMatch = text.match(/Market capitalisation (?:is\s+)?(?:up|down|fell|rose|declined)(?:\s+by)? ₦([\d,.-]+)\s+(trillion|billion)\s+(?:to|at)\s+₦([\d,.-]+)\s+(trillion|billion)/i);
-      const volMatch = text.match(/total volume ([\d,.-]+\s*(?:m|b|k)?\s*shares)/i);
-      const valMatch = text.match(/value traded ₦([\d,.-]+)\s*(billion|trillion|million|m|b|t)/i);
-      const dealsMatch = text.match(/([\d,.-]+)\s*deals/i);
+    // If EODHD ASI was not available, parse ASI summary from scraped HTML
+    if (!indexData.candles || indexData.candles.length === 0) {
+      const summaryMatch = homeHtml.match(/The Nigerian Exchange ([\s\S]*?) As of ([\s\S]*?)\./);
+      if (summaryMatch) {
+        const text = summaryMatch[1];
+        const asiMatch = text.match(/All-Share Index (?:is\s+)?(?:up|down|shed|gained|rose|fell|declined)\s+([\d,.-]+)\s+points\s+\(([\d,.+-]+)%\)\s+(?:to close\s+)?at\s+([\d,.-]+)/i);
+        const capMatch = text.match(/Market capitalisation (?:is\s+)?(?:up|down|fell|rose|declined)(?:\s+by)? ₦([\d,.-]+)\s+(trillion|billion)\s+(?:to|at)\s+₦([\d,.-]+)\s+(trillion|billion)/i);
+        const volMatch = text.match(/total volume ([\d,.-]+\s*(?:m|b|k)?\s*shares)/i);
+        const valMatch = text.match(/value traded ₦([\d,.-]+)\s*(billion|trillion|million|m|b|t)/i);
+        const dealsMatch = text.match(/([\d,.-]+)\s*deals/i);
 
-      if (asiMatch) {
-        indexData.change = parseFloat(asiMatch[2]);
-        indexData.changeAmount = parseFloat(asiMatch[1].replace(/,/g, ''));
-        indexData.allShareIndex = parseFloat(asiMatch[3].replace(/,/g, ''));
-        
-        const isDown = text.match(/(?:declined|shed|fell|down)/i);
-        if (isDown) {
-          indexData.change = -Math.abs(indexData.change);
-          indexData.changeAmount = -Math.abs(indexData.changeAmount);
+        if (asiMatch) {
+          indexData.change = parseFloat(asiMatch[2]);
+          indexData.changeAmount = parseFloat(asiMatch[1].replace(/,/g, ''));
+          indexData.allShareIndex = parseFloat(asiMatch[3].replace(/,/g, ''));
+          
+          const isDown = text.match(/(?:declined|shed|fell|down)/i);
+          if (isDown) {
+            indexData.change = -Math.abs(indexData.change);
+            indexData.changeAmount = -Math.abs(indexData.changeAmount);
+          }
         }
-      }
 
-      // Format custom stats if present
-      if (capMatch) {
-        const unit = capMatch[4].toLowerCase().startsWith('t') ? 'T' : 'B';
-        indexData.marketCap = `₦${capMatch[3]}${unit}`;
-      }
-      if (valMatch) {
-        const num = valMatch[1];
-        const unitStr = valMatch[2].toLowerCase();
-        let shortUnit = 'B';
-        if (unitStr.startsWith('t')) shortUnit = 'T';
-        else if (unitStr.startsWith('m')) shortUnit = 'M';
-        indexData.volume = `₦${num}${shortUnit}`;
-      }
-      if (dealsMatch) {
-        indexData.deals = dealsMatch[1];
+        if (capMatch) {
+          const unit = capMatch[4].toLowerCase().startsWith('t') ? 'T' : 'B';
+          indexData.marketCap = `₦${capMatch[3]}${unit}`;
+        }
+        if (valMatch) {
+          const num = valMatch[1];
+          const unitStr = valMatch[2].toLowerCase();
+          let shortUnit = 'B';
+          if (unitStr.startsWith('t')) shortUnit = 'T';
+          else if (unitStr.startsWith('m')) shortUnit = 'M';
+          indexData.volume = `₦${num}${shortUnit}`;
+        }
+        if (dealsMatch) {
+          indexData.deals = dealsMatch[1];
+        }
       }
     }
 
