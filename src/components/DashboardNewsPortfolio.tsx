@@ -18,9 +18,14 @@ export default function DashboardNewsPortfolio() {
     setView('news-detail');
   };
 
-  // Split news for the two columns
-  const analysisNews = news.slice(0, 4);
-  const marketNews = news.slice(4, 8);
+  // Split news for the two columns (8 items each)
+  const analysisNews = news.slice(0, 8);
+  let rawMarketNews = news.slice(8, 16);
+  if (rawMarketNews.length < 8 && news.length > 0) {
+    const needed = 8 - rawMarketNews.length;
+    rawMarketNews = [...rawMarketNews, ...news.slice(0, needed)];
+  }
+  const marketNews = rawMarketNews;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">

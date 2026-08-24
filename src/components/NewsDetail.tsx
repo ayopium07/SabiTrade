@@ -63,7 +63,7 @@ export default function NewsDetail() {
   const Icon = cfg.icon;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20 animate-in fade-in duration-300">
+    <div className="w-full space-y-6 pb-20 animate-in fade-in duration-300">
       {/* Header / Nav */}
       <div className="flex items-center justify-between sticky top-0 z-10 bg-[#0E0D25]/90 backdrop-blur-md py-4 border-b border-border/30">
         <button 

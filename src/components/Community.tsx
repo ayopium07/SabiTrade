@@ -122,12 +122,12 @@ export default function Community() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-10 text-left">
+    <div className="space-y-6 w-full pb-10 text-left">
       {/* Top Banner */}
       <div className="relative rounded-[2rem] p-8 sm:p-10 overflow-hidden border border-border/50 bg-bg-base/40 backdrop-blur-xl">
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-primary/10 rounded-full blur-[80px] pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-[#B275FF]/10 rounded-full blur-[80px] pointer-events-none" />
-        <div className="relative z-10 max-w-2xl space-y-3">
+        <div className="relative z-10 w-full space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-primary/20 bg-brand-primary/5 backdrop-blur-md">
             <Users className="h-3.5 w-3.5 text-brand-primary" />
             <span className="text-[10px] font-bold tracking-widest text-brand-primary uppercase">Trading Community</span>

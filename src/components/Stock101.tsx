@@ -138,7 +138,7 @@ export default function Stock101() {
   const progressPercentage = Math.round((readLessons.length / lessons.length) * 100);
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-10 text-left">
+    <div className="space-y-6 w-full pb-10 text-left">
       {/* Hero Header */}
       <div className="relative rounded-3xl p-6 sm:p-8 overflow-hidden border border-brand-primary/15"
         style={{ background: 'linear-gradient(135deg, rgba(14,13,37,0.9), rgba(7,6,21,0.95))' }}>
@@ -154,7 +154,7 @@ export default function Stock101() {
           <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary font-sora">
             Stock 101: Learn Investing
           </h1>
-          <p className="text-xs text-text-secondary leading-relaxed max-w-xl font-medium font-dm-sans">
+          <p className="text-xs text-text-secondary leading-relaxed max-w-3xl font-medium font-dm-sans">
             Say goodbye to scary charts and Wall Street grammar. Learn how the Nigerian Exchange (NGX) works using simple, local street market analogies.
           </p>
         </div>

@@ -384,7 +384,7 @@ export default function PortfolioTracker() {
            </div>
            
            {/* Card 3: Donut */}
-           <div className="rounded-2xl p-6 flex-1 flex items-center gap-4" style={cardStyle}>
+           <div className="rounded-2xl p-6 flex-1 flex items-center justify-center" style={cardStyle}>
               <div className="relative w-[130px] h-[130px] flex-shrink-0">
                  <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
                    <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="22" />
@@ -397,20 +397,6 @@ export default function PortfolioTracker() {
                     <span className="text-xl font-extrabold text-[#CFA343] font-sora leading-tight">{portfolio.length}</span>
                     <span className="text-[9px] text-white/40">Equities</span>
                  </div>
-              </div>
-              <div className="flex-1 flex flex-col justify-center gap-3">
-                 {donutSlices.slice(0,3).map((slice) => (
-                    <div key={slice.ticker} className="flex items-start gap-2">
-                       <div className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0" style={{ backgroundColor: slice.color }}></div>
-                       <div className="flex flex-col">
-                          <span className="text-[11px] font-bold text-white font-sora tracking-wide">{slice.ticker}</span>
-                          <span className="text-[10px] text-white/50">{(slice.percentage * 100).toFixed(0)}%</span>
-                       </div>
-                    </div>
-                 ))}
-                 {donutSlices.length > 3 && (
-                    <div className="text-[10px] text-white/40 italic ml-5">+ {donutSlices.length - 3} more</div>
-                 )}
               </div>
            </div>
 
@@ -436,9 +422,9 @@ export default function PortfolioTracker() {
                <div className="grid grid-cols-12 gap-4 pb-4 border-b border-white/5 text-[9px] font-bold text-white/40 uppercase tracking-widest text-left">
                   <div className="col-span-3">Equity</div>
                   <div className="col-span-2 text-center">Current Price</div>
-                  <div className="col-span-2 text-center">Holdings</div>
-                  <div className="col-span-2 text-center">Cost Price</div>
-                  <div className="col-span-1 text-center">Current Val</div>
+                  <div className="col-span-1.5 text-center">Holdings</div>
+                  <div className="col-span-1.5 text-center">Cost Price</div>
+                  <div className="col-span-2 text-center">Current Val / Share</div>
                   <div className="col-span-2 text-right pr-4">P&L / DEL</div>
                </div>
                
@@ -457,6 +443,7 @@ export default function PortfolioTracker() {
                         const isPos = h.pnl >= 0;
                         const colorIndex = sortedHoldings.findIndex(sh => sh.ticker === h.ticker);
                         const color = DONUT_COLORS[colorIndex % DONUT_COLORS.length];
+                        const portfolioPct = totalCurrentValue > 0 ? (h.currentValue / totalCurrentValue) * 100 : 0;
                         
                         return (
                           <div key={h.ticker} className="grid grid-cols-12 gap-4 py-5 items-center hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-xl">
@@ -480,20 +467,23 @@ export default function PortfolioTracker() {
                              </div>
                              
                              {/* HOLDINGS */}
-                             <div className="col-span-2 flex flex-col items-center">
+                             <div className="col-span-1.5 flex flex-col items-center">
                                 <span className="text-sm font-extrabold text-white font-sora">{h.shares.toLocaleString()}</span>
                                 <span className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5 font-bold">Shares</span>
                              </div>
                              
                              {/* COST PRICE */}
-                             <div className="col-span-2 flex flex-col items-center">
+                             <div className="col-span-1.5 flex flex-col items-center">
                                 <span className="text-sm font-extrabold text-white font-sora">₦{h.buyPrice.toLocaleString()}</span>
                                 <span className="text-[10px] text-white/40 font-bold mt-0.5">₦{h.costBasis.toLocaleString('en-NG')}</span>
                              </div>
                              
-                             {/* CURRENT VAL */}
-                             <div className="col-span-1 flex justify-center items-center">
+                             {/* CURRENT VAL & SHARE */}
+                             <div className="col-span-2 flex flex-col items-center">
                                 <span className="text-sm font-extrabold text-white font-sora">₦{h.currentValue.toLocaleString('en-NG')}</span>
+                                <span className="text-[10px] font-extrabold text-[#CFA343] mt-0.5">
+                                   {portfolioPct.toFixed(1)}% Share
+                                </span>
                              </div>
                              
                              {/* P&L / DEL */}

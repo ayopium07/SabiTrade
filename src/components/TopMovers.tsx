@@ -10,18 +10,18 @@ export default function TopMovers() {
   const getMovers = () => {
     switch (activeTab) {
       case 'gainers':
-        return [...stocks].sort((a, b) => b.change - a.change).slice(0, 4);
+        return [...stocks].sort((a, b) => b.change - a.change).slice(0, 5);
       case 'losers':
-        return [...stocks].sort((a, b) => a.change - b.change).slice(0, 4);
+        return [...stocks].sort((a, b) => a.change - b.change).slice(0, 5);
       case 'volume':
-        return [...stocks].sort((a, b) => b.volumeRaw - a.volumeRaw).slice(0, 4);
+        return [...stocks].sort((a, b) => b.volumeRaw - a.volumeRaw).slice(0, 5);
       case 'value':
-        return [...stocks].sort((a, b) => (b.price * b.volumeRaw) - (a.price * a.volumeRaw)).slice(0, 4);
+        return [...stocks].sort((a, b) => (b.price * b.volumeRaw) - (a.price * a.volumeRaw)).slice(0, 5);
       default:
-        return [...stocks].sort((a, b) => b.change - a.change).slice(0, 4);
+        return [...stocks].sort((a, b) => b.change - a.change).slice(0, 5);
     }
   };
-  
+
   const movers = getMovers();
 
   const getCryptoLogo = (ticker: string) => {
@@ -76,44 +76,40 @@ export default function TopMovers() {
         <div className="flex overflow-x-auto hide-scrollbar border border-border/40 p-1 rounded-2xl gap-1 flex-shrink-0 w-full md:w-auto">
           <button
             onClick={() => setActiveTab('gainers')}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${
-              activeTab === 'gainers'
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'gainers'
                 ? 'bg-[#10B981] text-[#121212]'
                 : 'text-text-secondary hover:text-text-primary'
-            }`}
+              }`}
           >
             <TrendingUp className="h-3 w-3" />
             Gainers
           </button>
           <button
             onClick={() => setActiveTab('losers')}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${
-              activeTab === 'losers'
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'losers'
                 ? 'bg-[#10B981] text-[#121212]'
                 : 'text-text-secondary hover:text-text-primary'
-            }`}
+              }`}
           >
             <TrendingDown className="h-3 w-3" />
             Losers
           </button>
           <button
             onClick={() => setActiveTab('volume')}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${
-              activeTab === 'volume'
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'volume'
                 ? 'bg-[#10B981] text-[#121212]'
                 : 'text-text-secondary hover:text-text-primary'
-            }`}
+              }`}
           >
             <BarChart2 className="h-3 w-3" />
             Volume
           </button>
           <button
             onClick={() => setActiveTab('value')}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${
-              activeTab === 'value'
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'value'
                 ? 'bg-[#10B981] text-[#121212]'
                 : 'text-text-secondary hover:text-text-primary'
-            }`}
+              }`}
           >
             <Activity className="h-3 w-3" />
             Value
@@ -122,7 +118,7 @@ export default function TopMovers() {
       </div>
 
       {/* ── Cards Grid (Horizontal scroll on mobile, Grid on desktop) ─────────────────────────── */}
-      <div className="flex overflow-x-auto pb-4 sm:pb-0 hide-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 snap-x snap-mandatory">
+      <div className="flex overflow-x-auto pb-4 sm:pb-0 hide-scrollbar sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 snap-x snap-mandatory">
         {movers.map((stock) => {
           const isPos = stock.change > 0;
           const color = isPos ? '#10B981' : '#FF4D4D';
@@ -173,9 +169,8 @@ export default function TopMovers() {
                   <span className="text-[10px] font-extrabold font-sora text-white">
                     ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 3 })}k
                   </span>
-                  <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                    isPos ? 'bg-[#10B981]/20 text-[#10B981]' : 'bg-[#FF4D4D]/20 text-[#FF4D4D]'
-                  }`}>
+                  <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${isPos ? 'bg-[#10B981]/20 text-[#10B981]' : 'bg-[#FF4D4D]/20 text-[#FF4D4D]'
+                    }`}>
                     <TrendingUp className={`h-3 w-3 ${isPos ? '' : 'rotate-180'}`} />
                     {isPos ? '+' : ''}{stock.change.toFixed(1)}%
                   </span>

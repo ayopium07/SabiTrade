@@ -67,28 +67,10 @@ const ngxTickerData = [
 ];
 
 function NGXTickerCarousel() {
-  const [offset, setOffset] = React.useState(0);
-  const [visible, setVisible] = React.useState(4);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      if (w < 640) setVisible(1);
-      else if (w < 768) setVisible(2);
-      else if (w < 1024) setVisible(3);
-      else setVisible(4);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const max = Math.max(0, ngxTickerData.length - visible);
-  const cards = ngxTickerData.slice(offset, offset + visible);
+  const marqueeItems = [...ngxTickerData, ...ngxTickerData, ...ngxTickerData];
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-4 px-1 sm:px-0">
-
       {/* ── Section heading ── */}
       <div>
         <h2 className="text-xl sm:text-2xl font-bold text-white font-sora leading-tight">
@@ -99,40 +81,20 @@ function NGXTickerCarousel() {
         </p>
       </div>
 
-      {/* ── Carousel wrapper with internal nav arrows ── */}
-      <div className="relative">
+      {/* ── Marquee wrapper ── */}
+      <div className="relative w-full overflow-hidden py-2">
+        {/* Edge fade masks */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-r from-[#041226] via-[#041226]/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-[#041226] via-[#041226]/80 to-transparent z-10" />
 
-        {/* Left arrow */}
-        <button
-          onClick={() => setOffset(o => Math.max(0, o - 1))}
-          disabled={offset === 0}
-          className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
-          style={{ background: 'rgba(8,29,56,0.85)' }}
-          aria-label="Previous NGX Stocks"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-        </button>
-
-        {/* Right arrow */}
-        <button
-          onClick={() => setOffset(o => Math.min(max, o + 1))}
-          disabled={offset >= max}
-          className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
-          style={{ background: 'rgba(8,29,56,0.85)' }}
-          aria-label="Next NGX Stocks"
-        >
-          <ArrowRight className="h-3.5 w-3.5" />
-        </button>
-
-        {/* Card row */}
-        <div className="w-full flex gap-3 overflow-hidden px-1 py-1">
-
-          {cards.map((s) => (
+        {/* Marquee track */}
+        <div className="card-marquee-track flex gap-4">
+          {marqueeItems.map((s, idx) => (
             <div
-              key={s.id}
-              className="relative flex-1 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl min-w-[240px] sm:min-w-0"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.15s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.055)'}
+              key={`ngx-${s.id}-${idx}`}
+              className="relative w-[250px] sm:w-[260px] flex-shrink-0 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl transition-all duration-200 hover:-translate-y-1 shadow-lg group"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
+              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.06)'}
               onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
             >
               {/* Row 1: logo circle + name + badge + ↗ */}
@@ -151,10 +113,10 @@ function NGXTickerCarousel() {
                   {s.badge}
                 </span>
                 <div
-                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
+                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center group-hover:bg-white/20 transition-colors"
                   style={{ background: 'rgba(255,255,255,0.08)' }}
                 >
-                  <ArrowUpRight className="h-3 w-3 text-white/50" />
+                  <ArrowUpRight className="h-3 w-3 text-white/50 group-hover:text-white" />
                 </div>
               </div>
 
@@ -180,7 +142,9 @@ function NGXTickerCarousel() {
               </div>
 
               {/* Row 4: Change % */}
-              <p className="text-[12px] font-semibold text-white/75">{s.change}%</p>
+              <p className="text-[12px] font-semibold" style={{ color: s.up ? '#10B981' : '#FF4D4D' }}>
+                {s.change}
+              </p>
             </div>
           ))}
         </div>
@@ -200,24 +164,7 @@ const usStockData = [
 ];
 
 function USMarketsCarousel() {
-  const [offset, setOffset] = React.useState(0);
-  const [visible, setVisible] = React.useState(4);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      if (w < 640) setVisible(1);
-      else if (w < 768) setVisible(2);
-      else if (w < 1024) setVisible(3);
-      else setVisible(4);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const max = Math.max(0, usStockData.length - visible);
-  const cards = usStockData.slice(offset, offset + visible);
+  const marqueeItems = [...usStockData, ...usStockData, ...usStockData];
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-4 px-1 sm:px-0">
@@ -226,39 +173,40 @@ function USMarketsCarousel() {
         <p className="text-[12px] font-medium mt-0.5" style={{ color: '#CFA343' }}>8,000+ equities &middot; New York</p>
       </div>
 
-      <div className="relative">
-        <button onClick={() => setOffset(o => Math.max(0, o - 1))} disabled={offset === 0}
-          className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
-          style={{ background: 'rgba(8,29,56,0.85)' }}
-          aria-label="Previous US Stocks">
-          <ArrowLeft className="h-3.5 w-3.5" />
-        </button>
-        <button onClick={() => setOffset(o => Math.min(max, o + 1))} disabled={offset >= max}
-          className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all disabled:opacity-20 focus:outline-none backdrop-blur-md shadow-lg"
-          style={{ background: 'rgba(8,29,56,0.85)' }}
-          aria-label="Next US Stocks">
-          <ArrowRight className="h-3.5 w-3.5" />
-        </button>
+      <div className="relative w-full overflow-hidden py-2">
+        {/* Edge fade masks */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-r from-[#041226] via-[#041226]/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-[#041226] via-[#041226]/80 to-transparent z-10" />
 
-        <div className="w-full flex gap-3 overflow-hidden px-1 py-1">
-          {cards.map((s) => (
-            <div key={s.id}
-              className="flex-1 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 rounded-xl cursor-pointer min-w-[240px] sm:min-w-0"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', transition: 'background 0.15s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.055)'}
+        {/* Marquee track */}
+        <div className="card-marquee-track-reverse flex gap-4">
+          {marqueeItems.map((s, idx) => (
+            <div
+              key={`us-${s.id}-${idx}`}
+              className="relative w-[250px] sm:w-[260px] flex-shrink-0 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl transition-all duration-200 hover:-translate-y-1 shadow-lg group"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.06)'}
               onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
             >
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[9px] font-black"
-                  style={{ background: s.bg, boxShadow: `0 0 12px ${s.bg}55` }}>
+                <div
+                  className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[9px] font-black"
+                  style={{ background: s.bg, boxShadow: `0 0 12px ${s.bg}55` }}
+                >
                   {s.id.slice(0, 2)}
                 </div>
                 <span className="text-[12px] font-extrabold text-white font-sora flex-1 truncate">{s.name}</span>
-                <span className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
-                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.35)' }}>{s.badge}</span>
-                <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}>
-                  <ArrowUpRight className="h-3 w-3 text-white/50" />
+                <span
+                  className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
+                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.35)' }}
+                >
+                  {s.badge}
+                </span>
+                <div
+                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center group-hover:bg-white/20 transition-colors"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                >
+                  <ArrowUpRight className="h-3 w-3 text-white/50 group-hover:text-white" />
                 </div>
               </div>
               <p className="text-[16px] font-extrabold font-sora text-white leading-none">{s.price}</p>
@@ -1024,7 +972,8 @@ export default function Page() {
     };
 
     return (
-      <>
+      <div className="space-y-6">
+
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start relative">
 
           {/* Mobile Menu Toggle */}
@@ -1121,7 +1070,7 @@ export default function Page() {
                               <path fill="#E15132" d="M12 21.6A9.6 9.6 0 1012 2.4a9.6 9.6 0 000 19.2z" />
                               <path fill="#FFF" d="M9 13.5c1.5-1.5 4.5-1.5 6 0l2 2a7 7 0 01-10 0l2-2z" />
                               <circle fill="#000" cx="10" cy="11" r="1.5" />
-                              <circle fill="#000" cx="14" cy="11" r="1.5" />
+                              <circle fill="#000" cx="14" cy="14" r="1.5" />
                               <path fill="#000" d="M11 13.5h2l-1 1.5z" />
                             </svg>
                           </div>
@@ -1187,10 +1136,6 @@ export default function Page() {
             {activeHomeTab === 'report' && (
               <div className="space-y-6 animate-in fade-in duration-300 text-left">
                 <MarketStatus />
-
-
-
-                <TopMovers />
               </div>
             )}
 
@@ -1299,6 +1244,13 @@ export default function Page() {
 
         </div>
 
+        {/* ─── Full-width Top Movers (Positioned UNDER All-Share Index section) ─── */}
+        {activeHomeTab === 'report' && (
+          <div className="w-full animate-in fade-in duration-300">
+            <TopMovers />
+          </div>
+        )}
+
         {activeHomeTab === 'report' && (
           <div className="w-full mt-6 space-y-6 animate-in fade-in duration-300 text-left">
             <AIDailyBrief />
@@ -1307,7 +1259,7 @@ export default function Page() {
             </div>
           </div>
         )}
-      </>
+      </div>
     );
   };
 
@@ -1903,8 +1855,8 @@ export default function Page() {
                           key={item.title}
                           onClick={() => setActiveStep(steps.indexOf(item))}
                           className={`flex-1 rounded-2xl p-5 sm:p-6 cursor-pointer transition-all duration-300 flex flex-col items-start min-w-[220px] sm:min-w-[260px] ${isActive
-                              ? 'bg-[#CFA343]'
-                              : 'bg-[#111116]'
+                            ? 'bg-[#CFA343]'
+                            : 'bg-[#111116]'
                             }`}
                           style={!isActive ? { background: '#111116' } : {}}
                         >
