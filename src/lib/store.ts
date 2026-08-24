@@ -58,8 +58,8 @@ export interface SocialComment {
 
 export interface AppState {
   // Navigation & View Flow
-  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread' | 'news-detail';
-  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread' | 'news-detail';
+  currentView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'screener' | 'public-profile' | 'post-thread' | 'news-detail';
+  previousView: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'about' | 'learn' | 'community' | 'trade' | 'screener' | 'public-profile' | 'post-thread' | 'news-detail';
   selectedTicker: string;
   
   // User Authentication & Onboarding
@@ -98,7 +98,7 @@ export interface AppState {
   selectedPostId: string | null;
 
   // Actions
-  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'public-profile' | 'post-thread' | 'news-detail') => void;
+  setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'screener' | 'public-profile' | 'post-thread' | 'news-detail') => void;
   setSelectedTicker: (ticker: string) => void;
   loginUser: (name: string, email: string) => void;
   signInUser: (name: string, email: string) => void;

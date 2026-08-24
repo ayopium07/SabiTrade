@@ -21,6 +21,7 @@ import {
   Award,
   GraduationCap,
   Users,
+  Filter,
   Search,
   Menu,
   X,
@@ -45,6 +46,7 @@ import AIChatbot from '@/components/AIChatbot';
 import AboutUs from '@/components/AboutUs';
 import Stock101 from '@/components/Stock101';
 import Community from '@/components/Community';
+import Screener from '@/components/Screener';
 import TradePage from '@/components/TradePage';
 import FeatureCards from '@/components/FeatureCards';
 import DashboardNewsPortfolio from '@/components/DashboardNewsPortfolio';
@@ -798,7 +800,8 @@ export default function Page() {
       case 'stock-detail': content = <StockDetail />; break;
       case 'about': content = <AboutUs />; break;
       case 'learn': content = <Stock101 />; break;
-      case 'community': content = <Community />; break;
+      case 'community': content = <Screener />; break;
+      case 'screener': content = <Screener />; break;
       case 'trade': content = <TradePage />; break;
       case 'public-profile': content = <PublicProfile />; break;
       case 'post-thread': content = <ThreadView />; break;
@@ -2110,7 +2113,7 @@ export default function Page() {
     { id: 'news', label: 'News', badge: true },
     { id: 'portfolio', label: 'Portfolio' },
     { id: 'trade', label: 'Trade' },
-    { id: 'community', label: 'Community' },
+    { id: 'screener', label: 'Screener' },
     { id: 'learn', label: 'Learn' },
     { id: 'about', label: 'About Us' },
   ] as const;
@@ -2118,7 +2121,7 @@ export default function Page() {
   // Items hidden inside the "More" dropdown
   const moreNavItems = [
     { id: 'trade', label: 'Trade', icon: TrendingUp },
-    { id: 'community', label: 'Marketplace', icon: Users },
+    { id: 'screener', label: 'Screener', icon: Filter },
     { id: 'learn', label: 'Learn', icon: GraduationCap },
     { id: 'about', label: 'About us', icon: Info },
     { id: 'profile', label: 'Profile', icon: User },
@@ -2135,7 +2138,7 @@ export default function Page() {
   // Drawer items (More panel) — all overflow items
   const mobileNavItems = [
     { id: 'trade' as const, label: 'Trade', icon: TrendingUp },
-    { id: 'community' as const, label: 'Marketplace', icon: Users },
+    { id: 'screener' as const, label: 'Screener', icon: Filter },
     { id: 'learn' as const, label: 'Learn', icon: GraduationCap },
     { id: 'about' as const, label: 'About', icon: Info },
     { id: 'profile' as const, label: 'Profile', icon: User },
