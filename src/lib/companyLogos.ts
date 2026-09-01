@@ -100,40 +100,80 @@ export const COMPANY_LOGOS: Record<string, CompanyLogoInfo> = {
   }
 };
 
+export interface ResolvedLogoInfo {
+  ticker: string;
+  name: string;
+  logoUrl: string;
+}
+
 /**
- * Given a news item (headline, content, affectedStocks), detect matching company logo URL.
+ * Given a news item (headline, content, affectedStocks), detect ALL matching company logos.
+ */
+export function resolveCompanyLogos(
+  affectedStocks?: string[],
+  headline?: string,
+  content?: string
+): ResolvedLogoInfo[] {
+  const matches: ResolvedLogoInfo[] = [];
+  const seenTickers = new Set<string>();
+
+  // 1. Check affectedStocks array first
+  if (affectedStocks && affectedStocks.length > 0) {
+    for (const ticker of affectedStocks) {
+      const cleanTicker = ticker.toUpperCase().trim();
+      if (COMPANY_LOGOS[cleanTicker] && !seenTickers.has(cleanTicker)) {
+        seenTickers.add(cleanTicker);
+        matches.push({
+          ticker: cleanTicker,
+          name: COMPANY_LOGOS[cleanTicker].name,
+          logoUrl: COMPANY_LOGOS[cleanTicker].logoUrl,
+        });
+      }
+    }
+  }
+
+  // 2. Scan headline and content text for all company names or aliases
+  const combinedText = `${headline || ''} ${content || ''}`.toLowerCase();
+
+  for (const [ticker, info] of Object.entries(COMPANY_LOGOS)) {
+    if (seenTickers.has(ticker)) continue;
+
+    let found = false;
+    if (combinedText.includes(ticker.toLowerCase())) {
+      found = true;
+    } else {
+      for (const alias of info.aliases) {
+        if (combinedText.includes(alias)) {
+          found = true;
+          break;
+        }
+      }
+    }
+
+    if (found) {
+      seenTickers.add(ticker);
+      matches.push({
+        ticker,
+        name: info.name,
+        logoUrl: info.logoUrl,
+      });
+    }
+  }
+
+  return matches;
+}
+
+/**
+ * Given a news item (headline, content, affectedStocks), detect matching company logo URL (primary single match).
  */
 export function resolveCompanyLogo(
   affectedStocks?: string[],
   headline?: string,
   content?: string
 ): { logoUrl: string | null; matchedCompany: string | null } {
-  // 1. Check affectedStocks array first
-  if (affectedStocks && affectedStocks.length > 0) {
-    for (const ticker of affectedStocks) {
-      const cleanTicker = ticker.toUpperCase().trim();
-      if (COMPANY_LOGOS[cleanTicker]) {
-        return {
-          logoUrl: COMPANY_LOGOS[cleanTicker].logoUrl,
-          matchedCompany: COMPANY_LOGOS[cleanTicker].name,
-        };
-      }
-    }
+  const logos = resolveCompanyLogos(affectedStocks, headline, content);
+  if (logos.length > 0) {
+    return { logoUrl: logos[0].logoUrl, matchedCompany: logos[0].name };
   }
-
-  // 2. Scan headline and content text for company names or aliases
-  const combinedText = `${headline || ''} ${content || ''}`.toLowerCase();
-
-  for (const [ticker, info] of Object.entries(COMPANY_LOGOS)) {
-    if (combinedText.includes(ticker.toLowerCase())) {
-      return { logoUrl: info.logoUrl, matchedCompany: info.name };
-    }
-    for (const alias of info.aliases) {
-      if (combinedText.includes(alias)) {
-        return { logoUrl: info.logoUrl, matchedCompany: info.name };
-      }
-    }
-  }
-
   return { logoUrl: null, matchedCompany: null };
 }

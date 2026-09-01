@@ -18,12 +18,10 @@ export async function GET(request: NextRequest) {
     let formattedDateQuery = '';
 
     if (targetDate && targetDate.trim() !== '') {
-      // Normalize targetDate to YYYY-MM-DD if in DD/MM/YYYY
       let isoDate = targetDate.trim();
       if (isoDate.includes('/')) {
         const parts = isoDate.split('/');
         if (parts.length === 3) {
-          // DD/MM/YYYY -> YYYY-MM-DD
           isoDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
         }
       }
@@ -43,8 +41,23 @@ export async function GET(request: NextRequest) {
 
     const rawItems: Array<{ title: string; description: string; pubDate: string; source: string; link?: string }> = [];
 
+    const cleanText = (text: string) => {
+      return text
+        .replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#8217;/g, "'")
+        .replace(/&#8216;/g, "'")
+        .replace(/&#8220;/g, '"')
+        .replace(/&#8221;/g, '"')
+        .trim();
+    };
+
     if (formattedDateQuery) {
-      // 1. Target date provided: Query Google News RSS for live historical news matching that date range
+      // 1. Target date provided: Query Google News RSS for live historical stock/market news
       const startDate = new Date(formattedDateQuery);
       const endDate = new Date(startDate);
       endDate.setDate(endDate.getDate() + 2); // 2-day window
@@ -52,7 +65,7 @@ export async function GET(request: NextRequest) {
       const startStr = startDate.toISOString().split('T')[0];
       const endStr = endDate.toISOString().split('T')[0];
 
-      const googleNewsRssUrl = `https://news.google.com/rss/search?q=Nigeria+market+OR+economy+OR+stocks+after:${startStr}+before:${endStr}&hl=en-NG&gl=NG&ceid=NG:en`;
+      const googleNewsRssUrl = `https://news.google.com/rss/search?q=Nigeria+stocks+OR+market+OR+economy+OR+global+markets+after:${startStr}+before:${endStr}&hl=en-NG&gl=NG&ceid=NG:en`;
 
       try {
         const res = await fetch(googleNewsRssUrl, {
@@ -70,34 +83,21 @@ export async function GET(request: NextRequest) {
           let match;
           let count = 0;
 
-          const cleanText = (text: string) => {
-            return text
-              .replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1')
-              .replace(/<[^>]*>/g, '')
-              .replace(/&amp;/g, '&')
-              .replace(/&lt;/g, '<')
-              .replace(/&gt;/g, '>')
-              .replace(/&quot;/g, '"')
-              .replace(/&#8217;/g, "'")
-              .replace(/&#8216;/g, "'")
-              .replace(/&#8220;/g, '"')
-              .replace(/&#8221;/g, '"')
-              .trim();
-          };
-
-          while ((match = itemRegex.exec(xml)) !== null && count < 10) {
+          while ((match = itemRegex.exec(xml)) !== null && count < 12) {
             const itemContent = match[1];
             const titleMatch = itemContent.match(/<title>([\s\S]*?)<\/title>/);
             const descMatch = itemContent.match(/<description>([\s\S]*?)<\/description>/);
             const dateMatch = itemContent.match(/<pubDate>([\s\S]*?)<\/pubDate>/);
             const sourceMatch = itemContent.match(/<source[^>]*>([\s\S]*?)<\/source>/);
+            const linkMatch = itemContent.match(/<link>([\s\S]*?)<\/link>/);
 
             if (titleMatch) {
               rawItems.push({
                 title: cleanText(titleMatch[1]),
                 description: descMatch ? cleanText(descMatch[1]) : '',
                 pubDate: dateMatch ? cleanText(dateMatch[1]) : new Date(formattedDateQuery).toUTCString(),
-                source: sourceMatch ? cleanText(sourceMatch[1]) : 'Financial News'
+                source: sourceMatch ? cleanText(sourceMatch[1]) : 'Financial Press',
+                link: linkMatch ? cleanText(linkMatch[1]) : ''
               });
               count++;
             }
@@ -108,14 +108,15 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 2. Fetch latest live news feeds from Nairametrics, Punch, Premium Times, BusinessDay, and Vanguard
+    // 2. Fetch latest live news feeds from Nairametrics, Punch, Premium Times, BusinessDay, Vanguard, and Global Markets RSS
     if (rawItems.length === 0) {
       const feeds = [
         { url: 'https://nairametrics.com/feed/', source: 'Nairametrics' },
         { url: 'https://punchng.com/category/business/feed/', source: 'Punch Business' },
         { url: 'https://www.premiumtimesng.com/category/business/feed/', source: 'Premium Times' },
         { url: 'https://businessday.ng/feed/', source: 'BusinessDay' },
-        { url: 'https://www.vanguardngr.com/category/business/feed/', source: 'Vanguard Business' }
+        { url: 'https://www.vanguardngr.com/category/business/feed/', source: 'Vanguard Business' },
+        { url: 'https://news.google.com/rss/search?q=Global+stocks+OR+SP500+OR+Federal+Reserve+OR+interest+rates+OR+commodities&hl=en-US&gl=US&ceid=US:en', source: 'Global Markets' }
       ];
 
       const fetchPromises = feeds.map(async (feed) => {
@@ -135,33 +136,20 @@ export async function GET(request: NextRequest) {
             let feedCount = 0;
             const items = [];
 
-            const cleanText = (text: string) => {
-              return text
-                .replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1')
-                .replace(/<[^>]*>/g, '')
-                .replace(/&amp;/g, '&')
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .replace(/&quot;/g, '"')
-                .replace(/&#8217;/g, "'")
-                .replace(/&#8216;/g, "'")
-                .replace(/&#8220;/g, '"')
-                .replace(/&#8221;/g, '"')
-                .trim();
-            };
-
             while ((match = itemRegex.exec(xml)) !== null && feedCount < 3) {
               const itemContent = match[1];
               const titleMatch = itemContent.match(/<title>([\s\S]*?)<\/title>/);
               const descMatch = itemContent.match(/<description>([\s\S]*?)<\/description>/);
               const dateMatch = itemContent.match(/<pubDate>([\s\S]*?)<\/pubDate>/);
+              const linkMatch = itemContent.match(/<link>([\s\S]*?)<\/link>/);
 
               if (titleMatch) {
                 items.push({
                   title: cleanText(titleMatch[1]),
                   description: descMatch ? cleanText(descMatch[1]) : '',
                   pubDate: dateMatch ? cleanText(dateMatch[1]) : new Date().toUTCString(),
-                  source: feed.source
+                  source: feed.source,
+                  link: linkMatch ? cleanText(linkMatch[1]) : ''
                 });
                 feedCount++;
               }
@@ -180,7 +168,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // High quality deterministic Unsplash stock photos mapped to drivers as fallback background
     const driverImages: Record<string, string> = {
       'Earnings Beat': 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=400&q=80',
       'Policy Change': 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=400&q=80',
@@ -194,16 +181,25 @@ export async function GET(request: NextRequest) {
     let parsedNews: any[] = [];
     let apiCallSucceeded = false;
 
-    // 3. Ask Gemini to enrich live raw news items with EquityStack fields
+    // 3. Ask Gemini to enrich live raw news items into deep, educational financial reports (Nairametrics style)
     if (apiKey && apiKey.trim() !== '' && rawItems.length > 0) {
-      const geminiPrompt = `You are a financial news intelligence analyst for EquityStack.
-I have a list of raw live Nigerian business news stories fetched from real-time outlets.
-Your job is to rewrite these stories into full, multi-paragraph articles for retail investors, adhering to a strict, professional financial analyst tone.
-Simplify complex jargon where necessary, and enrich them with EquityStack-specific fields.
+      const geminiPrompt = `You are a senior financial analyst, educator, and economic journalist for EquityStack.
+I have a list of raw live news stories. Your job is to write deep, highly educational, professional financial reports (similar to in-depth Nairametrics, Wall Street Journal, or Bloomberg analysis) based on these stories.
+
+EDUCATIONAL ARTICLE WRITING REQUIREMENTS:
+1. Every article must be comprehensive, thorough, and highly educational (500 to 800+ words).
+2. Structure each article into clear, distinct sections using markdown headings:
+   - ### Introduction & Overview
+   - ### What the Data is Saying
+   - ### Corporate & Stock Performance Impact
+   - ### 🎓 Investor Educational Concept
+   - ### Key Takeaways for Retail Investors
+3. In the "🎓 Investor Educational Concept" section, explicitly explain an underlying financial term or mechanism mentioned in the story (e.g. *What is constant price GDP?*, *How do interest rate hikes boost bank net interest margins?*, *Understanding FX debt devaluation*, *What EBITDA margin tells us about cash efficiency*).
+4. Translate complex economic statistics into clear, relatable prose for retail investors without losing 100% factual accuracy.
 
 CRITICAL INSTRUCTIONS FOR TRUTHFULNESS & FACTUAL ACCURACY:
-1. DO NOT make up any facts, figures, dates, or names. You must rely ONLY on the details explicitly mentioned in the raw news stories below.
-2. Under no circumstances should you hallucinate or alter any prices, financial metrics, or statistics.
+1. DO NOT make up any facts, figures, dates, or names. Rely ONLY on the details explicitly mentioned in the raw news stories below.
+2. Under no circumstances should you alter any prices, financial metrics, or statistics.
 
 Raw News Stories:
 ${JSON.stringify(rawItems, null, 2)}
@@ -212,19 +208,21 @@ Output Requirements:
 Return a JSON array of objects. Each object MUST match this structure:
 {
   "id": string (unique identifier like "news-live-1", "news-live-2"...),
-  "source": string (the news source provided or a reputable Nigerian financial paper),
+  "source": string (the news source provided or a reputable financial paper),
   "author": string (generate a realistic sounding name for a financial journalist),
   "date": string (ISO date string YYYY-MM-DD matching the publication date),
   "timeAgo": string (e.g. "2h ago", "12h ago", or "1d ago" relative to publication time),
+  "link": string (preserve original source link if available, or empty string),
   "originalHeadline": string (the headline of the story),
-  "aiSummary": string (a highly simplified, clear 2-sentence summary),
-  "fullContent": string (a comprehensive 3-4 paragraph article based on the news, strictly keeping a professional financial analyst tone. Use \\n\\n for paragraph breaks.),
-  "whyItMatters": string (1 sentence explaining why this is important to a retail investor),
-  "implications": string (1 sentence explaining the future outlook/implication for the stock market or economy),
+  "aiSummary": string (a concise 2-sentence executive summary),
+  "fullContent": string (a deep, comprehensive 5 to 7 section detailed educational article formatted with ### section headers including "### 🎓 Investor Educational Concept". Use \\n\\n between paragraphs and sections.),
+  "whyItMatters": string (2 to 3 detailed sentences explaining exactly why retail stock investors should care and how to position their portfolio),
+  "implications": string (2 to 3 detailed sentences explaining the future market outlook, interest rate trajectory, and risk factors),
+  "educationalConcept": string (a concise 2-sentence breakdown of the core financial literacy concept taught in this story),
   "keyDriver": string (must be one of: "Earnings Beat", "Policy Change", "Macro Event", "Dividend Payout", "Inflation Surge", "Regulatory Approval"),
   "affectedStocks": array of strings (must only contain tickers from this exact list: ["DANGCEM", "MTNN", "ZENITHBANK", "GTCO", "SEPLAT", "BUAFOODS", "ACCESSCORP", "NESTLE", "OANDO", "UBA", "AIRTELAFRI", "PRESCO", "TRANSCORP", "TOTAL", "FBNH"]. If no tickers are affected, return []),
   "marketImpact": string (must be one of: "Positive", "Negative", "Neutral"),
-  "category": string (must be one of: "All News", "Stock Market", "Economy", "Global News")
+  "category": string (must be one of: "Stock Market", "Economy", "Global Markets", "Corporate & Industry")
 }
 
 Return ONLY valid JSON. Do not include markdown code block wrappers.`;
@@ -284,21 +282,27 @@ Return ONLY valid JSON. Do not include markdown code block wrappers.`;
         const pubDateObj = new Date(item.pubDate);
         const isoDate = !isNaN(pubDateObj.getTime()) ? pubDateObj.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
 
+        let category = 'Stock Market';
+        if (/fed|us|global|nasdaq|s&p|dollar|oil|world/i.test(title)) category = 'Global Markets';
+        else if (/cbn|inflation|gdp|economy|tax|naira/i.test(title)) category = 'Economy';
+        else if (/bank|dangote|seplat|mtn|telecom|energy/i.test(title)) category = 'Corporate & Industry';
+
         return {
           id: `news-live-${index + 1}`,
           source: item.source,
           author: 'Market Reporter',
           date: isoDate,
           timeAgo: 'Recently',
+          link: item.link || '',
           originalHeadline: title,
           aiSummary: description.slice(0, 160) + (description.length > 160 ? '...' : ''),
-          fullContent: `${description}\n\nThis live report highlights ongoing shifts in domestic commercial activities. Industry watchers emphasize monitoring volume patterns and upcoming regulatory announcements for clearer guidance on long-term trends.`,
-          whyItMatters: 'Direct real-time insight into Nigerian economic and corporate developments.',
-          implications: 'Subsequent trading activity will confirm market direction over coming sessions.',
+          fullContent: `${description}\n\nThis stock-related development comes at a pivotal time for financial markets. Analysts suggest that equity investors are re-evaluating risk exposure across domestic and international assets in response to ongoing monetary policy adjustments and earnings announcements.\n\nInstitutional money flows indicate selective accumulation in high-yielding sectors, while defensive stocks are gaining traction among retail portfolios seeking inflation hedges. Market participants are advised to monitor trade volumes closely to validate price movement.`,
+          whyItMatters: 'Direct impact on stock valuations, sector sentiment, and investor portfolio positioning.',
+          implications: 'Subsequent trading sessions will determine whether price momentum expands into broader equity indices.',
           keyDriver,
           affectedStocks: [],
           marketImpact,
-          category: 'All News'
+          category
         };
       });
     }
@@ -306,11 +310,11 @@ Return ONLY valid JSON. Do not include markdown code block wrappers.`;
     // 5. Inject company logos & format final objects
     const enrichedNews = parsedNews.map((item: any, idx: number) => {
       const driver = item.keyDriver || 'Macro Event';
-      let category = item.category || 'All News';
+      let category = item.category || 'Stock Market';
 
-      const validCategories = ['All News', 'Stock Market', 'Economy', 'Global News'];
+      const validCategories = ['Stock Market', 'Economy', 'Global Markets', 'Corporate & Industry'];
       const matched = validCategories.find(c => c.toLowerCase() === category.toString().trim().toLowerCase());
-      category = matched || 'All News';
+      category = matched || 'Stock Market';
 
       // Detect company logo
       const logoRes = resolveCompanyLogo(item.affectedStocks, item.originalHeadline, item.fullContent);
@@ -321,7 +325,6 @@ Return ONLY valid JSON. Do not include markdown code block wrappers.`;
         category,
         companyLogoUrl: logoRes.logoUrl,
         matchedCompany: logoRes.matchedCompany,
-        // If company logo exists, set company logo or keep high quality image
         imageUrl: logoRes.logoUrl || item.imageUrl || driverImages[driver] || defaultImage,
         commentsCount: typeof item.commentsCount === 'number' ? item.commentsCount : (idx % 7) + 4,
         affectedStocks: Array.isArray(item.affectedStocks) ? item.affectedStocks : [],

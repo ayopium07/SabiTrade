@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info, Calendar, PenTool } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info, Calendar, PenTool, GraduationCap, Lightbulb, Target } from 'lucide-react';
 import { NewsItem } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
-import { resolveCompanyLogo } from '@/lib/companyLogos';
+import { resolveCompanyLogo, resolveCompanyLogos } from '@/lib/companyLogos';
 
 const sentimentConfig = {
   Positive: {
@@ -28,9 +29,10 @@ const sentimentConfig = {
   },
 };
 
-const categories = ['All News', 'Stock Market', 'Economy', 'Global News'] as const;
+const categories = ['All News', 'Stock Market', 'Economy', 'Global Markets', 'Corporate & Industry'] as const;
 
 export default function AINewsFeed() {
+  const [mounted, setMounted] = useState(false);
   const [activeCategory, setActiveCategory] = useState<typeof categories[number]>('All News');
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -39,6 +41,21 @@ export default function AINewsFeed() {
   const [publishImageUrl, setPublishImageUrl] = useState('');
   const [publishContent, setPublishContent] = useState('');
   const [isPublishing, setIsPublishing] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (selectedNews || isPublishModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedNews, isPublishModalOpen]);
 
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
   const setView = useAppStore((s) => s.setView);
@@ -233,12 +250,32 @@ export default function AINewsFeed() {
                       {news.marketImpact} Impact
                     </span>
 
-                    {/* Company Logo Overlay */}
-                    {companyLogo && (
-                      <div className="absolute top-3 right-3 w-10 h-10 rounded-xl bg-white/95 p-1 shadow-lg border border-white/20 flex items-center justify-center backdrop-blur-md z-10" title="Featured Company Logo">
-                        <img src={companyLogo} alt="Company Logo" className="w-full h-full object-contain" />
-                      </div>
-                    )}
+                    {/* Company Logos (Single or Combined Multi-Company Badge) */}
+                    {(() => {
+                      const logos = resolveCompanyLogos(news.affectedStocks, news.originalHeadline, news.fullContent || news.aiSummary);
+                      if (logos.length === 0) return null;
+                      if (logos.length === 1) {
+                        return (
+                          <div className="absolute top-3 right-3 w-10 h-10 rounded-xl bg-white/95 p-1 shadow-lg border border-white/20 flex items-center justify-center backdrop-blur-md z-10" title={logos[0].name}>
+                            <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="absolute top-3 right-3 flex items-center -space-x-3 bg-white/95 px-2 py-1 rounded-2xl shadow-xl border border-white/20 backdrop-blur-md z-10" title={logos.map(l => l.name).join(' & ')}>
+                          {logos.slice(0, 3).map((l, i) => (
+                            <div key={l.ticker} className="w-7 h-7 rounded-full bg-white p-0.5 border-2 border-[#0E0D25] shadow-md overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
+                              <img src={l.logoUrl} alt={l.name} className="w-full h-full object-contain rounded-full" />
+                            </div>
+                          ))}
+                          {logos.length > 3 && (
+                            <div className="w-6 h-6 rounded-full bg-black/80 text-white font-extrabold text-[8px] flex items-center justify-center border border-white relative z-0">
+                              +{logos.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-lg sm:text-xl font-extrabold text-text-primary font-sora leading-snug group-hover:text-brand-primary transition-colors">
@@ -266,7 +303,6 @@ export default function AINewsFeed() {
             {/* Remaining Items List */}
             {filteredNews.slice(1).map((news) => {
               const cfg = sentimentConfig[news.marketImpact];
-              const companyLogo = news.companyLogoUrl || resolveCompanyLogo(news.affectedStocks, news.originalHeadline, news.fullContent).logoUrl;
 
               return (
                 <div
@@ -295,11 +331,26 @@ export default function AINewsFeed() {
                       alt={news.originalHeadline}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    {companyLogo && (
-                      <div className="absolute bottom-1 right-1 w-6 h-6 rounded-md bg-white/95 p-0.5 shadow border border-white/20 flex items-center justify-center z-10" title="Company Logo">
-                        <img src={companyLogo} alt="Company Logo" className="w-full h-full object-contain" />
-                      </div>
-                    )}
+                    {(() => {
+                      const logos = resolveCompanyLogos(news.affectedStocks, news.originalHeadline, news.fullContent || news.aiSummary);
+                      if (logos.length === 0) return null;
+                      if (logos.length === 1) {
+                        return (
+                          <div className="absolute bottom-1 right-1 w-6 h-6 rounded-md bg-white/95 p-0.5 shadow border border-white/20 flex items-center justify-center z-10" title={logos[0].name}>
+                            <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="absolute bottom-1 right-1 flex items-center -space-x-2 bg-white/95 px-1 py-0.5 rounded-full shadow border border-white/20 backdrop-blur-md z-10" title={logos.map(l => l.name).join(' & ')}>
+                          {logos.slice(0, 2).map((l, i) => (
+                            <div key={l.ticker} className="w-5 h-5 rounded-full bg-white p-0.5 border border-[#0E0D25] shadow overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
+                              <img src={l.logoUrl} alt={l.name} className="w-full h-full object-contain rounded-full" />
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               );
@@ -313,10 +364,10 @@ export default function AINewsFeed() {
         )}
       </div>
 
-      {/* Details Modal */}
-      {selectedNews && (
+      {/* Details Modal (Portal to document.body for fixed viewport centering) */}
+      {mounted && selectedNews && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200"
           style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}
         >
           {/* Backdrop click close */}
@@ -331,16 +382,78 @@ export default function AINewsFeed() {
             }}
           >
             {/* Featured Image Header (Flush with edges) */}
-            <div className="w-full h-56 sm:h-64 relative flex-shrink-0 bg-black">
-              <img
-                src={selectedNews.imageUrl}
-                alt={selectedNews.originalHeadline}
-                className="w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0E0D25] to-transparent opacity-90" />
+            <div className="w-full h-56 sm:h-64 relative flex-shrink-0 bg-black overflow-hidden">
+              {(() => {
+                const modalLogos = resolveCompanyLogos(selectedNews.affectedStocks, selectedNews.originalHeadline, selectedNews.fullContent || selectedNews.aiSummary);
+                if (modalLogos.length > 1) {
+                  return (
+                    <div className="w-full h-full relative flex items-center justify-center p-6 overflow-hidden bg-[#090814]">
+                      {/* Financial City Skyline Background */}
+                      <img
+                        src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1200&auto=format&fit=crop"
+                        alt="Stock chart skyline"
+                        className="absolute inset-0 w-full h-full object-cover opacity-35 filter contrast-125 saturate-150 brightness-75 scale-105"
+                      />
+
+                      {/* SVG Glowing Stock Candlestick Chart Overlay */}
+                      <svg className="absolute inset-0 w-full h-full opacity-35 z-0 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1000 400">
+                        <defs>
+                          <linearGradient id="chartGlowModal" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#10B981" stopOpacity="0.4" />
+                            <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                          </linearGradient>
+                        </defs>
+                        <line x1="0" y1="120" x2="1000" y2="120" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+                        <line x1="0" y1="220" x2="1000" y2="220" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+                        
+                        <rect x="120" y="140" width="14" height="70" fill="#10B981" opacity="0.6" />
+                        <line x1="127" y1="120" x2="127" y2="230" stroke="#10B981" opacity="0.6" strokeWidth="2" />
+                        
+                        <rect x="350" y="100" width="14" height="110" fill="#10B981" opacity="0.7" />
+                        <line x1="357" y1="80" x2="357" y2="230" stroke="#10B981" opacity="0.7" strokeWidth="2" />
+
+                        <rect x="680" y="70" width="14" height="140" fill="#10B981" opacity="0.8" />
+                        <line x1="687" y1="50" x2="687" y2="230" stroke="#10B981" opacity="0.8" strokeWidth="2" />
+
+                        <path d="M 0,260 Q 250,200 450,120 T 800,90 L 1000,60 L 1000,400 L 0,400 Z" fill="url(#chartGlowModal)" />
+                        <path d="M 0,260 Q 250,200 450,120 T 800,90 L 1000,60" stroke="#10B981" strokeWidth="3" fill="none" />
+                      </svg>
+
+                      {/* Dark gradient vignette */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0E0D25] via-[#0E0D25]/75 to-[#0E0D25]/40 z-10" />
+
+                      {/* Clean Logo Showcase: LOGO 1 | LOGO 2 */}
+                      <div className="relative z-20 flex items-center justify-center gap-6 sm:gap-10 pb-10">
+                        {modalLogos.map((l, i) => (
+                          <React.Fragment key={l.ticker}>
+                            {i > 0 && (
+                              <div className="w-[2px] h-12 sm:h-16 bg-gradient-to-b from-transparent via-white/80 to-transparent shadow-[0_0_12px_rgba(255,255,255,0.9)]" />
+                            )}
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="px-4 py-2.5 rounded-2xl bg-black/40 backdrop-blur-md border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300 hover:scale-105 hover:bg-black/60 flex items-center justify-center">
+                                <img src={l.logoUrl} alt={l.name} className="h-10 sm:h-14 w-auto max-w-[120px] sm:max-w-[150px] object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]" />
+                              </div>
+                            </div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <>
+                    <img
+                      src={selectedNews.imageUrl}
+                      alt={selectedNews.originalHeadline}
+                      className="w-full h-full object-cover opacity-80"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0E0D25] to-transparent opacity-90" />
+                  </>
+                );
+              })()}
               
               {/* Floating Top Elements */}
-              <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
+              <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-20">
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2 items-center">
                     <span
@@ -367,68 +480,129 @@ export default function AINewsFeed() {
                 </button>
               </div>
 
-              {/* Headline Over Image */}
-              <div className="absolute bottom-4 left-6 right-6 z-10 space-y-2">
-                <h2 className="text-xl sm:text-2xl font-extrabold font-sora text-white leading-tight drop-shadow-md">
-                  {selectedNews.originalHeadline}
-                </h2>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-white/80 font-dm-sans font-medium">
-                  <span className="font-bold text-brand-primary">{selectedNews.source}</span>
-                  <span className="opacity-50">·</span>
-                  <span>{selectedNews.timeAgo}</span>
-                  <span className="opacity-50">·</span>
-                  <span className="flex items-center gap-1.5">
-                    <MessageSquare className="h-3.5 w-3.5" />
-                    {selectedNews.commentsCount} comments
-                  </span>
+              {/* Headline & Multi-Company Logos Over Image */}
+              <div className="absolute bottom-4 left-6 right-6 z-20 flex items-end justify-between">
+                <div className="space-y-2 flex-1 pr-3">
+                  <h2 className="text-xl sm:text-2xl font-extrabold font-sora text-white leading-tight drop-shadow-md">
+                    {selectedNews.originalHeadline}
+                  </h2>
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-white/80 font-dm-sans font-medium">
+                    <span className="font-bold text-brand-primary">{selectedNews.source}</span>
+                    <span className="opacity-50">·</span>
+                    <span>{selectedNews.timeAgo}</span>
+                    <span className="opacity-50">·</span>
+                    <span className="flex items-center gap-1.5">
+                      <MessageSquare className="h-3.5 w-3.5" />
+                      {selectedNews.commentsCount} comments
+                    </span>
+                  </div>
                 </div>
+
+                {/* Combined Multi-Company Logo Overlay */}
+                {(() => {
+                  const logos = resolveCompanyLogos(selectedNews.affectedStocks, selectedNews.originalHeadline, selectedNews.fullContent || selectedNews.aiSummary);
+                  if (logos.length === 0) return null;
+                  if (logos.length === 1) {
+                    return (
+                      <div className="w-12 h-12 rounded-xl bg-white/95 p-1.5 shadow-xl border border-white/20 flex-shrink-0 flex items-center justify-center backdrop-blur-md ml-3" title={logos[0].name}>
+                        <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="flex items-center -space-x-3.5 bg-white/95 px-2.5 py-1.5 rounded-2xl shadow-xl border border-white/20 flex-shrink-0 backdrop-blur-md ml-3" title={logos.map(l => l.name).join(' & ')}>
+                      {logos.slice(0, 3).map((l, i) => (
+                        <div key={l.ticker} className="w-8 h-8 rounded-full bg-white p-0.5 border-2 border-[#0E0D25] shadow-md overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
+                          <img src={l.logoUrl} alt={l.name} className="w-full h-full object-contain rounded-full" />
+                        </div>
+                      ))}
+                      {logos.length > 3 && (
+                        <div className="w-7 h-7 rounded-full bg-black/80 text-white font-extrabold text-[9px] flex items-center justify-center border-2 border-white relative z-0">
+                          +{logos.length - 3}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 
             {/* Scrollable Content Body */}
             <div className="p-6 sm:p-8 space-y-6 flex-1 overflow-y-auto">
               
-              {/* AI summary block */}
-              <div className="p-5 rounded-2xl border border-brand-primary/20 bg-brand-primary/5 relative overflow-hidden">
-                <div className="absolute -top-4 -right-4 opacity-10">
-                  <Sparkles className="h-20 w-20 text-brand-primary" />
-                </div>
-                <div className="flex items-center gap-2 mb-2 relative z-10">
-                  <Sparkles className="h-4 w-4 text-brand-primary animate-pulse" />
-                  <span className="text-[10px] font-extrabold text-brand-primary uppercase tracking-wider">
-                    EquityStack AI Summary
-                  </span>
-                </div>
-                <p className="text-sm text-text-primary/90 font-medium leading-relaxed font-dm-sans relative z-10">
-                  {selectedNews.aiSummary}
-                </p>
-              </div>
-
-              {/* AI Insights: why it matters & implications */}
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-[10px] text-text-secondary font-extrabold uppercase tracking-wider mb-1.5 border-b border-border/30 pb-1">
-                    Why It Matters
-                  </h4>
-                  <p className="text-sm text-text-primary/80 font-medium leading-relaxed font-dm-sans">
+              {/* Prominent Educational Insights Grid: Why It Matters & Potential Implications */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Why It Matters */}
+                <div className="p-4 rounded-2xl border border-brand-primary/30 bg-brand-primary/5 space-y-2 relative overflow-hidden">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-brand-primary flex-shrink-0 animate-pulse" />
+                    <h4 className="text-xs font-extrabold text-brand-primary uppercase tracking-wider font-sora">
+                      Why It Matters To Investors
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
                     {selectedNews.whyItMatters}
                   </p>
                 </div>
 
-                <div>
-                  <h4 className="text-[10px] text-text-secondary font-extrabold uppercase tracking-wider mb-1.5 border-b border-border/30 pb-1">
-                    Potential Implications
-                  </h4>
-                  <p className="text-sm text-text-primary/80 font-medium leading-relaxed font-dm-sans">
+                {/* Potential Implications */}
+                <div className="p-4 rounded-2xl border border-blue-500/30 bg-blue-500/5 space-y-2 relative overflow-hidden">
+                  <div className="flex items-center gap-2">
+                    <Target className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                    <h4 className="text-xs font-extrabold text-blue-400 uppercase tracking-wider font-sora">
+                      Potential Market Implications
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
                     {selectedNews.implications}
                   </p>
                 </div>
+              </div>
+
+              {/* Educational Concept Banner */}
+              {selectedNews.educationalConcept && (
+                <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 flex items-start gap-3">
+                  <GraduationCap className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-extrabold text-emerald-400 uppercase tracking-wider font-sora">
+                      Investor Educational Concept
+                    </h4>
+                    <p className="text-xs text-white/90 font-medium leading-relaxed font-dm-sans">
+                      {selectedNews.educationalConcept}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Full Refined Financial Article Report */}
+              {selectedNews.fullContent && (
+                <div className="space-y-4 pt-2">
+                  <div className="prose prose-invert max-w-none space-y-4 text-xs sm:text-sm text-white/90 leading-relaxed font-dm-sans">
+                    {selectedNews.fullContent.split(/(?:\r?\n)+/).map((para, idx) => {
+                      const cleanPara = para.trim();
+                      if (!cleanPara) return null;
+
+                      // Detect markdown section headings like ### Section Title
+                      if (cleanPara.startsWith('###') || cleanPara.startsWith('##')) {
+                        const headingText = cleanPara.replace(/^#+\s*/, '');
+                        return (
+                          <h4 key={idx} className="text-sm sm:text-base font-extrabold text-brand-primary font-sora mt-6 mb-2 border-b border-border/30 pb-1">
+                            {headingText}
+                          </h4>
+                        );
+                      }
+
+                      return <p key={idx} className="leading-relaxed">{cleanPara}</p>;
+                    })}
+                  </div>
+                </div>
+              )}
 
                 {/* Related Companies */}
                 {selectedNews.affectedStocks && selectedNews.affectedStocks.length > 0 && (
                   <div className="pt-2">
                     <h4 className="text-[10px] text-text-secondary font-extrabold uppercase tracking-wider mb-2 border-b border-border/30 pb-1">
-                      Related Companies
+                      Related Companies & Tickers
                     </h4>
                     <div className="flex flex-wrap gap-2.5">
                       {selectedNews.affectedStocks.map((ticker) => {
@@ -459,7 +633,6 @@ export default function AINewsFeed() {
                     </div>
                   </div>
                 )}
-              </div>
 
               {/* Drivers Tags */}
               {selectedNews.drivers && (
@@ -475,25 +648,36 @@ export default function AINewsFeed() {
                 </div>
               )}
 
-              {/* Read full article */}
-              <div className="pt-6 mt-4 border-t border-border/30 space-y-4">
+              {/* Read full article & Publisher source link */}
+              <div className="pt-6 mt-4 border-t border-border/30 flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleReadFullArticle}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold bg-brand-primary text-black hover:bg-brand-primary/90 hover:scale-[1.01] transition-all focus:outline-none"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold bg-brand-primary text-black hover:bg-brand-primary/90 transition-all focus:outline-none"
                 >
-                  Read full article
-                  <ExternalLink className="h-4 w-4" />
+                  Dedicated News Page View
                 </button>
+                {selectedNews.link && (
+                  <a
+                    href={selectedNews.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-all text-center"
+                  >
+                    Read Original Publisher Source ({selectedNews.source})
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       {/* Modals & Overlays */}
       
-      {/* Publish News Modal */}
-      {isPublishModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+      {/* Publish News Modal (Portal) */}
+      {mounted && isPublishModalOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
           <div 
             className="w-full max-w-2xl rounded-[24px] border border-white/10 overflow-hidden flex flex-col relative"
             style={{
@@ -583,7 +767,8 @@ export default function AINewsFeed() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

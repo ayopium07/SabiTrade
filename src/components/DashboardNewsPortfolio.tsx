@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
-import { resolveCompanyLogo } from '@/lib/companyLogos';
+import { resolveCompanyLogo, resolveCompanyLogos } from '@/lib/companyLogos';
 
 export default function DashboardNewsPortfolio() {
   const news = useAppStore((s) => s.news);
@@ -38,13 +38,22 @@ export default function DashboardNewsPortfolio() {
           <div className="h-[2px] w-full bg-gradient-to-r from-blue-500 to-purple-600"></div>
           <div className="p-2">
             {analysisNews.map((item, idx) => {
-              const companyLogo = item.companyLogoUrl || resolveCompanyLogo(item.affectedStocks, item.originalHeadline, item.fullContent).logoUrl;
+              const logos = resolveCompanyLogos(item.affectedStocks, item.originalHeadline, item.fullContent || item.aiSummary);
               return (
                 <React.Fragment key={item.id}>
                   <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                    {companyLogo && (
-                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5">
-                        <img src={companyLogo} alt="Company logo" className="w-full h-full object-contain" />
+                    {logos.length === 1 && (
+                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5" title={logos[0].name}>
+                        <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    {logos.length > 1 && (
+                      <div className="flex items-center -space-x-2 bg-white/95 px-1 py-0.5 rounded-full shadow border border-white/20 flex-shrink-0 self-start mt-0.5" title={logos.map(l => l.name).join(' & ')}>
+                        {logos.slice(0, 2).map((l, i) => (
+                          <div key={l.ticker} className="w-6 h-6 rounded-full bg-white p-0.5 border border-[#0E0D25] shadow overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
+                            <img src={l.logoUrl} alt={l.name} className="w-full h-full object-contain rounded-full" />
+                          </div>
+                        ))}
                       </div>
                     )}
                     <div className="flex flex-col justify-between flex-1 min-w-0">
@@ -83,13 +92,22 @@ export default function DashboardNewsPortfolio() {
           <div className="h-[2px] w-full bg-gradient-to-r from-orange-400 to-amber-600"></div>
           <div className="p-2">
             {marketNews.map((item, idx) => {
-              const companyLogo = item.companyLogoUrl || resolveCompanyLogo(item.affectedStocks, item.originalHeadline, item.fullContent).logoUrl;
+              const logos = resolveCompanyLogos(item.affectedStocks, item.originalHeadline, item.fullContent || item.aiSummary);
               return (
                 <React.Fragment key={item.id}>
                   <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                    {companyLogo && (
-                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5">
-                        <img src={companyLogo} alt="Company logo" className="w-full h-full object-contain" />
+                    {logos.length === 1 && (
+                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5" title={logos[0].name}>
+                        <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    {logos.length > 1 && (
+                      <div className="flex items-center -space-x-2 bg-white/95 px-1 py-0.5 rounded-full shadow border border-white/20 flex-shrink-0 self-start mt-0.5" title={logos.map(l => l.name).join(' & ')}>
+                        {logos.slice(0, 2).map((l, i) => (
+                          <div key={l.ticker} className="w-6 h-6 rounded-full bg-white p-0.5 border border-[#0E0D25] shadow overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
+                            <img src={l.logoUrl} alt={l.name} className="w-full h-full object-contain rounded-full" />
+                          </div>
+                        ))}
                       </div>
                     )}
                     <div className="flex flex-col justify-between flex-1 min-w-0">

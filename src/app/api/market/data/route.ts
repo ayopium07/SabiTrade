@@ -142,13 +142,18 @@ export async function GET() {
           const vol = volMatch ? volMatch[1].trim() : '—';
 
           const sectorRaw = sectorMap[ticker] || 'FINANCIAL SERVICES';
-          let sectorMapped: 'Banking' | 'Consumer Goods' | 'Oil & Gas' | 'Industrials' | 'Agriculture' | 'Conglomerates' = 'Conglomerates';
+          let sectorMapped: 'Banking' | 'Consumer Goods' | 'Oil & Gas' | 'Industrials' | 'Agriculture' | 'Conglomerates' | 'Insurance' | 'Healthcare' | 'ICT' | 'Services' | 'Real Estate' = 'Conglomerates';
           
-          if (sectorRaw.includes('BANK') || sectorRaw.includes('FINANCIAL')) sectorMapped = 'Banking';
+          if (sectorRaw.includes('INSURANCE') || sectorRaw.includes('ASSURANCE')) sectorMapped = 'Insurance';
+          else if (sectorRaw.includes('BANK') || sectorRaw.includes('FINANCIAL')) sectorMapped = 'Banking';
           else if (sectorRaw.includes('CONSUMER') || sectorRaw.includes('FOOD') || sectorRaw.includes('BEVERAGE')) sectorMapped = 'Consumer Goods';
           else if (sectorRaw.includes('OIL') || sectorRaw.includes('GAS') || sectorRaw.includes('ENERGY') || sectorRaw.includes('PETROLEUM')) sectorMapped = 'Oil & Gas';
           else if (sectorRaw.includes('INDUSTRIAL') || sectorRaw.includes('CEMENT') || sectorRaw.includes('CONSTRUCTION')) sectorMapped = 'Industrials';
           else if (sectorRaw.includes('AGRICULT')) sectorMapped = 'Agriculture';
+          else if (sectorRaw.includes('HEALTH') || sectorRaw.includes('PHARM')) sectorMapped = 'Healthcare';
+          else if (sectorRaw.includes('ICT') || sectorRaw.includes('TECH') || sectorRaw.includes('TELECOM')) sectorMapped = 'ICT';
+          else if (sectorRaw.includes('SERVICE') || sectorRaw.includes('AVIATION')) sectorMapped = 'Services';
+          else if (sectorRaw.includes('REAL ESTATE') || sectorRaw.includes('REIT')) sectorMapped = 'Real Estate';
 
           // Look for existing mock stock detail
           const existingMock = ngxStocks.find(s => s.ticker === ticker);
@@ -220,6 +225,13 @@ export async function GET() {
             });
           }
         }
+      }
+    }
+
+    // Add any base stocks from ngxStocks that were not present in the scraped homepage table
+    for (const baseStock of ngxStocks) {
+      if (!parsedStocks.some(s => s.ticker === baseStock.ticker)) {
+        parsedStocks.push(baseStock);
       }
     }
 

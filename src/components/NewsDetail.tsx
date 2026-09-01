@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
-import { ArrowLeft, MessageSquare, Share2, Bookmark, Clock, Send, Sparkles, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { resolveCompanyLogo } from '@/lib/companyLogos';
+import { ArrowLeft, MessageSquare, Share2, Bookmark, Clock, Send, Sparkles, TrendingUp, TrendingDown, Minus, ExternalLink, GraduationCap, Lightbulb, Target } from 'lucide-react';
+import { resolveCompanyLogo, resolveCompanyLogos } from '@/lib/companyLogos';
 
 const sentimentConfig = {
   Positive: {
@@ -119,9 +119,65 @@ export default function NewsDetail() {
         </div>
       </div>
 
-      {/* Hero Image */}
+      {/* Hero Image & Combined Multi-Company Editorial Graphic */}
       {(() => {
-        const companyLogo = selectedNews.companyLogoUrl || resolveCompanyLogo(selectedNews.affectedStocks, selectedNews.originalHeadline, selectedNews.fullContent).logoUrl;
+        const logos = resolveCompanyLogos(selectedNews.affectedStocks, selectedNews.originalHeadline, selectedNews.fullContent || selectedNews.aiSummary);
+        if (logos.length > 1) {
+          return (
+            <div className="w-full h-64 sm:h-[400px] rounded-3xl overflow-hidden border border-border/40 relative flex items-center justify-center p-6 sm:p-10 group bg-[#090814]">
+              {/* Financial City Skyline Background */}
+              <img
+                src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1200&auto=format&fit=crop"
+                alt="Stock chart skyline"
+                className="absolute inset-0 w-full h-full object-cover opacity-35 filter contrast-125 saturate-150 brightness-75 scale-105 transition-transform duration-700 group-hover:scale-110"
+              />
+
+              {/* SVG Glowing Stock Candlestick Chart Overlay */}
+              <svg className="absolute inset-0 w-full h-full opacity-35 z-0 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1000 400">
+                <defs>
+                  <linearGradient id="chartGlowDetail" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10B981" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="120" x2="1000" y2="120" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+                <line x1="0" y1="220" x2="1000" y2="220" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+                
+                <rect x="120" y="140" width="14" height="70" fill="#10B981" opacity="0.6" />
+                <line x1="127" y1="120" x2="127" y2="230" stroke="#10B981" opacity="0.6" strokeWidth="2" />
+                
+                <rect x="350" y="100" width="14" height="110" fill="#10B981" opacity="0.7" />
+                <line x1="357" y1="80" x2="357" y2="230" stroke="#10B981" opacity="0.7" strokeWidth="2" />
+
+                <rect x="680" y="70" width="14" height="140" fill="#10B981" opacity="0.8" />
+                <line x1="687" y1="50" x2="687" y2="230" stroke="#10B981" opacity="0.8" strokeWidth="2" />
+
+                <path d="M 0,260 Q 250,200 450,120 T 800,90 L 1000,60 L 1000,400 L 0,400 Z" fill="url(#chartGlowDetail)" />
+                <path d="M 0,260 Q 250,200 450,120 T 800,90 L 1000,60" stroke="#10B981" strokeWidth="3" fill="none" />
+              </svg>
+
+              {/* Dark gradient vignette */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0E0D25] via-[#0E0D25]/75 to-[#0E0D25]/40 z-10" />
+
+              {/* Clean Logo Showcase: LOGO 1 | LOGO 2 */}
+              <div className="relative z-20 flex items-center justify-center gap-6 sm:gap-14">
+                {logos.map((l, i) => (
+                  <React.Fragment key={l.ticker}>
+                    {i > 0 && (
+                      <div className="w-[2px] h-16 sm:h-24 bg-gradient-to-b from-transparent via-white/80 to-transparent shadow-[0_0_14px_rgba(255,255,255,0.9)]" />
+                    )}
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="px-6 py-4 rounded-3xl bg-black/40 backdrop-blur-md border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.8)] transition-all duration-300 hover:scale-105 hover:bg-black/60 flex items-center justify-center">
+                        <img src={l.logoUrl} alt={l.name} className="h-16 sm:h-24 w-auto max-w-[160px] sm:max-w-[240px] object-contain filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" />
+                      </div>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
         return (
           <div className="w-full h-64 sm:h-[400px] rounded-3xl overflow-hidden border border-border/40 relative group">
             <img 
@@ -131,10 +187,10 @@ export default function NewsDetail() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0E0D25] via-transparent to-transparent opacity-60" />
             
-            {/* Company Logo Badge */}
-            {companyLogo && (
-              <div className="absolute top-4 right-4 bg-white/95 p-2 rounded-2xl shadow-xl border border-white/20 flex items-center justify-center w-14 h-14 backdrop-blur-md z-10" title="Featured Company Logo">
-                <img src={companyLogo} alt="Company logo" className="w-full h-full object-contain" />
+            {/* Combined Company Logo Badge */}
+            {logos.length === 1 && (
+              <div className="absolute top-4 right-4 bg-white/95 p-2 rounded-2xl shadow-xl border border-white/20 flex items-center justify-center w-14 h-14 backdrop-blur-md z-10" title={logos[0].name}>
+                <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
               </div>
             )}
           </div>
@@ -146,27 +202,70 @@ export default function NewsDetail() {
         
         {/* Main Article Body */}
         <div className="lg:col-span-8 space-y-6">
-          {/* AI Summary Block */}
-          <div className="p-5 rounded-2xl border border-brand-primary/20 bg-brand-primary/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-20">
-              <Sparkles className="w-16 h-16 text-brand-primary" />
+          
+          {/* Prominent Educational Insights Grid: Why It Matters & Potential Implications */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Why It Matters */}
+            <div className="p-5 rounded-2xl border border-brand-primary/30 bg-brand-primary/5 space-y-2 relative overflow-hidden">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-4 h-4 text-brand-primary flex-shrink-0 animate-pulse" />
+                <h3 className="text-xs font-extrabold text-brand-primary uppercase tracking-wider font-sora">
+                  Why It Matters To Investors
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
+                {selectedNews.whyItMatters}
+              </p>
             </div>
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-brand-primary animate-pulse" />
-              <h3 className="text-xs font-extrabold text-brand-primary uppercase tracking-wider">EquityStack AI Summary</h3>
+
+            {/* Potential Implications */}
+            <div className="p-5 rounded-2xl border border-blue-500/30 bg-blue-500/5 space-y-2 relative overflow-hidden">
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                <h3 className="text-xs font-extrabold text-blue-400 uppercase tracking-wider font-sora">
+                  Potential Market Implications
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
+                {selectedNews.implications}
+              </p>
             </div>
-            <p className="text-sm text-white/90 font-medium leading-relaxed font-dm-sans relative z-10">
-              {selectedNews.aiSummary}
-            </p>
           </div>
 
-          <div className="prose prose-invert prose-p:text-white/80 prose-p:leading-relaxed prose-p:font-dm-sans max-w-none space-y-4 text-[15px]">
+          {/* Educational Concept Banner */}
+          {selectedNews.educationalConcept && (
+            <div className="p-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 flex items-start gap-3.5">
+              <GraduationCap className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <h3 className="text-xs font-extrabold text-emerald-400 uppercase tracking-wider font-sora">
+                  Investor Educational Concept
+                </h3>
+                <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
+                  {selectedNews.educationalConcept}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Main Article Content */}
+          <div className="prose prose-invert prose-p:text-white/90 prose-p:leading-relaxed prose-p:font-dm-sans max-w-none space-y-4 text-[15px]">
             {selectedNews.fullContent?.split(/(?:\r?\n)+/).map((paragraph, idx) => {
-              if (!paragraph.trim()) return null;
+              const cleanPara = paragraph.trim();
+              if (!cleanPara) return null;
               
-              const parts = paragraph.split(/(!\[.*?\]\(.*?\))/g);
+              // Handle section headings like ### Section Title
+              if (cleanPara.startsWith('###') || cleanPara.startsWith('##')) {
+                const headingText = cleanPara.replace(/^#+\s*/, '');
+                return (
+                  <h3 key={idx} className="text-lg font-extrabold text-brand-primary font-sora mt-8 mb-2 border-b border-border/20 pb-1">
+                    {headingText}
+                  </h3>
+                );
+              }
+
+              const parts = cleanPara.split(/(!\[.*?\]\(.*?\))/g);
               if (parts.length === 1) {
-                return <p key={idx}>{paragraph}</p>;
+                return <p key={idx} className="leading-relaxed">{cleanPara}</p>;
               }
 
               return (
@@ -185,7 +284,7 @@ export default function NewsDetail() {
                         </div>
                       );
                     }
-                    return part.trim() ? <p key={pIdx} className="inline-block">{part}</p> : null;
+                    return part.trim() ? <p key={pIdx} className="inline-block leading-relaxed">{part}</p> : null;
                   })}
                 </div>
               );
@@ -246,6 +345,27 @@ export default function NewsDetail() {
 
         {/* Sidebar */}
         <div className="lg:col-span-4 space-y-6">
+          {/* Original Source Link */}
+          {selectedNews.link && (
+            <div className="bg-[#171622] border border-brand-primary/30 rounded-2xl p-5 space-y-3">
+              <h3 className="text-[10px] font-extrabold text-brand-primary uppercase tracking-widest border-b border-white/5 pb-2">
+                Original Publisher Source
+              </h3>
+              <p className="text-xs text-white/70 font-dm-sans">
+                Read the unedited original story published by <span className="font-bold text-white">{selectedNews.source}</span>.
+              </p>
+              <a
+                href={selectedNews.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-xs font-bold bg-brand-primary text-black hover:bg-brand-primary/90 transition-all text-center"
+              >
+                Read Full Story on {selectedNews.source}
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          )}
+
           {/* Why It Matters */}
           <div className="bg-[#171622] border border-border/30 rounded-2xl p-5 space-y-3">
             <h3 className="text-[10px] font-extrabold text-white/50 uppercase tracking-widest border-b border-white/5 pb-2">Why It Matters</h3>
