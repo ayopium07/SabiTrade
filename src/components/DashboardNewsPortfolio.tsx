@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
+import { resolveCompanyLogo } from '@/lib/companyLogos';
 
 export default function DashboardNewsPortfolio() {
   const news = useAppStore((s) => s.news);
@@ -36,33 +37,41 @@ export default function DashboardNewsPortfolio() {
         <div className="rounded-xl border border-white/5 bg-[#111116] overflow-hidden">
           <div className="h-[2px] w-full bg-gradient-to-r from-blue-500 to-purple-600"></div>
           <div className="p-2">
-            {analysisNews.map((item, idx) => (
-              <React.Fragment key={item.id}>
-                <div onClick={() => handleNewsClick(item)} className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                  <div className="flex flex-col justify-between flex-1 min-w-0">
-                    <div>
-                      {item.category === 'Featured' && (
-                        <span className="text-[10px] text-orange-500 font-bold mb-1 block">Trending 🔥</span>
-                      )}
-                      <h4 className="text-[12px] font-bold text-white/90 leading-tight group-hover:text-[#D4AF37] transition-colors line-clamp-2">
-                        {item.originalHeadline}
-                      </h4>
-                    </div>
-                    <div className="flex items-center justify-between mt-2 gap-2">
-                      <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo} • {item.source}</span>
-                      <div className="flex gap-1 flex-shrink-0">
-                        {item.affectedStocks.slice(0,2).map(ticker => (
-                          <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
-                            {ticker}
-                          </span>
-                        ))}
+            {analysisNews.map((item, idx) => {
+              const companyLogo = item.companyLogoUrl || resolveCompanyLogo(item.affectedStocks, item.originalHeadline, item.fullContent).logoUrl;
+              return (
+                <React.Fragment key={item.id}>
+                  <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                    {companyLogo && (
+                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5">
+                        <img src={companyLogo} alt="Company logo" className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <div className="flex flex-col justify-between flex-1 min-w-0">
+                      <div>
+                        {item.category === 'Featured' && (
+                          <span className="text-[10px] text-orange-500 font-bold mb-1 block">Trending 🔥</span>
+                        )}
+                        <h4 className="text-[12px] font-bold text-white/90 leading-tight group-hover:text-[#D4AF37] transition-colors line-clamp-2">
+                          {item.originalHeadline}
+                        </h4>
+                      </div>
+                      <div className="flex items-center justify-between mt-2 gap-2">
+                        <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo} • {item.source}</span>
+                        <div className="flex gap-1 flex-shrink-0">
+                          {item.affectedStocks.slice(0,2).map(ticker => (
+                            <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
+                              {ticker}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                {idx < analysisNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-white/5"></div>}
-              </React.Fragment>
-            ))}
+                  {idx < analysisNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-white/5"></div>}
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -73,33 +82,41 @@ export default function DashboardNewsPortfolio() {
         <div className="rounded-xl border border-white/5 bg-[#111116] overflow-hidden">
           <div className="h-[2px] w-full bg-gradient-to-r from-orange-400 to-amber-600"></div>
           <div className="p-2">
-            {marketNews.map((item, idx) => (
-              <React.Fragment key={item.id}>
-                <div onClick={() => handleNewsClick(item)} className="flex gap-4 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                  <div className="flex flex-col justify-between flex-1 min-w-0">
-                    <div>
-                      {idx === 0 && (
-                        <span className="text-[10px] text-white/60 font-medium mb-1 block">Market News</span>
-                      )}
-                      <h4 className="text-[12px] font-bold text-white/90 leading-tight group-hover:text-[#D4AF37] transition-colors line-clamp-2">
-                        {item.originalHeadline}
-                      </h4>
-                    </div>
-                    <div className="flex items-center justify-between mt-2 gap-2">
-                      <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo}</span>
-                      <div className="flex gap-1 flex-shrink-0">
-                        {item.affectedStocks.slice(0,2).map(ticker => (
-                          <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
-                            {ticker}
-                          </span>
-                        ))}
+            {marketNews.map((item, idx) => {
+              const companyLogo = item.companyLogoUrl || resolveCompanyLogo(item.affectedStocks, item.originalHeadline, item.fullContent).logoUrl;
+              return (
+                <React.Fragment key={item.id}>
+                  <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                    {companyLogo && (
+                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5">
+                        <img src={companyLogo} alt="Company logo" className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <div className="flex flex-col justify-between flex-1 min-w-0">
+                      <div>
+                        {idx === 0 && (
+                          <span className="text-[10px] text-white/60 font-medium mb-1 block">Market News</span>
+                        )}
+                        <h4 className="text-[12px] font-bold text-white/90 leading-tight group-hover:text-[#D4AF37] transition-colors line-clamp-2">
+                          {item.originalHeadline}
+                        </h4>
+                      </div>
+                      <div className="flex items-center justify-between mt-2 gap-2">
+                        <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo}</span>
+                        <div className="flex gap-1 flex-shrink-0">
+                          {item.affectedStocks.slice(0,2).map(ticker => (
+                            <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
+                              {ticker}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                {idx < marketNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-white/5"></div>}
-              </React.Fragment>
-            ))}
+                  {idx < marketNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-white/5"></div>}
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
       </div>

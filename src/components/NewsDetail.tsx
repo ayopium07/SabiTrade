@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
 import { ArrowLeft, MessageSquare, Share2, Bookmark, Clock, Send, Sparkles, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { resolveCompanyLogo } from '@/lib/companyLogos';
 
 const sentimentConfig = {
   Positive: {
@@ -119,14 +120,26 @@ export default function NewsDetail() {
       </div>
 
       {/* Hero Image */}
-      <div className="w-full h-64 sm:h-[400px] rounded-3xl overflow-hidden border border-border/40 relative group">
-        <img 
-          src={selectedNews.imageUrl} 
-          alt={selectedNews.originalHeadline}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0E0D25] via-transparent to-transparent opacity-60" />
-      </div>
+      {(() => {
+        const companyLogo = selectedNews.companyLogoUrl || resolveCompanyLogo(selectedNews.affectedStocks, selectedNews.originalHeadline, selectedNews.fullContent).logoUrl;
+        return (
+          <div className="w-full h-64 sm:h-[400px] rounded-3xl overflow-hidden border border-border/40 relative group">
+            <img 
+              src={selectedNews.imageUrl} 
+              alt={selectedNews.originalHeadline}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0E0D25] via-transparent to-transparent opacity-60" />
+            
+            {/* Company Logo Badge */}
+            {companyLogo && (
+              <div className="absolute top-4 right-4 bg-white/95 p-2 rounded-2xl shadow-xl border border-white/20 flex items-center justify-center w-14 h-14 backdrop-blur-md z-10" title="Featured Company Logo">
+                <img src={companyLogo} alt="Company logo" className="w-full h-full object-contain" />
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

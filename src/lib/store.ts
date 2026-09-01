@@ -115,7 +115,7 @@ export interface AppState {
   sendChatMessage: (text: string) => void;
   clearChat: () => void;
   fetchMarketData: () => Promise<void>;
-  fetchNews: () => Promise<void>;
+  fetchNews: (date?: string) => Promise<void>;
   publishNews: (headline: string, content: string, imageUrl?: string, source?: string) => Promise<void>;
   setSelectedNewsArticle: (news: NewsItem | null) => void;
   addNewsComment: (newsId: string, text: string) => void;
@@ -480,18 +480,18 @@ export const useAppStore = create<AppState>()(
     });
   },
 
-  fetchNews: async () => {
+  fetchNews: async (date?: string) => {
     if (get().isLoadingNews) return;
     set({ isLoadingNews: true });
     try {
-      const response = await fetch('/api/ai/news');
+      const url = date ? `/api/ai/news?date=${encodeURIComponent(date)}` : '/api/ai/news';
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         if (data.news && Array.isArray(data.news)) {
           set(state => {
             const userNews = state.news.filter(n => n.id.startsWith('news-user-'));
-            const existingOtherNews = state.news.filter(n => !n.id.startsWith('news-user-') && !data.news.some((dn: any) => dn.id === n.id));
-            return { news: [...userNews, ...data.news, ...existingOtherNews] };
+            return { news: [...userNews, ...data.news] };
           });
         }
       }

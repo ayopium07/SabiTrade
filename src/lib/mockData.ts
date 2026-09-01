@@ -42,6 +42,8 @@ export interface NewsItem {
   marketImpact: 'Positive' | 'Negative' | 'Neutral';
   drivers?: string[];
   imageUrl: string;
+  companyLogoUrl?: string;
+  matchedCompany?: string;
   commentsCount: number;
   category: 'Stock Market' | 'Economy' | 'Global News' | 'Featured' | string;
   fullContent?: string;

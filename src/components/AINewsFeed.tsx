@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ExternalLink, TrendingUp, TrendingDown, Minus, MessageSquare, X, Sparkles, Info, Calendar, PenTool } from 'lucide-react';
 import { NewsItem } from '@/lib/mockData';
 import { useAppStore } from '@/lib/store';
+import { resolveCompanyLogo } from '@/lib/companyLogos';
 
 const sentimentConfig = {
   Positive: {
@@ -76,8 +77,8 @@ export default function AINewsFeed() {
   };
 
   React.useEffect(() => {
-    fetchNews();
-  }, [fetchNews]);
+    fetchNews(selectedDate);
+  }, [fetchNews, selectedDate]);
 
   // Filter news by active category and selected date
   const filteredNews = newsList.filter((item) => {
@@ -197,6 +198,8 @@ export default function AINewsFeed() {
             {(() => {
               const news = filteredNews[0];
               const cfg = sentimentConfig[news.marketImpact];
+              const companyLogo = news.companyLogoUrl || resolveCompanyLogo(news.affectedStocks, news.originalHeadline, news.fullContent).logoUrl;
+
               return (
                 <div
                   key={news.id}
@@ -229,6 +232,13 @@ export default function AINewsFeed() {
                     >
                       {news.marketImpact} Impact
                     </span>
+
+                    {/* Company Logo Overlay */}
+                    {companyLogo && (
+                      <div className="absolute top-3 right-3 w-10 h-10 rounded-xl bg-white/95 p-1 shadow-lg border border-white/20 flex items-center justify-center backdrop-blur-md z-10" title="Featured Company Logo">
+                        <img src={companyLogo} alt="Company Logo" className="w-full h-full object-contain" />
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-lg sm:text-xl font-extrabold text-text-primary font-sora leading-snug group-hover:text-brand-primary transition-colors">
@@ -256,6 +266,8 @@ export default function AINewsFeed() {
             {/* Remaining Items List */}
             {filteredNews.slice(1).map((news) => {
               const cfg = sentimentConfig[news.marketImpact];
+              const companyLogo = news.companyLogoUrl || resolveCompanyLogo(news.affectedStocks, news.originalHeadline, news.fullContent).logoUrl;
+
               return (
                 <div
                   key={news.id}
@@ -283,6 +295,11 @@ export default function AINewsFeed() {
                       alt={news.originalHeadline}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
+                    {companyLogo && (
+                      <div className="absolute bottom-1 right-1 w-6 h-6 rounded-md bg-white/95 p-0.5 shadow border border-white/20 flex items-center justify-center z-10" title="Company Logo">
+                        <img src={companyLogo} alt="Company Logo" className="w-full h-full object-contain" />
+                      </div>
+                    )}
                   </div>
                 </div>
               );
