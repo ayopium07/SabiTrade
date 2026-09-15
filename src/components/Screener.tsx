@@ -342,7 +342,7 @@ export default function Screener() {
       </div>
 
       {/* ── METRICS OVERVIEW GRID CARD (6 COLUMNS) ── */}
-      <div className="rounded-2xl border border-white/8 p-4 md:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-white/5" style={{ background: '#12101E' }}>
+      <div className="rounded-2xl p-4 md:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-white/5" style={{ background: '#12101E' }}>
         
         {/* Col 1 */}
         <div className="flex flex-col justify-between">
@@ -515,7 +515,7 @@ export default function Screener() {
           <strong className="text-white font-sora">{activeCategoryLabel}</strong>. <span className="text-[#94A3B8] font-normal">The complete NGX universe covered by EquityStack.</span>
         </div>
 
-        <div className="rounded-2xl border border-white/8 p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3" style={{ background: '#12101E' }}>
+        <div className="rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3" style={{ background: '#12101E' }}>
           
           {/* Search Box */}
           <div className="relative min-w-[240px] sm:min-w-[300px] flex-grow">
@@ -589,7 +589,7 @@ export default function Screener() {
       </div>
 
       {/* ── RESULTS TABLE WITH EXPANDABLE ROW DRAWER ── */}
-      <div className="rounded-2xl border border-white/8 overflow-hidden" style={{ background: '#0F0D1A' }}>
+      <div className="rounded-2xl overflow-hidden" style={{ background: '#0F0D1A' }}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

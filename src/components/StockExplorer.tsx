@@ -131,7 +131,7 @@ export default function StockExplorer() {
       </div>
 
       {/* TABLE — all screen sizes, horizontal scroll on mobile */}
-      <div className="rounded-2xl border border-white/8 overflow-hidden" style={{ background: '#0F0D1A' }}>
+      <div className="rounded-2xl overflow-hidden" style={{ background: '#0F0D1A' }}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

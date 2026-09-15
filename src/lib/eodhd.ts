@@ -125,12 +125,28 @@ export async function fetchEodhdAllShareIndex() {
   // Base ~ ₦58.7T at 98,425 points => ~₦145T at 243,416 points
   const estimatedMarketCapTrillions = ((currentASI / 98425.10) * 58.7).toFixed(1);
 
+  // Compute market open status fresh (never cache this — it changes throughout the day)
+  const marketOpen = isNgxMarketOpen();
+
+  // Check if the latest data date matches today (in Lagos/WAT timezone)
+  const todayNgx = new Date();
+  const lagosNow = new Date(todayNgx.getTime() + (todayNgx.getTimezoneOffset() * 60000) + 3600000);
+  const lagosToday = lagosNow.toISOString().split('T')[0];
+  const isLatestToday = latest.date === lagosToday;
+
+  const lastUpdatedStr = marketOpen
+    ? `Live · ${latest.date}`
+    : isLatestToday
+    ? `Closed · ${latest.date}`
+    : `Prev Close · ${latest.date}`;
+
   return {
     allShareIndex: currentASI,
     change,
     changeAmount,
-    status: (isNgxMarketOpen() ? 'Open' : 'Closed') as 'Open' | 'Closed',
-    lastUpdated: `As of ${latest.date}`,
+    // Always recompute status fresh — never use a cached value
+    status: (marketOpen ? 'Open' : 'Closed') as 'Open' | 'Closed',
+    lastUpdated: lastUpdatedStr,
     marketCap: `₦${estimatedMarketCapTrillions}T`,
     volume: volStr,
     deals: `${Math.floor(11000 + (latest.volume % 5000)).toLocaleString()}`,

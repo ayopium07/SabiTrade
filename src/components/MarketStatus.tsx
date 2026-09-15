@@ -89,7 +89,6 @@ function getDynamicTimeframeData(tf: Timeframe, liveData?: IndexData) {
     } else if (tf === '30 days') {
       filteredCandles = candles.slice(-30);
     } else {
-      // 12 month
       filteredCandles = candles;
     }
 
@@ -156,13 +155,14 @@ function getDynamicTimeframeData(tf: Timeframe, liveData?: IndexData) {
   let currentVal = baseAsi;
 
   if (tf === '24 hours') {
-    const count = 24;
+    const count = 12;
     let base = baseAsi - changeAmt;
 
     for (let i = 0; i < count; i++) {
-      const dt = new Date(now.getTime() - (count - 1 - i) * 60 * 60 * 1000);
-      const timeStr = dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-      const fullDateStr = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' at ' + timeStr;
+      const hour = 10 + Math.floor((i * 4.5) / count);
+      const min = Math.floor(((i * 4.5 * 60) / count) % 60);
+      const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+      const fullDateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' at ' + timeStr + ' WAT';
 
       const isLast = i === count - 1;
       const o = base;
@@ -178,12 +178,11 @@ function getDynamicTimeframeData(tf: Timeframe, liveData?: IndexData) {
 
     xAxisLabels = [
       points[0].date,
+      points[2].date,
       points[4].date,
-      points[8].date,
-      points[12].date,
-      points[16].date,
-      points[20].date,
-      points[23].date,
+      points[7].date,
+      points[9].date,
+      points[11].date,
     ];
 
   } else if (tf === '7 days') {
@@ -251,7 +250,6 @@ function getDynamicTimeframeData(tf: Timeframe, liveData?: IndexData) {
     changePct = parseFloat(((changeAmt / first.o) * 100).toFixed(2));
 
   } else {
-    // 12 month
     const count = 12;
     let base = baseAsi * 0.65;
 
@@ -299,9 +297,16 @@ function getDynamicTimeframeData(tf: Timeframe, liveData?: IndexData) {
   };
 }
 
+// ── Format Y-axis tick value ────────────────────────────────────────────
+function formatYTick(val: number): string {
+  if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+  if (val >= 1000) return `${(val / 1000).toFixed(1)}k`;
+  return val.toFixed(0);
+}
+
 export default function MarketStatus() {
   const [chartStyle, setChartStyle] = useState<ChartStyle>('candlestick');
-  const [timeframe, setTimeframe] = useState<Timeframe>('30 days');
+  const [timeframe, setTimeframe] = useState<Timeframe>('24 hours');
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('2026-01-01');
@@ -309,31 +314,33 @@ export default function MarketStatus() {
 
   const data = useAppStore((state) => state.indexData);
 
-  // Active data generated relative to real EODHD market data
   const activeData = useMemo(() => getDynamicTimeframeData(timeframe, data), [timeframe, data]);
   const isPositive = activeData.changePct >= 0;
 
-  // Active point when hovered
   const hoveredPoint = hoveredIdx !== null ? activeData.points[hoveredIdx] : null;
 
-  // Y-axis tick labels
+  // Y-axis tick labels (7 ticks from top → bottom)
   const yAxisTicks = useMemo(() => {
-    const ticks = [];
+    const ticks: string[] = [];
     const step = (activeData.maxVal - activeData.minVal) / 6;
     for (let i = 6; i >= 0; i--) {
-      const val = activeData.minVal + step * i;
-      if (val >= 1000) {
-        ticks.push(`${(val / 1000).toFixed(1)}k`);
-      } else {
-        ticks.push(val.toFixed(0));
-      }
+      ticks.push(formatYTick(activeData.minVal + step * i));
     }
     return ticks;
   }, [activeData]);
 
+  // Y-axis raw values (for positioning)
+  const yAxisValues = useMemo(() => {
+    const vals: number[] = [];
+    const step = (activeData.maxVal - activeData.minVal) / 6;
+    for (let i = 6; i >= 0; i--) {
+      vals.push(activeData.minVal + step * i);
+    }
+    return vals;
+  }, [activeData]);
+
   const maxVol = useMemo(() => Math.max(...activeData.points.map(p => p.v)), [activeData]);
 
-  // Compute SVG Points for smooth line / area rendering
   const svgCoords = useMemo(() => {
     const pts = activeData.points;
     const len = pts.length;
@@ -357,311 +364,396 @@ export default function MarketStatus() {
     return `${linePath} L 100 100 L 0 100 Z`;
   }, [linePath, svgCoords]);
 
-  // Formatted real-time current timestamp string
   const currentTimestampStr = data.lastUpdated && data.lastUpdated !== 'Just now'
     ? `${data.lastUpdated} · (Lagos / WAT)`
     : new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' · (Lagos / WAT)';
 
+  const isPrevClose = data.lastUpdated?.startsWith('Prev Close');
+
+  // Scale helper: value → percentage from top (0% = top = maxVal)
+  const scaleY = (val: number) =>
+    100 - ((val - activeData.minVal) / (activeData.maxVal - activeData.minVal || 1)) * 100;
+
   return (
     <div className="space-y-6">
       {/* ── Main Chart Card ── */}
-      <div className="rounded-2xl border border-white/10 overflow-hidden shadow-2xl" style={{ background: '#12101E' }}>
-        <div className="p-6">
-          <div className="flex flex-col lg:flex-row justify-between gap-6">
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ background: '#0E0D18', border: '1px solid rgba(255,255,255,0.07)' }}
+      >
+        <div className="p-4 sm:p-5">
 
-            {/* Left Header */}
+          {/* ── Header Row ── */}
+          <div className="flex flex-wrap items-start justify-between gap-y-3 mb-3">
+
+            {/* Left: Title + Status Badge */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-1">
                 <span className="text-xl sm:text-2xl font-extrabold text-white font-sora tracking-tight">
                   All Share Index
                 </span>
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded text-[#00D395] bg-[#00D395]/10 uppercase border border-[#00D395]/20 ml-2 font-sora">
-                  {data.status === 'Open' ? 'LIVE' : 'CLOSED'}
-                </span>
-                <Info className="h-4 w-4 text-white/40 ml-1" />
+                {data.status === 'Open' ? (
+                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded text-[#00D395] bg-[#00D395]/10 uppercase border border-[#00D395]/20 font-sora">
+                    LIVE
+                  </span>
+                ) : isPrevClose ? (
+                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded text-[#CFA343] bg-[#CFA343]/10 uppercase border border-[#CFA343]/25 font-sora">
+                    PREV CLOSE
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded text-[#FF4D4D] bg-[#FF4D4D]/10 uppercase border border-[#FF4D4D]/20 font-sora">
+                    CLOSED
+                  </span>
+                )}
+                <Info className="h-3.5 w-3.5 text-white/30" />
               </div>
 
-              {/* Timestamp Indicator */}
-              <div className="flex items-center gap-1.5 text-[11px] text-[#CFA343] font-medium mb-3">
-                <Clock className="h-3.5 w-3.5" />
-                <span>Real-Time Market Data · {currentTimestampStr}</span>
+              {/* Session timestamp */}
+              <div className="flex items-center gap-1.5 text-[11px] text-[#CFA343] font-medium">
+                <Clock className="h-3 w-3" />
+                <span>{isPrevClose ? 'Previous Session Data' : 'Market Data'} · {currentTimestampStr}</span>
               </div>
-
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-3xl lg:text-4xl font-extrabold font-sora text-[#00D395] tracking-tight">
-                    {hoveredPoint
-                      ? hoveredPoint.c.toLocaleString('en-NG', { minimumFractionDigits: 2 })
-                      : activeData.currentVal.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-                  </h2>
-                </div>
-                <span className={`flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full ${isPositive ? 'bg-[#00D395]/10 text-[#00D395] border-[#00D395]/20' : 'bg-[#FF4D4D]/10 text-[#FF4D4D] border-[#FF4D4D]/20'} border`}>
-                  <TrendingUp className={`h-3.5 w-3.5 ${isPositive ? '' : 'rotate-180'}`} />
-                  {isPositive ? '+' : ''}{activeData.changePct.toFixed(2)}% ({timeframe})
-                </span>
-              </div>
-
-              <div className="flex items-center gap-6 text-xs sm:text-sm font-medium font-sora">
-                <span><span className="text-white/40">Market Cap:</span> <span className="text-white font-bold">{data.marketCap}</span></span>
-                <span><span className="text-white/40">Volume:</span> <span className="text-white font-bold">{data.volume}</span></span>
-                <span><span className="text-white/40">Deals:</span> <span className="text-white font-bold">{data.deals}</span></span>
-              </div>
-            </div>
-
-            {/* Right Controls */}
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Chart Style Switcher */}
-              <div className="flex items-center border border-white/10 rounded-lg p-0.5 bg-[#181528] overflow-hidden">
-                <button
-                  onClick={() => setChartStyle('candlestick')}
-                  className={`px-3 py-1.5 text-xs font-bold transition-all focus:outline-none border-r border-white/10 ${chartStyle === 'candlestick' ? 'bg-[#CFA343] text-[#0E0B14] shadow-md' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-                >
-                  Candlestick
-                </button>
-                <button
-                  onClick={() => setChartStyle('area')}
-                  className={`px-3 py-1.5 text-xs font-bold transition-all focus:outline-none border-r border-white/10 ${chartStyle === 'area' ? 'bg-[#CFA343] text-[#0E0B14] shadow-md' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-                >
-                  Area Chart
-                </button>
-                <button
-                  onClick={() => setChartStyle('line')}
-                  className={`px-3 py-1.5 text-xs font-bold transition-all focus:outline-none border-r border-white/10 ${chartStyle === 'line' ? 'bg-[#CFA343] text-[#0E0B14] shadow-md' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-                >
-                  Line Chart
-                </button>
-                <button
-                  onClick={() => setChartStyle('bars')}
-                  className={`px-3 py-1.5 text-xs font-bold transition-all focus:outline-none ${chartStyle === 'bars' ? 'bg-[#CFA343] text-[#0E0B14] shadow-md' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-                >
-                  Bar Chart
-                </button>
-              </div>
-
-              {/* Timeframe selector buttons */}
-              <div className="flex items-center border border-white/10 rounded-lg p-0.5 bg-[#181528] overflow-hidden">
-                {(['24 hours', '7 days', '30 days'] as Timeframe[]).map((tf) => (
-                  <button
-                    key={tf}
-                    onClick={() => { setTimeframe(tf); setHoveredIdx(null); }}
-                    className={`px-3.5 py-1.5 text-xs font-bold transition-all focus:outline-none border-r border-white/10 last:border-0 ${timeframe === tf
-                        ? 'bg-white/15 text-white border-white/20'
-                        : 'text-white/60 hover:text-white hover:bg-white/5'
-                      }`}
-                  >
-                    {tf}
-                  </button>
-                ))}
-              </div>
-
-              {/* Select dates button */}
-              <button
-                onClick={() => setIsDatePickerOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold border border-white/15 text-white hover:bg-white/5 focus:outline-none transition-all bg-[#181528]"
-              >
-                <Calendar className="h-3.5 w-3.5 text-[#CFA343]" />
-                Select dates
-              </button>
             </div>
           </div>
 
-          {/* Interactive Hover Card Details */}
-          {hoveredPoint && (
-            <div className="mt-4 p-3.5 rounded-xl border border-[#CFA343]/30 bg-[#181528] flex flex-wrap items-center justify-between text-xs font-sora animate-fadeIn shadow-lg">
-              <div className="flex items-center gap-2">
-                <Clock className="h-3.5 w-3.5 text-[#CFA343]" />
-                <span className="text-[#CFA343] font-extrabold">{hoveredPoint.fullDate}</span>
-              </div>
-              <div className="flex items-center gap-4 flex-wrap">
-                <span>Open: <strong className="text-white">₦{hoveredPoint.o.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
-                <span>High: <strong className="text-[#00D395]">₦{hoveredPoint.h.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
-                <span>Low: <strong className="text-[#FF4D4D]">₦{hoveredPoint.l.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
-                <span>Close: <strong className="text-[#00D395]">₦{hoveredPoint.c.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
-                <span>Volume: <strong className="text-white">₦{hoveredPoint.v}B</strong></span>
-              </div>
-            </div>
-          )}
+          {/* ── Price Row ── */}
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-sora text-[#00D395] tracking-tight leading-none">
+              {hoveredPoint
+                ? hoveredPoint.c.toLocaleString('en-NG', { minimumFractionDigits: 2 })
+                : activeData.currentVal.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+            </h2>
+            <span
+              className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full border ${
+                isPositive
+                  ? 'bg-[#00D395]/10 text-[#00D395] border-[#00D395]/20'
+                  : 'bg-[#FF4D4D]/10 text-[#FF4D4D] border-[#FF4D4D]/20'
+              }`}
+            >
+              <TrendingUp className={`h-3 w-3 ${isPositive ? '' : 'rotate-180'}`} />
+              {isPositive ? '+' : ''}{activeData.changePct.toFixed(2)}%
+            </span>
+          </div>
 
-          {/* ── Main Chart Canvas Area ── */}
-          <div className="mt-6 h-[380px] w-full relative flex pl-2 pr-4 pt-4 pb-6 select-none">
+          {/* ── Controls Row: chart style + timeframe + dates ── */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 mb-4">
 
-            {/* Y-axis Labels */}
-            <div className="flex flex-col justify-between items-end pr-4 text-[10px] text-white/50 font-medium h-full font-sora">
-              {yAxisTicks.map((t, idx) => (
-                <span key={idx}>{t}</span>
+            {/* Chart style buttons */}
+            <div className="flex items-center rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              {(['candlestick', 'area', 'line', 'bars'] as ChartStyle[]).map((style, idx, arr) => (
+                <button
+                  key={style}
+                  onClick={() => setChartStyle(style)}
+                  className={`px-3 py-1.5 text-[11px] font-bold transition-all focus:outline-none whitespace-nowrap capitalize ${
+                    idx < arr.length - 1 ? 'border-r border-white/8' : ''
+                  } ${
+                    chartStyle === style
+                      ? 'bg-[#CFA343] text-[#0E0D18]'
+                      : 'text-white/50 hover:text-white/80'
+                  }`}
+                >
+                  {style === 'candlestick' ? 'Candle' : style.charAt(0).toUpperCase() + style.slice(1)}
+                </button>
               ))}
             </div>
 
-            {/* SVG & Bars Chart Area */}
-            <div
-              className="flex-1 relative border-l border-white/10 ml-2"
-              onMouseLeave={() => setHoveredIdx(null)}
-              onMouseMove={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const ratio = Math.max(0, Math.min(1, mouseX / rect.width));
-                const idx = Math.round(ratio * (activeData.points.length - 1));
-                setHoveredIdx(idx);
-              }}
+            {/* Timeframe buttons */}
+            <div className="flex items-center rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              {(['24 hours', '7 days', '30 days'] as Timeframe[]).map((tf, idx, arr) => (
+                <button
+                  key={tf}
+                  onClick={() => { setTimeframe(tf); setHoveredIdx(null); }}
+                  className={`px-3 py-1.5 text-[11px] font-bold transition-all focus:outline-none whitespace-nowrap ${
+                    idx < arr.length - 1 ? 'border-r border-white/8' : ''
+                  } ${
+                    timeframe === tf
+                      ? 'bg-white/15 text-white'
+                      : 'text-white/50 hover:text-white/80'
+                  }`}
+                >
+                  {tf === '24 hours' ? '24H' : tf === '7 days' ? '7D' : '30D'}
+                </button>
+              ))}
+            </div>
+
+            {/* Dates button */}
+            <button
+              onClick={() => setIsDatePickerOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all focus:outline-none flex-shrink-0 whitespace-nowrap text-white/50 hover:text-white/80"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
             >
-              {/* Horizontal Grid lines */}
-              <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                {[...Array(7)].map((_, i) => (
-                  <div key={i} className="w-full border-t border-white/5" />
-                ))}
-              </div>
+              <Calendar className="h-3.5 w-3.5 text-[#CFA343]" />
+              Dates
+            </button>
+          </div>
 
-              {/* Candlestick Render */}
-              {chartStyle === 'candlestick' && (
-                <div className="absolute inset-0 flex items-end justify-between px-1" style={{ paddingBottom: '32px' }}>
-                  {activeData.points.map((p, i) => {
-                    const color = p.c >= p.o ? '#00D395' : '#FF4D4D';
-                    const range = activeData.maxVal - activeData.minVal;
-                    const scale = (val: number) => ((val - activeData.minVal) / range) * 100;
+          {/* ── Hover Details Strip ── */}
+          {hoveredPoint && (
+            <div
+              className="mb-3 px-3 py-2 rounded-xl flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-sora animate-fadeIn"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(207,163,67,0.2)' }}
+            >
+              <span className="text-[#CFA343] font-bold">{hoveredPoint.fullDate}</span>
+              <span className="text-white/50">O: <strong className="text-white">{hoveredPoint.o.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+              <span className="text-white/50">H: <strong className="text-[#00D395]">{hoveredPoint.h.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+              <span className="text-white/50">L: <strong className="text-[#FF4D4D]">{hoveredPoint.l.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+              <span className="text-white/50">C: <strong className="text-[#00D395]">{hoveredPoint.c.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+            </div>
+          )}
 
-                    const high = scale(p.h);
-                    const low = scale(p.l);
-                    const open = scale(p.o);
-                    const close = scale(p.c);
+          {/* ── Chart Canvas ── */}
+          {/*
+            Layout:
+            [chart area (flex-1)] [y-axis labels (fixed right)]
+            [x-axis labels below chart]
+          */}
+          <div className="relative select-none" style={{ height: '220px' }}>
 
-                    const top = Math.max(0, Math.min(100, 100 - high));
-                    const bottom = Math.max(0, Math.min(100, 100 - low));
-                    const bodyTop = Math.max(0, Math.min(100, 100 - Math.max(open, close)));
-                    const bodyBottom = Math.max(0, Math.min(100, 100 - Math.min(open, close)));
-                    const heightPercent = Math.max(2.5, bodyBottom - bodyTop);
+            {/* Chart + Y-axis flex wrapper */}
+            <div className="flex h-full">
 
-                    const isHovered = hoveredIdx === i;
-
-                    return (
-                      <div
-                        key={i}
-                        className="relative flex-1 flex flex-col justify-end h-full px-[1px] cursor-pointer group"
-                      >
-                        {/* Guide Line on Hover */}
-                        {isHovered && (
-                          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-white/30 border-dashed border-l border-white/50 z-20 pointer-events-none" />
-                        )}
-
-                        {/* Candle Wicks and Body */}
-                        <div className="absolute top-0 bottom-0 w-full z-10 flex items-center justify-center pointer-events-none">
-                          {/* Wick */}
-                          <div
-                            className={`absolute w-[1.5px] rounded-full left-1/2 -translate-x-1/2 transition-all duration-150 ${isHovered ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' : ''}`}
-                            style={{ top: `${top}%`, bottom: `${100 - bottom}%`, backgroundColor: isHovered ? '#FFFFFF' : color }}
-                          />
-                          {/* Body */}
-                          <div
-                            className={`absolute w-full max-w-[10px] rounded-[1.5px] transition-all duration-150 ${isHovered ? 'brightness-150 scale-x-125' : ''}`}
-                            style={{ top: `${bodyTop}%`, height: `${heightPercent}%`, backgroundColor: color }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Area & Line SVG Render */}
-              {(chartStyle === 'area' || chartStyle === 'line') && (
-                <div className="absolute inset-0" style={{ paddingBottom: '32px' }}>
-                  <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="market-area-gradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#00D395" stopOpacity="0.35" />
-                        <stop offset="60%" stopColor="#00D395" stopOpacity="0.08" />
-                        <stop offset="100%" stopColor="#00D395" stopOpacity="0.00" />
-                      </linearGradient>
-                    </defs>
-
-                    {/* Area Fill */}
-                    {chartStyle === 'area' && (
-                      <path d={areaPath} fill="url(#market-area-gradient)" />
-                    )}
-
-                    {/* Main Line Stroke */}
-                    <path
-                      d={linePath}
-                      fill="none"
-                      stroke="#00D395"
-                      strokeWidth="2.5"
-                      vectorEffect="non-scaling-stroke"
-                    />
-
-                    {/* Hover Active Dot */}
-                    {hoveredIdx !== null && svgCoords[hoveredIdx] && (
-                      <g>
-                        {/* Guide Line */}
-                        <line
-                          x1={svgCoords[hoveredIdx].x}
-                          y1="0"
-                          x2={svgCoords[hoveredIdx].x}
-                          y2="100"
-                          stroke="rgba(255,255,255,0.4)"
-                          strokeDasharray="2 2"
-                          vectorEffect="non-scaling-stroke"
-                        />
-                        <circle
-                          cx={svgCoords[hoveredIdx].x}
-                          cy={svgCoords[hoveredIdx].y}
-                          r="4"
-                          fill="#00D395"
-                          stroke="#FFFFFF"
-                          strokeWidth="2"
-                          vectorEffect="non-scaling-stroke"
-                        />
-                      </g>
-                    )}
-                  </svg>
-                </div>
-              )}
-
-              {/* Bar Columns Render (When 'bars' style selected) */}
-              {chartStyle === 'bars' && (
-                <div className="absolute inset-0 flex items-end justify-between px-1" style={{ paddingBottom: '32px' }}>
-                  {activeData.points.map((p, i) => {
-                    const range = activeData.maxVal - activeData.minVal;
-                    const heightPct = Math.max(4, ((p.c - activeData.minVal) / range) * 100);
-                    const isHovered = hoveredIdx === i;
-
-                    return (
-                      <div
-                        key={i}
-                        className="relative flex-1 flex flex-col justify-end h-full px-[1px] cursor-pointer group"
-                      >
-                        <div
-                          className={`w-full rounded-t-sm transition-all duration-150 ${isHovered ? 'bg-[#00D395] brightness-125 scale-x-110' : 'bg-[#00D395]/70'}`}
-                          style={{ height: `${heightPct}%` }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Volume Bars overlay at bottom 20% */}
-              <div className="absolute bottom-0 left-0 right-0 h-[20%] flex items-end justify-between px-1 pointer-events-none" style={{ paddingBottom: '32px' }}>
-                {activeData.points.map((p, i) => {
-                  const volHeight = (p.v / maxVol) * 100;
-                  const isHovered = hoveredIdx === i;
+              {/* Main Chart Area */}
+              <div
+                className="flex-1 relative h-full"
+                onMouseLeave={() => setHoveredIdx(null)}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const mouseX = e.clientX - rect.left;
+                  const ratio = Math.max(0, Math.min(1, mouseX / rect.width));
+                  const idx = Math.round(ratio * (activeData.points.length - 1));
+                  setHoveredIdx(idx);
+                }}
+              >
+                {/* Horizontal grid lines with right-side value labels */}
+                {yAxisValues.map((val, i) => {
+                  const topPct = scaleY(val);
                   return (
-                    <div key={i} className="flex-1 px-[1px] h-full flex items-end">
-                      <div
-                        className={`w-full rounded-t-[1px] transition-colors ${isHovered ? 'bg-white/60' : 'bg-white/10'}`}
-                        style={{ height: `${volHeight}%` }}
-                      />
+                    <div
+                      key={i}
+                      className="absolute left-0 right-0 flex items-center pointer-events-none"
+                      style={{ top: `${topPct}%` }}
+                    >
+                      <div className="flex-1 border-t border-white/[0.05]" />
+                      <span
+                        className="text-[9px] sm:text-[10px] text-white/35 font-medium font-sora pl-1.5 pr-0.5"
+                        style={{ minWidth: '42px', textAlign: 'right' }}
+                      >
+                        {yAxisTicks[i]}
+                      </span>
                     </div>
                   );
                 })}
-              </div>
 
-              {/* X-axis Labels */}
-              <div className="absolute bottom-0 w-full flex justify-between text-[11px] text-white/50 font-medium font-sora -mb-7 px-1">
-                {activeData.xAxisLabels.map((lbl, idx) => (
-                  <span key={idx}>{lbl}</span>
-                ))}
+                {/* Hover vertical guide */}
+                {hoveredIdx !== null && (
+                  <div
+                    className="absolute top-0 bottom-0 w-[1px] pointer-events-none z-20"
+                    style={{
+                      left: `${(hoveredIdx / (activeData.points.length - 1)) * 100}%`,
+                      background: 'rgba(255,255,255,0.25)',
+                    }}
+                  />
+                )}
+
+                {/* ── Candlestick Render ── */}
+                {chartStyle === 'candlestick' && (
+                  <div className="absolute inset-0 flex items-stretch" style={{ paddingRight: '46px' }}>
+                    {activeData.points.map((p, i) => {
+                      const isUp = p.c >= p.o;
+                      const color = isUp ? '#00D395' : '#FF4D4D';
+                      const isHovered = hoveredIdx === i;
+
+                      const topPctH = scaleY(p.h);
+                      const topPctL = scaleY(p.l);
+                      const topPctHigh = Math.min(topPctH, topPctL);
+                      const bottomPctLow = Math.max(topPctH, topPctL);
+
+                      const bodyTop = scaleY(Math.max(p.o, p.c));
+                      const bodyBottom = scaleY(Math.min(p.o, p.c));
+                      const bodyHeight = Math.max(1, bodyBottom - bodyTop);
+
+                      const slotWidthPct = `${100 / activeData.points.length}%`;
+
+                      return (
+                        <div
+                          key={i}
+                          className="relative h-full cursor-pointer flex-shrink-0 group"
+                          style={{ width: slotWidthPct }}
+                        >
+                          {/* Hover price tag */}
+                          {isHovered && (
+                            <div
+                              className="absolute z-30 pointer-events-none"
+                              style={{
+                                top: `${bodyTop}%`,
+                                left: '50%',
+                                transform: 'translate(-50%, -130%)',
+                              }}
+                            >
+                              <span
+                                className="text-[9px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap"
+                                style={{ background: color, color: '#0E0D18' }}
+                              >
+                                {p.c.toLocaleString('en-NG', { maximumFractionDigits: 0 })}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Wick */}
+                          <div
+                            className="absolute left-1/2 -translate-x-1/2 rounded-full z-10"
+                            style={{
+                              width: '1.5px',
+                              top: `${topPctHigh}%`,
+                              height: `${bottomPctLow - topPctHigh}%`,
+                              backgroundColor: isHovered ? '#ffffff' : color,
+                              opacity: isHovered ? 1 : 0.75,
+                            }}
+                          />
+
+                          {/* Body */}
+                          <div
+                            className="absolute z-10 rounded-[2px] transition-opacity duration-100"
+                            style={{
+                              left: '12%',
+                              right: '12%',
+                              top: `${bodyTop}%`,
+                              height: `${bodyHeight}%`,
+                              backgroundColor: color,
+                              opacity: isHovered ? 1 : 0.88,
+                              boxShadow: isHovered ? `0 0 8px ${color}60` : 'none',
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* ── Area / Line SVG Render ── */}
+                {(chartStyle === 'area' || chartStyle === 'line') && (
+                  <div className="absolute inset-0" style={{ paddingRight: '46px' }}>
+                    <svg
+                      className="w-full h-full overflow-visible"
+                      preserveAspectRatio="none"
+                      viewBox="0 0 100 100"
+                    >
+                      <defs>
+                        <linearGradient id="ms-area-gradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#00D395" stopOpacity="0.35" />
+                          <stop offset="60%" stopColor="#00D395" stopOpacity="0.06" />
+                          <stop offset="100%" stopColor="#00D395" stopOpacity="0.00" />
+                        </linearGradient>
+                      </defs>
+
+                      {chartStyle === 'area' && (
+                        <path d={areaPath} fill="url(#ms-area-gradient)" />
+                      )}
+
+                      <path
+                        d={linePath}
+                        fill="none"
+                        stroke="#00D395"
+                        strokeWidth="2"
+                        vectorEffect="non-scaling-stroke"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+
+                      {hoveredIdx !== null && svgCoords[hoveredIdx] && (
+                        <g>
+                          <line
+                            x1={svgCoords[hoveredIdx].x}
+                            y1="0"
+                            x2={svgCoords[hoveredIdx].x}
+                            y2="100"
+                            stroke="rgba(255,255,255,0.3)"
+                            strokeDasharray="2 2"
+                            vectorEffect="non-scaling-stroke"
+                          />
+                          <circle
+                            cx={svgCoords[hoveredIdx].x}
+                            cy={svgCoords[hoveredIdx].y}
+                            r="3.5"
+                            fill="#00D395"
+                            stroke="#FFFFFF"
+                            strokeWidth="2"
+                            vectorEffect="non-scaling-stroke"
+                          />
+                        </g>
+                      )}
+                    </svg>
+                  </div>
+                )}
+
+                {/* ── Bars Render ── */}
+                {chartStyle === 'bars' && (
+                  <div
+                    className="absolute inset-0 flex items-end gap-px"
+                    style={{ paddingRight: '46px' }}
+                  >
+                    {activeData.points.map((p, i) => {
+                      const range = activeData.maxVal - activeData.minVal;
+                      const heightPct = Math.max(4, ((p.c - activeData.minVal) / range) * 100);
+                      const isHovered = hoveredIdx === i;
+                      return (
+                        <div key={i} className="relative flex-1 flex flex-col justify-end h-full">
+                          <div
+                            className="w-full rounded-t-sm transition-all duration-100"
+                            style={{
+                              height: `${heightPct}%`,
+                              backgroundColor: isHovered ? '#00D395' : 'rgba(0,211,149,0.55)',
+                              boxShadow: isHovered ? '0 0 6px rgba(0,211,149,0.5)' : 'none',
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* ── Volume Overlay ── */}
+                <div
+                  className="absolute bottom-0 left-0 flex items-end pointer-events-none"
+                  style={{ right: '46px', height: '18%' }}
+                >
+                  {activeData.points.map((p, i) => {
+                    const volH = (p.v / maxVol) * 100;
+                    const isHovered = hoveredIdx === i;
+                    return (
+                      <div key={i} className="flex-1 px-[0.5px] h-full flex items-end">
+                        <div
+                          className="w-full rounded-t-[1px] transition-colors"
+                          style={{
+                            height: `${volH}%`,
+                            backgroundColor: isHovered ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.07)',
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
+
+            {/* ── X-Axis Labels ── */}
+            <div
+              className="absolute bottom-0 left-0 flex justify-between text-[9px] sm:text-[10px] text-white/35 font-medium font-sora"
+              style={{ right: '50px' }}
+            >
+              {activeData.xAxisLabels.map((lbl, idx) => (
+                <span key={idx}>{lbl}</span>
+              ))}
+            </div>
           </div>
+
+          {/* ── Market Stats Row (below chart) ── */}
+          <div className="mt-5 pt-4 border-t border-white/[0.06] flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] font-sora">
+            <span><span className="text-white/40">Market Cap</span> <span className="text-white font-bold ml-1">{data.marketCap}</span></span>
+            <span><span className="text-white/40">Volume</span> <span className="text-white font-bold ml-1">{data.volume}</span></span>
+            <span><span className="text-white/40">Deals</span> <span className="text-white font-bold ml-1">{data.deals}</span></span>
+          </div>
+
         </div>
       </div>
 
@@ -704,7 +796,6 @@ export default function MarketStatus() {
                 </div>
               </div>
 
-              {/* Presets */}
               <div>
                 <label className="text-xs text-white/60 font-medium mb-2 block">Quick Ranges</label>
                 <div className="grid grid-cols-3 gap-2">

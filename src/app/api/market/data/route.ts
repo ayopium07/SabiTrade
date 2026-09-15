@@ -1,19 +1,25 @@
 import { NextResponse } from 'next/server';
 import { ngxStocks, ngxIndexData, Stock, IndexData } from '@/lib/mockData';
-import { fetchEodhdAllShareIndex, getEodhdApiKey } from '@/lib/eodhd';
+import { fetchEodhdAllShareIndex, getEodhdApiKey, isNgxMarketOpen } from '@/lib/eodhd';
 
 export const dynamic = 'force-dynamic';
 
-// Cache market data in memory for 10 minutes (600,000 ms)
+// Cache market data in memory for 5 minutes (300,000 ms)
 let cachedData: { indexData: IndexData; stocks: Stock[] } | null = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 600000; // 10 minutes
+const CACHE_DURATION = 300000; // 5 minutes
 
 export async function GET() {
   const now = Date.now();
   
   if (cachedData && (now - lastFetchTime < CACHE_DURATION)) {
-    return NextResponse.json(cachedData, {
+    // Even when serving cached price data, always recompute market open/closed status fresh
+    const freshStatus = isNgxMarketOpen() ? 'Open' : 'Closed';
+    const freshIndexData = {
+      ...cachedData.indexData,
+      status: freshStatus as 'Open' | 'Closed',
+    };
+    return NextResponse.json({ ...cachedData, indexData: freshIndexData }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
       }
