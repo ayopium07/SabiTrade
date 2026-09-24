@@ -64,33 +64,28 @@ export default function FeatureCards() {
 
       {/* Section header */}
       <div className="mb-10 text-left">
-        <span className="text-[11px] font-semibold tracking-widest uppercase block mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>
+        <span className="text-[11px] font-semibold tracking-widest uppercase block mb-3 text-text-muted">
           Platform Services
         </span>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-sora leading-tight mb-3">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora leading-tight mb-3">
           Everything you need to invest smarter.
         </h2>
-        <p className="text-sm text-white/50 font-medium max-w-sm leading-relaxed">
+        <p className="text-sm text-text-muted font-medium max-w-sm leading-relaxed">
           Six integrated tools designed to take you from first-time investor to confident market participant.
         </p>
       </div>
 
       {/* 3-column grid */}
       <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-        style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', overflow: 'hidden' }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border border-border rounded-2xl overflow-hidden glass-elevated bg-bg-surface"
       >
         {services.map((s, i) => (
           <div
             key={s.num}
-            className="flex flex-col gap-4 p-7 transition-colors duration-200 hover:bg-white/[0.02]"
-            style={{
-              borderRight: (i + 1) % 3 !== 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-              borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-            }}
+            className="flex flex-col gap-4 p-7 transition-colors duration-200 hover:bg-bg-hover border-b md:border-b-0 border-r border-border last:border-r-0"
           >
             {/* Number */}
-            <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            <span className="text-[11px] font-semibold text-text-muted">
               {s.num}
             </span>
 
@@ -103,12 +98,12 @@ export default function FeatureCards() {
             </div>
 
             {/* Title */}
-            <h3 className="text-[15px] font-extrabold text-white font-sora leading-snug">
+            <h3 className="text-[15px] font-extrabold text-text-primary font-sora leading-snug">
               {s.title}
             </h3>
 
             {/* Description */}
-            <p className="text-[12px] leading-relaxed flex-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            <p className="text-[12px] leading-relaxed flex-1 text-text-muted">
               {s.desc}
             </p>
 

@@ -19,7 +19,7 @@ export default function TickerTape() {
   const allTickers = [...tickerItems, ...tickerItems, ...tickerItems]; // duplicate for smooth scrolling
 
   return (
-    <div className="w-full overflow-hidden border-b border-border/20 bg-[#191A1D] hidden lg:block">
+    <div className="w-full overflow-hidden border-b border-border bg-bg-surface hidden lg:block">
       <div className="ticker-track py-2">
         {allTickers.map((item, i) => (
           <span key={i} className="inline-flex items-center gap-2 mx-6 text-[10px] font-bold font-dm-sans flex-shrink-0">

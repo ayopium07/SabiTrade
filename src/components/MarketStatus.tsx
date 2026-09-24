@@ -377,10 +377,7 @@ export default function MarketStatus() {
   return (
     <div className="space-y-6">
       {/* ── Main Chart Card ── */}
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{ background: '#0E0D18', border: '1px solid rgba(255,255,255,0.07)' }}
-      >
+      <div className="rounded-2xl overflow-hidden glass-elevated">
         <div className="p-4 sm:p-5">
 
           {/* ── Header Row ── */}
@@ -389,7 +386,7 @@ export default function MarketStatus() {
             {/* Left: Title + Status Badge */}
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xl sm:text-2xl font-extrabold text-white font-sora tracking-tight">
+                <span className="text-xl sm:text-2xl font-extrabold text-text-primary font-sora tracking-tight">
                   All Share Index
                 </span>
                 {data.status === 'Open' ? (
@@ -405,7 +402,7 @@ export default function MarketStatus() {
                     CLOSED
                   </span>
                 )}
-                <Info className="h-3.5 w-3.5 text-white/30" />
+                <Info className="h-3.5 w-3.5 text-text-muted" />
               </div>
 
               {/* Session timestamp */}
@@ -439,17 +436,17 @@ export default function MarketStatus() {
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 mb-4">
 
             {/* Chart style buttons */}
-            <div className="flex items-center rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="flex items-center rounded-xl overflow-hidden flex-shrink-0 bg-bg-raised border border-border">
               {(['candlestick', 'area', 'line', 'bars'] as ChartStyle[]).map((style, idx, arr) => (
                 <button
                   key={style}
                   onClick={() => setChartStyle(style)}
                   className={`px-3 py-1.5 text-[11px] font-bold transition-all focus:outline-none whitespace-nowrap capitalize ${
-                    idx < arr.length - 1 ? 'border-r border-white/8' : ''
+                    idx < arr.length - 1 ? 'border-r border-border' : ''
                   } ${
                     chartStyle === style
-                      ? 'bg-[#CFA343] text-[#0E0D18]'
-                      : 'text-white/50 hover:text-white/80'
+                      ? 'bg-brand-primary text-bg-base'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   {style === 'candlestick' ? 'Candle' : style.charAt(0).toUpperCase() + style.slice(1)}
@@ -458,17 +455,17 @@ export default function MarketStatus() {
             </div>
 
             {/* Timeframe buttons */}
-            <div className="flex items-center rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="flex items-center rounded-xl overflow-hidden flex-shrink-0 bg-bg-raised border border-border">
               {(['24 hours', '7 days', '30 days'] as Timeframe[]).map((tf, idx, arr) => (
                 <button
                   key={tf}
                   onClick={() => { setTimeframe(tf); setHoveredIdx(null); }}
                   className={`px-3 py-1.5 text-[11px] font-bold transition-all focus:outline-none whitespace-nowrap ${
-                    idx < arr.length - 1 ? 'border-r border-white/8' : ''
+                    idx < arr.length - 1 ? 'border-r border-border' : ''
                   } ${
                     timeframe === tf
-                      ? 'bg-white/15 text-white'
-                      : 'text-white/50 hover:text-white/80'
+                      ? 'bg-brand-primary-glow text-brand-primary border-brand-primary/30'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   {tf === '24 hours' ? '24H' : tf === '7 days' ? '7D' : '30D'}
@@ -479,10 +476,9 @@ export default function MarketStatus() {
             {/* Dates button */}
             <button
               onClick={() => setIsDatePickerOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all focus:outline-none flex-shrink-0 whitespace-nowrap text-white/50 hover:text-white/80"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all focus:outline-none flex-shrink-0 whitespace-nowrap bg-bg-raised border border-border text-text-secondary hover:text-text-primary"
             >
-              <Calendar className="h-3.5 w-3.5 text-[#CFA343]" />
+              <Calendar className="h-3.5 w-3.5 text-brand-primary" />
               Dates
             </button>
           </div>
@@ -490,14 +486,13 @@ export default function MarketStatus() {
           {/* ── Hover Details Strip ── */}
           {hoveredPoint && (
             <div
-              className="mb-3 px-3 py-2 rounded-xl flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-sora animate-fadeIn"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(207,163,67,0.2)' }}
+              className="mb-3 px-3 py-2 rounded-xl flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-sora animate-fadeIn bg-bg-raised border border-border"
             >
               <span className="text-[#CFA343] font-bold">{hoveredPoint.fullDate}</span>
-              <span className="text-white/50">O: <strong className="text-white">{hoveredPoint.o.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
-              <span className="text-white/50">H: <strong className="text-[#00D395]">{hoveredPoint.h.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
-              <span className="text-white/50">L: <strong className="text-[#FF4D4D]">{hoveredPoint.l.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
-              <span className="text-white/50">C: <strong className="text-[#00D395]">{hoveredPoint.c.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+              <span className="text-text-secondary">O: <strong className="text-text-primary">{hoveredPoint.o.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+              <span className="text-text-secondary">H: <strong className="text-[#00D395]">{hoveredPoint.h.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+              <span className="text-text-secondary">L: <strong className="text-[#FF4D4D]">{hoveredPoint.l.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
+              <span className="text-text-secondary">C: <strong className="text-[#00D395]">{hoveredPoint.c.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</strong></span>
             </div>
           )}
 
@@ -533,9 +528,9 @@ export default function MarketStatus() {
                       className="absolute left-0 right-0 flex items-center pointer-events-none"
                       style={{ top: `${topPct}%` }}
                     >
-                      <div className="flex-1 border-t border-white/[0.05]" />
+                      <div className="flex-1 border-t border-border/40" />
                       <span
-                        className="text-[9px] sm:text-[10px] text-white/35 font-medium font-sora pl-1.5 pr-0.5"
+                        className="text-[9px] sm:text-[10px] text-text-muted font-medium font-sora pl-1.5 pr-0.5"
                         style={{ minWidth: '42px', textAlign: 'right' }}
                       >
                         {yAxisTicks[i]}
@@ -738,7 +733,7 @@ export default function MarketStatus() {
 
             {/* ── X-Axis Labels ── */}
             <div
-              className="absolute bottom-0 left-0 flex justify-between text-[9px] sm:text-[10px] text-white/35 font-medium font-sora"
+              className="absolute bottom-0 left-0 flex justify-between text-[9px] sm:text-[10px] text-text-muted font-medium font-sora"
               style={{ right: '50px' }}
             >
               {activeData.xAxisLabels.map((lbl, idx) => (
@@ -748,10 +743,10 @@ export default function MarketStatus() {
           </div>
 
           {/* ── Market Stats Row (below chart) ── */}
-          <div className="mt-5 pt-4 border-t border-white/[0.06] flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] font-sora">
-            <span><span className="text-white/40">Market Cap</span> <span className="text-white font-bold ml-1">{data.marketCap}</span></span>
-            <span><span className="text-white/40">Volume</span> <span className="text-white font-bold ml-1">{data.volume}</span></span>
-            <span><span className="text-white/40">Deals</span> <span className="text-white font-bold ml-1">{data.deals}</span></span>
+          <div className="mt-5 pt-4 border-t border-border flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] font-sora">
+            <span><span className="text-text-muted">Market Cap</span> <span className="text-text-primary font-bold ml-1">{data.marketCap}</span></span>
+            <span><span className="text-text-muted">Volume</span> <span className="text-text-primary font-bold ml-1">{data.volume}</span></span>
+            <span><span className="text-text-muted">Deals</span> <span className="text-text-primary font-bold ml-1">{data.deals}</span></span>
           </div>
 
         </div>
@@ -759,16 +754,16 @@ export default function MarketStatus() {
 
       {/* ── Date Picker Modal ── */}
       {isDatePickerOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
-          <div className="bg-[#141020] border border-white/15 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fadeIn">
+          <div className="bg-bg-surface border border-border rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-[#CFA343]" />
-                <h3 className="text-lg font-bold text-white font-sora">Select Date Range</h3>
+                <Calendar className="h-5 w-5 text-brand-primary" />
+                <h3 className="text-lg font-bold text-text-primary font-sora">Select Date Range</h3>
               </div>
               <button
                 onClick={() => setIsDatePickerOpen(false)}
-                className="p-1 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-bg-raised transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -777,27 +772,27 @@ export default function MarketStatus() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-white/60 font-medium mb-1 block">Start Date</label>
+                  <label className="text-xs text-text-secondary font-medium mb-1 block">Start Date</label>
                   <input
                     type="date"
                     value={customStartDate}
                     onChange={(e) => setCustomStartDate(e.target.value)}
-                    className="w-full bg-[#1A1829] border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#CFA343]"
+                    className="w-full bg-bg-raised border border-border rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-brand-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-white/60 font-medium mb-1 block">End Date</label>
+                  <label className="text-xs text-text-secondary font-medium mb-1 block">End Date</label>
                   <input
                     type="date"
                     value={customEndDate}
                     onChange={(e) => setCustomEndDate(e.target.value)}
-                    className="w-full bg-[#1A1829] border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#CFA343]"
+                    className="w-full bg-bg-raised border border-border rounded-lg px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-brand-primary"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-white/60 font-medium mb-2 block">Quick Ranges</label>
+                <label className="text-xs text-text-secondary font-medium mb-2 block">Quick Ranges</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     { name: '30D', tf: '30 days' as Timeframe },
@@ -810,7 +805,7 @@ export default function MarketStatus() {
                         setTimeframe(preset.tf);
                         setIsDatePickerOpen(false);
                       }}
-                      className="py-1.5 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-white hover:bg-[#CFA343] hover:text-[#0E0B14] transition-all"
+                      className="py-1.5 rounded-lg text-xs font-bold bg-bg-raised border border-border text-text-primary hover:bg-brand-primary hover:text-bg-base transition-all"
                     >
                       {preset.name}
                     </button>
@@ -819,10 +814,10 @@ export default function MarketStatus() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4">
+            <div className="flex items-center justify-end gap-3 border-t border-border pt-4">
               <button
                 onClick={() => setIsDatePickerOpen(false)}
-                className="px-4 py-2 rounded-lg text-xs font-bold text-white/60 hover:text-white"
+                className="px-4 py-2 rounded-lg text-xs font-bold text-text-muted hover:text-text-primary"
               >
                 Cancel
               </button>
@@ -831,7 +826,7 @@ export default function MarketStatus() {
                   setTimeframe('30 days');
                   setIsDatePickerOpen(false);
                 }}
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold bg-[#CFA343] text-[#0E0B14] hover:brightness-110 transition-all"
+                className="flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold bg-brand-primary text-bg-base hover:brightness-110 transition-all"
               >
                 <Check className="h-4 w-4" />
                 Apply Range

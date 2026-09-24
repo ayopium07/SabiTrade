@@ -28,13 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="min-h-screen" style={{ background: '#041226', colorScheme: 'dark' }}>
+    <html lang="en" className="min-h-screen">
       <body
-        className={`${sora.variable} ${dmSans.variable} font-dm-sans text-text-primary bg-bg-base antialiased min-h-screen w-full`}
-        style={{ background: '#041226' }}
+        className={`${sora.variable} ${dmSans.variable} font-dm-sans text-text-primary bg-bg-base antialiased min-h-screen w-full transition-colors duration-200`}
       >
         {children}
-
       </body>
     </html>
   );

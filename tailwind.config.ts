@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: ["class", '[data-theme="dark"]'],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,39 +10,39 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Dark base surfaces (Landing page purple-black)
-        "bg-base":    "#0E0B14",
-        "bg-surface": "#141020",
-        "bg-raised":  "#1C1728",
-        "bg-hover":   "#251F33",
+        // Dynamic Base surfaces
+        "bg-base":    "var(--bg-base)",
+        "bg-surface": "var(--bg-surface)",
+        "bg-raised":  "var(--bg-raised)",
+        "bg-hover":   "var(--bg-hover)",
 
         // Brand — elegant gold identity
-        "brand-primary":       "#CFA343",
-        "brand-primary-dim":   "#B58C35",
-        "brand-primary-glow":  "rgba(207,163,67,0.15)",
-        "brand-primary-dark":  "#3E3114",
+        "brand-primary":       "var(--brand-primary)",
+        "brand-primary-dim":   "var(--brand-primary-dim)",
+        "brand-primary-glow":  "var(--brand-primary-glow)",
+        "brand-primary-dark":  "var(--brand-primary-dark)",
 
         // Accent
-        "brand-accent": "#E5C06F",
+        "brand-accent": "var(--brand-accent)",
 
         // Text
-        "text-primary":   "#FFFFFF",
-        "text-secondary": "#94A3B8",
-        "text-muted":     "#475569",
+        "text-primary":   "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "text-muted":     "var(--text-muted)",
 
         // Border
-        "border":         "#11325D",
-        "border-bright":  "#1B4E8C",
+        "border":         "var(--border-color)",
+        "border-bright":  "var(--border-bright)",
 
         // Semantic
-        danger:  "#FF4D4D",
-        warning: "#FFB800",
-        info:    "#00B8FF",
+        danger:  "#EF4444",
+        warning: "#F59E0B",
+        info:    "#3B82F6",
         gain:    "#10B981", // Emerald green strictly for stock gainers/increases
 
-        // Legacy (kept for compat)
-        background: "#0E0B14",
-        foreground:  "#FFFFFF",
+        // Dynamic background & foreground
+        background: "var(--bg-base)",
+        foreground:  "var(--text-primary)",
       },
 
       fontFamily: {

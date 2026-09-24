@@ -33,24 +33,24 @@ export default function DashboardNewsPortfolio() {
       
       {/* Column 1: Stock Analysis & Insight */}
       <div className="flex flex-col">
-        <h3 className="text-[15px] font-extrabold text-white font-sora mb-3">Stock Analysis & Insight</h3>
-        <div className="rounded-xl border border-white/5 bg-[#111116] overflow-hidden">
+        <h3 className="text-[15px] font-extrabold text-text-primary font-sora mb-3">Stock Analysis & Insight</h3>
+        <div className="rounded-xl border border-border bg-bg-raised overflow-hidden shadow-sm">
           <div className="h-[2px] w-full bg-gradient-to-r from-blue-500 to-purple-600"></div>
           <div className="p-2">
             {analysisNews.map((item, idx) => {
               const logos = resolveCompanyLogos(item.affectedStocks, item.originalHeadline, item.fullContent || item.aiSummary);
               return (
                 <React.Fragment key={item.id}>
-                  <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                  <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-bg-hover rounded-lg cursor-pointer transition-colors group">
                     {logos.length === 1 && (
-                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5" title={logos[0].name}>
+                      <div className="w-8 h-8 rounded-lg bg-white p-0.5 shadow border border-border flex-shrink-0 flex items-center justify-center self-start mt-0.5" title={logos[0].name}>
                         <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
                       </div>
                     )}
                     {logos.length > 1 && (
-                      <div className="flex items-center -space-x-2 bg-white/95 px-1 py-0.5 rounded-full shadow border border-white/20 flex-shrink-0 self-start mt-0.5" title={logos.map(l => l.name).join(' & ')}>
+                      <div className="flex items-center -space-x-2 bg-white px-1 py-0.5 rounded-full shadow border border-border flex-shrink-0 self-start mt-0.5" title={logos.map(l => l.name).join(' & ')}>
                         {logos.slice(0, 2).map((l, i) => (
-                          <div key={l.ticker} className="w-6 h-6 rounded-full bg-white p-0.5 border border-[#0E0D25] shadow overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
+                          <div key={l.ticker} className="w-6 h-6 rounded-full bg-white p-0.5 border border-border shadow overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
                             <img src={l.logoUrl} alt={l.name} className="w-full h-full object-contain rounded-full" />
                           </div>
                         ))}
@@ -61,15 +61,15 @@ export default function DashboardNewsPortfolio() {
                         {item.category === 'Featured' && (
                           <span className="text-[10px] text-orange-500 font-bold mb-1 block">Trending 🔥</span>
                         )}
-                        <h4 className="text-[12px] font-bold text-white/90 leading-tight group-hover:text-[#D4AF37] transition-colors line-clamp-2">
+                        <h4 className="text-[12px] font-bold text-text-primary leading-tight group-hover:text-brand-primary transition-colors line-clamp-2">
                           {item.originalHeadline}
                         </h4>
                       </div>
                       <div className="flex items-center justify-between mt-2 gap-2">
-                        <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo} • {item.source}</span>
+                        <span className="text-[10px] text-text-muted truncate flex-1">{item.timeAgo} • {item.source}</span>
                         <div className="flex gap-1 flex-shrink-0">
                           {item.affectedStocks.slice(0,2).map(ticker => (
-                            <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
+                            <span key={ticker} className="text-[8px] font-semibold border border-border text-text-secondary px-1.5 py-0.5 rounded-full uppercase">
                               {ticker}
                             </span>
                           ))}
@@ -77,7 +77,7 @@ export default function DashboardNewsPortfolio() {
                       </div>
                     </div>
                   </div>
-                  {idx < analysisNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-white/5"></div>}
+                  {idx < analysisNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-border/50"></div>}
                 </React.Fragment>
               );
             })}
@@ -87,24 +87,24 @@ export default function DashboardNewsPortfolio() {
 
       {/* Column 2: Financial Market News */}
       <div className="flex flex-col">
-        <h3 className="text-[15px] font-extrabold text-white font-sora mb-3">Financial Market News</h3>
-        <div className="rounded-xl border border-white/5 bg-[#111116] overflow-hidden">
+        <h3 className="text-[15px] font-extrabold text-text-primary font-sora mb-3">Financial Market News</h3>
+        <div className="rounded-xl border border-border bg-bg-raised overflow-hidden shadow-sm">
           <div className="h-[2px] w-full bg-gradient-to-r from-orange-400 to-amber-600"></div>
           <div className="p-2">
             {marketNews.map((item, idx) => {
               const logos = resolveCompanyLogos(item.affectedStocks, item.originalHeadline, item.fullContent || item.aiSummary);
               return (
                 <React.Fragment key={item.id}>
-                  <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                  <div onClick={() => handleNewsClick(item)} className="flex gap-3 p-3 hover:bg-bg-hover rounded-lg cursor-pointer transition-colors group">
                     {logos.length === 1 && (
-                      <div className="w-8 h-8 rounded-lg bg-white/95 p-0.5 shadow border border-white/20 flex-shrink-0 flex items-center justify-center self-start mt-0.5" title={logos[0].name}>
+                      <div className="w-8 h-8 rounded-lg bg-white p-0.5 shadow border border-border flex-shrink-0 flex items-center justify-center self-start mt-0.5" title={logos[0].name}>
                         <img src={logos[0].logoUrl} alt={logos[0].name} className="w-full h-full object-contain" />
                       </div>
                     )}
                     {logos.length > 1 && (
-                      <div className="flex items-center -space-x-2 bg-white/95 px-1 py-0.5 rounded-full shadow border border-white/20 flex-shrink-0 self-start mt-0.5" title={logos.map(l => l.name).join(' & ')}>
+                      <div className="flex items-center -space-x-2 bg-white px-1 py-0.5 rounded-full shadow border border-border flex-shrink-0 self-start mt-0.5" title={logos.map(l => l.name).join(' & ')}>
                         {logos.slice(0, 2).map((l, i) => (
-                          <div key={l.ticker} className="w-6 h-6 rounded-full bg-white p-0.5 border border-[#0E0D25] shadow overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
+                          <div key={l.ticker} className="w-6 h-6 rounded-full bg-white p-0.5 border border-border shadow overflow-hidden flex items-center justify-center relative" style={{ zIndex: 10 - i }}>
                             <img src={l.logoUrl} alt={l.name} className="w-full h-full object-contain rounded-full" />
                           </div>
                         ))}
@@ -113,17 +113,17 @@ export default function DashboardNewsPortfolio() {
                     <div className="flex flex-col justify-between flex-1 min-w-0">
                       <div>
                         {idx === 0 && (
-                          <span className="text-[10px] text-white/60 font-medium mb-1 block">Market News</span>
+                          <span className="text-[10px] text-text-muted font-medium mb-1 block">Market News</span>
                         )}
-                        <h4 className="text-[12px] font-bold text-white/90 leading-tight group-hover:text-[#D4AF37] transition-colors line-clamp-2">
+                        <h4 className="text-[12px] font-bold text-text-primary leading-tight group-hover:text-brand-primary transition-colors line-clamp-2">
                           {item.originalHeadline}
                         </h4>
                       </div>
                       <div className="flex items-center justify-between mt-2 gap-2">
-                        <span className="text-[10px] text-white/50 truncate flex-1">{item.timeAgo}</span>
+                        <span className="text-[10px] text-text-muted truncate flex-1">{item.timeAgo}</span>
                         <div className="flex gap-1 flex-shrink-0">
                           {item.affectedStocks.slice(0,2).map(ticker => (
-                            <span key={ticker} className="text-[8px] font-semibold border border-white/20 text-white/60 px-1.5 py-0.5 rounded-full uppercase">
+                            <span key={ticker} className="text-[8px] font-semibold border border-border text-text-secondary px-1.5 py-0.5 rounded-full uppercase">
                               {ticker}
                             </span>
                           ))}
@@ -131,7 +131,7 @@ export default function DashboardNewsPortfolio() {
                       </div>
                     </div>
                   </div>
-                  {idx < marketNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-white/5"></div>}
+                  {idx < marketNews.length - 1 && <div className="h-[1px] w-[90%] mx-auto bg-border/50"></div>}
                 </React.Fragment>
               );
             })}
@@ -141,25 +141,25 @@ export default function DashboardNewsPortfolio() {
 
       {/* Column 3: My Portfolio */}
       <div className="flex flex-col">
-        <h3 className="text-[15px] font-extrabold text-white font-sora mb-3">My Portfolio</h3>
-        <div className="rounded-xl border border-white/5 bg-[#111116] overflow-hidden flex flex-col h-full">
+        <h3 className="text-[15px] font-extrabold text-text-primary font-sora mb-3">My Portfolio</h3>
+        <div className="rounded-xl border border-border bg-bg-raised overflow-hidden flex flex-col h-full shadow-sm">
           <div className="h-[2px] w-full bg-gradient-to-r from-pink-500 to-rose-600"></div>
           <div className="p-4 flex-1 flex flex-col gap-3">
             <div className="flex flex-col gap-3">
               {portfolio.length === 0 ? (
-                <div className="py-6 text-center text-[12px] text-white/40">Your portfolio is empty.</div>
+                <div className="py-6 text-center text-[12px] text-text-muted">Your portfolio is empty.</div>
               ) : (
                 portfolio.map(h => {
                   const stock = stocks.find(s => s.ticker === h.ticker);
                   return (
-                    <div key={h.ticker} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                    <div key={h.ticker} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                       <div className="flex flex-col">
-                        <span className="text-[13px] font-bold text-white">{h.ticker}</span>
-                        <span className="text-[10px] text-white/50">{h.shares} Shares</span>
+                        <span className="text-[13px] font-bold text-text-primary">{h.ticker}</span>
+                        <span className="text-[10px] text-text-muted">{h.shares} Shares</span>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-[13px] font-bold text-white">₦{(h.shares * (stock?.price || 0)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        <span className={`text-[10px] ${((stock?.price || 0) - h.buyPrice) >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
+                        <span className="text-[13px] font-bold text-text-primary">₦{(h.shares * (stock?.price || 0)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        <span className={`text-[10px] font-bold ${((stock?.price || 0) - h.buyPrice) >= 0 ? 'text-gain' : 'text-danger'}`}>
                           {((stock?.price || 0) - h.buyPrice) >= 0 ? '+' : ''}{(((stock?.price || 0) - h.buyPrice) / h.buyPrice * 100).toFixed(2)}%
                         </span>
                       </div>

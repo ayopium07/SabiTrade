@@ -194,40 +194,30 @@ export default function AIChatbot() {
       {/* ── Chat Panel ──────────────────────────────────────── */}
       {isChatOpen && (
         <div
-          className="fixed z-50 flex flex-col rounded-2xl overflow-hidden"
+          className="fixed z-50 flex flex-col rounded-2xl overflow-hidden glass-modal"
           style={{
             width:  `${Math.min(PANEL_W, viewport.w - 16)}px`,
             height: `${PANEL_H}px`,
             right:  `${panelRight}px`,
             bottom: `${panelBottom}px`,
-            background: 'rgba(6, 20, 42, 0.98)',
-            backdropFilter: 'blur(32px)',
-            border: '1px solid rgba(207,163,67,0.18)',
-            boxShadow: '0 0 0 1px rgba(207,163,67,0.05), 0 40px 80px rgba(0,0,0,0.85)',
             animation: 'chatSlideIn 0.25s cubic-bezier(0.34,1.56,0.64,1)',
           }}
         >
           {/* Top gradient bar */}
-          <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-            style={{ background: 'linear-gradient(90deg, transparent, #CFA343 40%, transparent)' }} />
+          <div className="absolute top-0 left-0 right-0 h-px pointer-events-none bg-gradient-to-r from-transparent via-brand-primary to-transparent" />
 
           {/* ── Header ── */}
-          <div
-            className="px-4 py-3 flex items-center justify-between flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, rgba(207,163,67,0.07), rgba(8,29,56,0.5))', borderBottom: '1px solid rgba(207,163,67,0.1)' }}
-          >
+          <div className="px-4 py-3 flex items-center justify-between flex-shrink-0 bg-bg-raised border-b border-border">
             <div className="flex items-center gap-2.5">
               <div className="relative">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
-                  <Sparkles className="h-4 w-4 text-[#0E0B14]" />
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-brand-primary to-brand-primary-dim shadow-sm">
+                  <Sparkles className="h-4 w-4 text-bg-base" />
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2"
-                  style={{ background: '#10B981', borderColor: '#06142A' }} />
+                <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-bg-surface bg-gain" />
               </div>
               <div>
-                <h4 className="text-[13px] font-bold font-sora text-white leading-none">EquityStack Assistant</h4>
-                <span className="text-[9px] font-semibold uppercase tracking-widest mt-0.5 block" style={{ color: '#CFA343' }}>
+                <h4 className="text-[13px] font-bold font-sora text-text-primary leading-none">EquityStack Assistant</h4>
+                <span className="text-[9px] font-semibold uppercase tracking-widest mt-0.5 block text-brand-primary">
                   NGX Intelligence · 🇳🇬
                 </span>
               </div>
@@ -235,20 +225,14 @@ export default function AIChatbot() {
             <div className="flex items-center gap-1">
               <button
                 onClick={() => clearChat()}
-                className="p-1.5 rounded-lg transition-all focus:outline-none"
-                style={{ color: 'rgba(255,255,255,0.4)' }}
+                className="p-1.5 rounded-lg text-text-muted hover:text-brand-primary transition-colors focus:outline-none"
                 title="Clear chat"
-                onMouseEnter={e => (e.currentTarget.style.color = '#CFA343')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
               >
                 <RotateCcw className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={handleClose}
-                className="p-1.5 rounded-lg transition-all focus:outline-none"
-                style={{ color: 'rgba(255,255,255,0.4)' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#FF4D4F')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+                className="p-1.5 rounded-lg text-text-muted hover:text-danger transition-colors focus:outline-none"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -256,28 +240,18 @@ export default function AIChatbot() {
           </div>
 
           {/* ── Messages ── */}
-          <div
-            className="flex-grow overflow-y-auto p-4 space-y-3 custom-scrollbar"
-            style={{ background: 'rgba(4,12,28,0.5)' }}
-          >
+          <div className="flex-grow overflow-y-auto p-4 space-y-3 custom-scrollbar bg-bg-surface">
             {chatMessages.map((msg, idx) => {
               const isAi = msg.sender === 'ai';
               return (
                 <div key={idx} className={`flex items-end gap-2 ${isAi ? '' : 'justify-end'}`}>
                   {isAi && (
-                    <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mb-0.5"
-                      style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}
-                    >
-                      <Sparkles className="h-3 w-3 text-[#0E0B14]" />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mb-0.5 bg-gradient-to-br from-brand-primary to-brand-primary-dim">
+                      <Sparkles className="h-3 w-3 text-bg-base" />
                     </div>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-[13px] font-dm-sans ${isAi ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
-                    style={isAi
-                      ? { background: 'rgba(8,29,56,0.9)', border: '1px solid rgba(207,163,67,0.1)', color: 'rgba(255,255,255,0.88)' }
-                      : { background: 'linear-gradient(135deg, #CFA343, #B58C35)', color: '#0E0B14', fontWeight: 600 }
-                    }
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-[13px] font-dm-sans ${isAi ? 'rounded-bl-sm bg-bg-raised border border-border text-text-primary' : 'rounded-br-sm bg-brand-primary text-bg-base font-semibold'}`}
                   >
                     {isAi
                       ? <>{parseMarkdown(msg.text)}</>
@@ -291,15 +265,13 @@ export default function AIChatbot() {
             {/* Typing indicator */}
             {isChatTyping && (
               <div className="flex items-end gap-2">
-                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'linear-gradient(135deg, #CFA343, #B58C35)' }}>
-                  <Sparkles className="h-3 w-3 text-[#0E0B14]" />
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-brand-primary to-brand-primary-dim">
+                  <Sparkles className="h-3 w-3 text-bg-base" />
                 </div>
-                <div className="rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5"
-                  style={{ background: 'rgba(8,29,56,0.9)', border: '1px solid rgba(207,163,67,0.1)' }}>
+                <div className="rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5 bg-bg-raised border border-border">
                   {[0, 140, 280].map((delay) => (
-                    <span key={delay} className="h-2 w-2 rounded-full animate-bounce"
-                      style={{ background: '#CFA343', animationDelay: `${delay}ms` }} />
+                    <span key={delay} className="h-2 w-2 rounded-full animate-bounce bg-brand-primary"
+                      style={{ animationDelay: `${delay}ms` }} />
                   ))}
                 </div>
               </div>
@@ -309,18 +281,12 @@ export default function AIChatbot() {
 
           {/* ── Quick replies (shown when fresh) ── */}
           {chatMessages.length <= 1 && !isChatTyping && (
-            <div
-              className="px-3 py-2.5 flex flex-wrap gap-1.5 flex-shrink-0"
-              style={{ background: 'rgba(4,12,28,0.7)', borderTop: '1px solid rgba(207,163,67,0.08)' }}
-            >
+            <div className="px-3 py-2.5 flex flex-wrap gap-1.5 flex-shrink-0 bg-bg-raised border-t border-border">
               {quickReplies.map((q) => (
                 <button
                   key={q}
                   onClick={() => sendChatMessage(q.replace(/^[^a-zA-Z]+/, '').trim())}
-                  className="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all focus:outline-none whitespace-nowrap"
-                  style={{ background: 'rgba(207,163,67,0.08)', border: '1px solid rgba(207,163,67,0.18)', color: '#CFA343' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(207,163,67,0.16)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(207,163,67,0.08)'; }}
+                  className="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all focus:outline-none whitespace-nowrap bg-brand-primary-glow border border-brand-primary/20 text-brand-primary hover:bg-brand-primary/20"
                 >
                   {q}
                 </button>
@@ -329,18 +295,14 @@ export default function AIChatbot() {
           )}
 
           {/* ── Disclaimer ── */}
-          <div
-            className="px-4 py-1.5 text-[9px] leading-relaxed font-dm-sans text-left flex-shrink-0"
-            style={{ background: 'rgba(4,12,28,0.8)', borderTop: '1px solid rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.3)' }}
-          >
+          <div className="px-4 py-1.5 text-[9px] leading-relaxed font-dm-sans text-left flex-shrink-0 bg-bg-raised border-t border-border text-text-muted">
             For educational &amp; research purposes only. Not financial advice.
           </div>
 
           {/* ── Input ── */}
           <form
             onSubmit={handleSend}
-            className="p-3 flex gap-2 flex-shrink-0"
-            style={{ background: 'rgba(4,12,28,0.95)', borderTop: '1px solid rgba(207,163,67,0.1)' }}
+            className="p-3 flex gap-2 flex-shrink-0 bg-bg-surface border-t border-border"
           >
             <input
               ref={inputRef}
@@ -349,14 +311,7 @@ export default function AIChatbot() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               disabled={isChatTyping}
-              className="flex-grow px-4 py-2.5 rounded-xl text-[12px] font-semibold focus:ring-0 focus:outline-none text-white placeholder:text-white/30 disabled:opacity-50"
-              style={{
-                background: 'rgba(8,29,56,0.9)',
-                border: '1px solid rgba(207,163,67,0.15)',
-                transition: 'border-color 0.2s',
-              }}
-              onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.45)')}
-              onBlur={e => (e.target.style.borderColor = 'rgba(207,163,67,0.15)')}
+              className="flex-grow px-4 py-2.5 rounded-xl text-[12px] font-semibold focus:outline-none text-text-primary placeholder:text-text-muted bg-bg-raised border border-border focus:border-brand-primary/50 disabled:opacity-50"
             />
             <button
               type="submit"

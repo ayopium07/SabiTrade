@@ -613,11 +613,11 @@ export default function AINewsFeed() {
                           <button
                             key={ticker}
                             onClick={(e) => handleStockClick(ticker, e)}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold text-brand-primary border border-brand-primary/20 bg-[#171622] hover:bg-[#1E1C2E] hover:border-brand-primary/40 transition-all flex items-center gap-2 focus:outline-none"
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold text-brand-primary border border-brand-primary/20 bg-bg-raised hover:bg-bg-hover hover:border-brand-primary/40 transition-all flex items-center gap-2 focus:outline-none"
                           >
-                            <span className="text-white">{ticker}</span>
+                            <span className="text-text-primary">{ticker}</span>
                             {price && (
-                              <span className="text-[10px] text-white/60 font-medium">
+                              <span className="text-[10px] text-text-secondary font-medium">
                                 ₦{price}
                               </span>
                             )}
@@ -640,7 +640,7 @@ export default function AINewsFeed() {
                   {selectedNews.drivers.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2.5 py-1 rounded-md text-[10px] font-bold text-text-secondary border border-border/50 bg-[#171622]"
+                      className="px-2.5 py-1 rounded-md text-[10px] font-bold text-text-secondary border border-border bg-bg-raised"
                     >
                       #{tag}
                     </span>
@@ -649,10 +649,10 @@ export default function AINewsFeed() {
               )}
 
               {/* Read full article & Publisher source link */}
-              <div className="pt-6 mt-4 border-t border-border/30 flex flex-col sm:flex-row gap-3">
+              <div className="pt-6 mt-4 border-t border-border flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleReadFullArticle}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold bg-brand-primary text-black hover:bg-brand-primary/90 transition-all focus:outline-none"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold bg-brand-primary text-bg-base hover:bg-brand-primary/90 transition-all focus:outline-none"
                 >
                   Dedicated News Page View
                 </button>
@@ -661,7 +661,7 @@ export default function AINewsFeed() {
                     href={selectedNews.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-all text-center"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold bg-bg-raised hover:bg-bg-hover text-text-primary border border-border transition-all text-center"
                   >
                     Read Original Publisher Source ({selectedNews.source})
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -679,59 +679,55 @@ export default function AINewsFeed() {
       {mounted && isPublishModalOpen && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
           <div 
-            className="w-full max-w-2xl rounded-[24px] border border-white/10 overflow-hidden flex flex-col relative"
-            style={{
-              background: 'linear-gradient(180deg, #13111C 0%, #0B0A10 100%)',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
-            }}
+            className="w-full max-w-2xl rounded-[24px] border border-border overflow-hidden flex flex-col relative bg-bg-surface shadow-2xl"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
+            <div className="flex items-center justify-between p-6 border-b border-border bg-bg-raised">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20">
                   <PenTool className="w-5 h-5 text-brand-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-extrabold text-white font-sora tracking-tight">Publish Article</h2>
+                  <h2 className="text-xl font-extrabold text-text-primary font-sora tracking-tight">Publish Article</h2>
                   <p className="text-xs text-text-secondary font-dm-sans mt-0.5">Share your market analysis with the community</p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsPublishModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5"
+                className="w-8 h-8 rounded-full bg-bg-surface hover:bg-bg-hover flex items-center justify-center transition-colors border border-border"
               >
-                <X className="w-4 h-4 text-white/70" />
+                <X className="w-4 h-4 text-text-secondary" />
               </button>
             </div>
 
             {/* Modal Form */}
             <form onSubmit={handlePublish} className="p-6 flex flex-col gap-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-white/70 uppercase tracking-wider">Headline</label>
+                <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Headline</label>
                 <input
                   type="text"
                   placeholder="e.g., Zenith Bank announces record Q3 profits..."
                   value={publishTitle}
                   onChange={(e) => setPublishTitle(e.target.value)}
-                  className="w-full bg-[#0A090F] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50 transition-colors"
+                  className="w-full bg-bg-raised border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-primary/50 transition-colors"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-white/70 uppercase tracking-wider">Cover Image URL (Optional)</label>
+                <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Cover Image URL (Optional)</label>
                 <input
                   type="url"
                   placeholder="e.g., https://unsplash.com/photos/..."
                   value={publishImageUrl}
                   onChange={(e) => setPublishImageUrl(e.target.value)}
-                  className="w-full bg-[#0A090F] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50 transition-colors"
+                  className="w-full bg-bg-raised border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-primary/50 transition-colors"
                 />
               </div>
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-white/70 uppercase tracking-wider">Article Content</label>
+                  <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Article Content</label>
                   <button 
                     type="button" 
                     onClick={handleInsertImage}
@@ -744,16 +740,16 @@ export default function AINewsFeed() {
                   placeholder="Write your market analysis here. EquityStack AI will automatically summarize it for the feed."
                   value={publishContent}
                   onChange={(e) => setPublishContent(e.target.value)}
-                  className="w-full bg-[#0A090F] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50 transition-colors min-h-[200px] resize-y"
+                  className="w-full bg-bg-raised border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-primary/50 transition-colors min-h-[200px] resize-y"
                   required
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+              <div className="flex justify-end gap-3 pt-4 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setIsPublishModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl font-bold text-xs text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                  className="px-5 py-2.5 rounded-xl font-bold text-xs text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors"
                 >
                   Cancel
                 </button>

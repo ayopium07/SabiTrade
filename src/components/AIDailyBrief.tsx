@@ -61,10 +61,7 @@ export default function AIDailyBrief() {
   const visibleParagraphs = expanded ? dynamicBrief.paragraphs : dynamicBrief.paragraphs.slice(0, 1);
 
   return (
-    <div
-      className="rounded-2xl overflow-hidden"
-      style={{ background: 'linear-gradient(160deg, #131128 0%, #0B0917 100%)' }}
-    >
+    <div className="rounded-2xl overflow-hidden bg-bg-surface border border-border shadow-lg">
       {/* Top accent line */}
       <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, #CFA343, #7C5C1E, transparent)' }} />
 
@@ -75,41 +72,40 @@ export default function AIDailyBrief() {
           <div className="flex items-center gap-2.5">
             {/* AI Avatar */}
             <div
-              className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-extrabold text-[#0B0917]"
+              className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-extrabold text-bg-base"
               style={{ background: 'linear-gradient(135deg, #CFA343, #8C6420)' }}
             >
               AI
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[13px] font-bold text-white leading-none">EquityStack AI</span>
+                <span className="text-[13px] font-bold text-text-primary leading-none">EquityStack AI</span>
                 <span
                   className="text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wide"
-                  style={{ background: 'rgba(207,163,67,0.15)', color: '#CFA343', border: '1px solid rgba(207,163,67,0.3)' }}
+                  style={{ background: 'rgba(207,163,67,0.15)', color: 'var(--brand-primary)', border: '1px solid rgba(207,163,67,0.3)' }}
                 >
                   Daily Brief
                 </span>
               </div>
-              <span className="text-[10px] text-white/40 font-medium mt-0.5 block">{dynamicBrief.dateLabel}</span>
+              <span className="text-[10px] text-text-muted font-medium mt-0.5 block">{dynamicBrief.dateLabel}</span>
             </div>
           </div>
           {/* Bookmark */}
           <button
             onClick={() => setBookmarked(!bookmarked)}
-            className="p-1.5 rounded-lg transition-colors focus:outline-none"
-            style={{ color: bookmarked ? '#CFA343' : 'rgba(255,255,255,0.35)' }}
+            className="p-1.5 rounded-lg transition-colors focus:outline-none text-text-muted hover:text-brand-primary"
           >
-            <Bookmark className="w-4 h-4" fill={bookmarked ? '#CFA343' : 'none'} />
+            <Bookmark className="w-4 h-4" fill={bookmarked ? 'var(--brand-primary)' : 'none'} />
           </button>
         </div>
 
         {/* ── Article Headline ── */}
-        <h2 className="text-[15px] sm:text-[16px] font-extrabold text-white leading-snug mb-3 font-sora">
+        <h2 className="text-[15px] sm:text-[16px] font-extrabold text-text-primary leading-snug mb-3 font-sora">
           {dynamicBrief.headline}
         </h2>
 
         {/* ── Body Paragraphs with ticker highlighting ── */}
-        <div className="text-[13px] leading-[1.7] text-white/70 space-y-3">
+        <div className="text-[13px] leading-[1.7] text-text-secondary space-y-3">
           {visibleParagraphs.map((para, idx) => (
             <p key={idx}>
               <HighlightedText text={para} />
@@ -120,7 +116,7 @@ export default function AIDailyBrief() {
         {/* Read more / collapse toggle */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-1 mt-3 text-[11px] font-bold text-[#CFA343] hover:text-[#E5B94A] transition-colors focus:outline-none"
+          className="flex items-center gap-1 mt-3 text-[11px] font-bold text-brand-primary hover:brightness-110 transition-colors focus:outline-none"
         >
           {expanded ? (
             <><ChevronUp className="w-3.5 h-3.5" />Show less</>
@@ -130,22 +126,21 @@ export default function AIDailyBrief() {
         </button>
 
         {/* ── Engagement / Footer Row ── */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/8">
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setLiked(!liked)}
-              className="flex items-center gap-1.5 text-[11px] font-semibold transition-colors focus:outline-none"
-              style={{ color: liked ? '#CFA343' : 'rgba(255,255,255,0.4)' }}
+              className="flex items-center gap-1.5 text-[11px] font-semibold transition-colors focus:outline-none text-text-muted hover:text-brand-primary"
             >
-              <ThumbsUp className="w-3.5 h-3.5" fill={liked ? '#CFA343' : 'none'} />
+              <ThumbsUp className="w-3.5 h-3.5" fill={liked ? 'var(--brand-primary)' : 'none'} />
               <span>{liked ? 43 : 42}</span>
             </button>
-            <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white/40 hover:text-white/60 transition-colors focus:outline-none">
+            <button className="flex items-center gap-1.5 text-[11px] font-semibold text-text-muted hover:text-text-primary transition-colors focus:outline-none">
               <Share2 className="w-3.5 h-3.5" />
               <span>Share</span>
             </button>
           </div>
-          <div className="flex items-center gap-1 text-[9px] text-white/25 font-medium">
+          <div className="flex items-center gap-1 text-[9px] text-text-muted font-medium">
             <ShieldAlert className="w-3 h-3 flex-shrink-0" />
             <span>Research only</span>
           </div>

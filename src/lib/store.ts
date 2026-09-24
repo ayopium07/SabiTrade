@@ -97,6 +97,11 @@ export interface AppState {
   selectedUserId: string | null;
   selectedPostId: string | null;
 
+  // Theme State
+  theme: 'dark' | 'light';
+  toggleTheme: () => void;
+  setTheme: (theme: 'dark' | 'light') => void;
+
   // Actions
   setView: (view: 'landing' | 'onboarding' | 'home' | 'markets' | 'news' | 'portfolio' | 'profile' | 'stock-detail' | 'about' | 'learn' | 'community' | 'trade' | 'screener' | 'public-profile' | 'post-thread' | 'news-detail') => void;
   setSelectedTicker: (ticker: string) => void;
@@ -178,6 +183,25 @@ export const useAppStore = create<AppState>()(
   ],
   selectedUserId: null,
   selectedPostId: null,
+
+  theme: 'dark',
+  toggleTheme: () => set((state) => {
+    const nextTheme = state.theme === 'dark' ? 'light' : 'dark';
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      document.documentElement.classList.remove('dark', 'light');
+      document.documentElement.classList.add(nextTheme);
+    }
+    return { theme: nextTheme };
+  }),
+  setTheme: (theme) => set(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.classList.remove('dark', 'light');
+      document.documentElement.classList.add(theme);
+    }
+    return { theme };
+  }),
 
   setView: (view) => set((state) => {
     // Save WHERE we currently are as previousView before navigating away.
@@ -680,6 +704,7 @@ export const useAppStore = create<AppState>()(
     name: 'equitystack-session',
     // Only persist the essential session state — not transient UI, chat history, or real-time prices
     partialize: (state) => ({
+      theme: state.theme,
       currentView: state.currentView,
       previousView: state.previousView,
       selectedTicker: state.selectedTicker,

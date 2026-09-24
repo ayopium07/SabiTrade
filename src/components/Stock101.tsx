@@ -140,8 +140,7 @@ export default function Stock101() {
   return (
     <div className="space-y-6 w-full pb-10 text-left">
       {/* Hero Header */}
-      <div className="relative rounded-3xl p-6 sm:p-8 overflow-hidden border border-brand-primary/15"
-        style={{ background: 'linear-gradient(135deg, rgba(14,13,37,0.9), rgba(7,6,21,0.95))' }}>
+      <div className="relative rounded-3xl p-6 sm:p-8 overflow-hidden border border-border bg-bg-surface">
         <div className="absolute inset-0 bg-brand-primary/2 opacity-50" />
         <div className="absolute top-0 right-0 p-4 opacity-10">
           <GraduationCap className="h-28 w-28 text-brand-primary" />
@@ -161,8 +160,7 @@ export default function Stock101() {
       </div>
 
       {/* Progress Bar */}
-      <div className="rounded-2xl p-4 border border-border"
-        style={{ background: 'linear-gradient(145deg, #0E0D25, #070615)' }}>
+      <div className="rounded-2xl p-4 border border-border bg-bg-surface">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-extrabold uppercase tracking-widest text-text-secondary font-dm-sans">
             Academy Completion Progress
@@ -171,7 +169,7 @@ export default function Stock101() {
             {progressPercentage}% Completed ({readLessons.length}/{lessons.length} lessons)
           </span>
         </div>
-        <div className="w-full h-2.5 bg-bg-base border border-border/50 rounded-full overflow-hidden">
+        <div className="w-full h-2.5 bg-bg-raised border border-border/50 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 bg-brand-primary"
             style={{ width: `${progressPercentage}%`, boxShadow: '0 0 12px #CFA343' }}
@@ -200,10 +198,9 @@ export default function Stock101() {
               return (
                 <div
                   key={lesson.id}
-                  className="rounded-2xl p-5 border border-border/80 transition-all duration-300 relative overflow-hidden group"
+                  className="rounded-2xl p-5 border border-border bg-bg-surface transition-all duration-300 relative overflow-hidden group"
                   style={{
-                    background: 'linear-gradient(145deg, #0E0D25, #070615)',
-                    borderColor: isRead ? 'rgba(16,185,129,0.3)' : '#23214C'
+                    borderColor: isRead ? 'rgba(16,185,129,0.5)' : 'var(--border-color)'
                   }}
                 >
                   <div className="absolute top-0 left-0 right-0 h-[3px]"
@@ -272,11 +269,7 @@ export default function Stock101() {
           </h3>
 
           <div
-            className="rounded-2xl p-5 border border-border/80 relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(145deg, #0E0D25, #070615)',
-              borderColor: '#23214C'
-            }}
+            className="rounded-2xl p-5 border border-border bg-bg-surface relative overflow-hidden"
           >
             <div className="flex items-center gap-1.5 mb-4 border-b border-border/30 pb-3">
               <HelpCircle className="h-4 w-4 text-brand-primary" />
@@ -304,8 +297,8 @@ export default function Stock101() {
                         const isSelected = selectedIdx === oIdx;
                         const isCorrect = oIdx === q.correctAnswerIdx;
 
-                        let btnBorder = '#23214C';
-                        let btnBg = 'rgba(14,13,37,0.4)';
+                        let btnBorder = 'var(--border-color)';
+                        let btnBg = 'var(--bg-raised)';
                         let textCls = 'text-text-secondary';
                         let Icon = null;
 

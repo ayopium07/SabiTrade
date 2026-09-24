@@ -66,10 +66,10 @@ export default function NewsDetail() {
   return (
     <div className="w-full space-y-6 pb-20 animate-in fade-in duration-300">
       {/* Header / Nav */}
-      <div className="flex items-center justify-between sticky top-0 z-10 bg-[#0E0D25]/90 backdrop-blur-md py-4 border-b border-border/30">
+      <div className="flex items-center justify-between sticky top-0 z-10 bg-bg-surface/90 backdrop-blur-md py-4 border-b border-border/30">
         <button 
           onClick={handleBack}
-          className="flex items-center gap-2 text-text-secondary hover:text-white transition-colors text-sm font-bold"
+          className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm font-bold"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to News
@@ -99,12 +99,12 @@ export default function NewsDetail() {
           </span>
         </div>
         
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-white font-sora leading-tight">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-text-primary font-sora leading-tight">
           {selectedNews.originalHeadline}
         </h1>
         
         <div className="flex flex-wrap items-center gap-4 text-xs text-text-secondary font-medium font-dm-sans">
-          <span className="font-bold text-white/90">{selectedNews.source}</span>
+          <span className="font-bold text-text-primary">{selectedNews.source}</span>
           {selectedNews.author && (
             <span className="font-bold text-brand-primary">by {selectedNews.author}</span>
           )}
@@ -124,7 +124,7 @@ export default function NewsDetail() {
         const logos = resolveCompanyLogos(selectedNews.affectedStocks, selectedNews.originalHeadline, selectedNews.fullContent || selectedNews.aiSummary);
         if (logos.length > 1) {
           return (
-            <div className="w-full h-64 sm:h-[400px] rounded-3xl overflow-hidden border border-border/40 relative flex items-center justify-center p-6 sm:p-10 group bg-[#090814]">
+            <div className="w-full h-64 sm:h-[400px] rounded-3xl overflow-hidden border border-border/40 relative flex items-center justify-center p-6 sm:p-10 group bg-bg-surface">
               {/* Financial City Skyline Background */}
               <img
                 src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1200&auto=format&fit=crop"
@@ -213,7 +213,7 @@ export default function NewsDetail() {
                   Why It Matters To Investors
                 </h3>
               </div>
-              <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
+              <p className="text-xs sm:text-sm text-text-primary font-medium leading-relaxed font-dm-sans">
                 {selectedNews.whyItMatters}
               </p>
             </div>
@@ -221,12 +221,12 @@ export default function NewsDetail() {
             {/* Potential Implications */}
             <div className="p-5 rounded-2xl border border-blue-500/30 bg-blue-500/5 space-y-2 relative overflow-hidden">
               <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                <h3 className="text-xs font-extrabold text-blue-400 uppercase tracking-wider font-sora">
+                <Target className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                <h3 className="text-xs font-extrabold text-blue-500 uppercase tracking-wider font-sora">
                   Potential Market Implications
                 </h3>
               </div>
-              <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
+              <p className="text-xs sm:text-sm text-text-primary font-medium leading-relaxed font-dm-sans">
                 {selectedNews.implications}
               </p>
             </div>
@@ -235,12 +235,12 @@ export default function NewsDetail() {
           {/* Educational Concept Banner */}
           {selectedNews.educationalConcept && (
             <div className="p-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 flex items-start gap-3.5">
-              <GraduationCap className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <GraduationCap className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <h3 className="text-xs font-extrabold text-emerald-400 uppercase tracking-wider font-sora">
+                <h3 className="text-xs font-extrabold text-emerald-500 uppercase tracking-wider font-sora">
                   Investor Educational Concept
                 </h3>
-                <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed font-dm-sans">
+                <p className="text-xs sm:text-sm text-text-primary font-medium leading-relaxed font-dm-sans">
                   {selectedNews.educationalConcept}
                 </p>
               </div>
@@ -248,7 +248,7 @@ export default function NewsDetail() {
           )}
 
           {/* Main Article Content */}
-          <div className="prose prose-invert prose-p:text-white/90 prose-p:leading-relaxed prose-p:font-dm-sans max-w-none space-y-4 text-[15px]">
+          <div className="prose text-text-primary prose-p:text-text-primary prose-p:leading-relaxed prose-p:font-dm-sans max-w-none space-y-4 text-[15px]">
             {selectedNews.fullContent?.split(/(?:\r?\n)+/).map((paragraph, idx) => {
               const cleanPara = paragraph.trim();
               if (!cleanPara) return null;
@@ -274,10 +274,10 @@ export default function NewsDetail() {
                     const imageMatch = part.match(/^!\[(.*?)\]\((.*?)\)$/);
                     if (imageMatch) {
                       return (
-                        <div key={pIdx} className="my-6 w-full rounded-2xl overflow-hidden border border-border/40 bg-black/20">
+                        <div key={pIdx} className="my-6 w-full rounded-2xl overflow-hidden border border-border bg-bg-raised">
                           <img src={imageMatch[2]} alt={imageMatch[1]} className="w-full h-auto object-cover" />
                           {imageMatch[1] && imageMatch[1] !== 'Image Description' && (
-                            <div className="p-3 text-center text-xs text-white/50 bg-black/40">
+                            <div className="p-3 text-center text-xs text-text-muted bg-bg-surface">
                               {imageMatch[1]}
                             </div>
                           )}
@@ -292,8 +292,8 @@ export default function NewsDetail() {
           </div>
 
           {/* Comments Section */}
-          <div className="pt-8 mt-12 border-t border-border/30 space-y-6">
-            <h3 className="text-lg font-bold text-white font-sora flex items-center gap-2">
+          <div className="pt-8 mt-12 border-t border-border space-y-6">
+            <h3 className="text-lg font-bold text-text-primary font-sora flex items-center gap-2">
               Discussion <span className="text-brand-primary bg-brand-primary/10 px-2 py-0.5 rounded-lg text-sm">{selectedNews.commentsCount}</span>
             </h3>
             
@@ -307,12 +307,12 @@ export default function NewsDetail() {
                   value={commentInput}
                   onChange={(e) => setCommentInput(e.target.value)}
                   placeholder="Share your thoughts on this..."
-                  className="w-full bg-[#171622] border border-border/40 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50 resize-none min-h-[80px]"
+                  className="w-full bg-bg-raised border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-primary/50 resize-none min-h-[80px]"
                 />
                 <button 
                   type="submit"
                   disabled={!commentInput.trim()}
-                  className="absolute bottom-3 right-3 p-2 bg-brand-primary text-black rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-brand-primary/90 transition-colors"
+                  className="absolute bottom-3 right-3 p-2 bg-brand-primary text-bg-base rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-brand-primary/90 transition-colors"
                 >
                   <Send className="w-4 h-4" />
                 </button>
@@ -327,12 +327,12 @@ export default function NewsDetail() {
                     <img src={comment.avatar} alt={comment.user} />
                   </div>
                   <div className="flex-1">
-                    <div className="bg-[#171622] border border-border/30 rounded-2xl rounded-tl-sm p-4">
+                    <div className="bg-bg-raised border border-border rounded-2xl rounded-tl-sm p-4">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-bold text-brand-primary">{comment.user}</span>
-                        <span className="text-[10px] text-white/40">{comment.timeAgo}</span>
+                        <span className="text-[10px] text-text-muted">{comment.timeAgo}</span>
                       </div>
-                      <p className="text-sm text-white/80 font-dm-sans leading-relaxed">
+                      <p className="text-sm text-text-primary font-dm-sans leading-relaxed">
                         {comment.text}
                       </p>
                     </div>
@@ -347,18 +347,18 @@ export default function NewsDetail() {
         <div className="lg:col-span-4 space-y-6">
           {/* Original Source Link */}
           {selectedNews.link && (
-            <div className="bg-[#171622] border border-brand-primary/30 rounded-2xl p-5 space-y-3">
-              <h3 className="text-[10px] font-extrabold text-brand-primary uppercase tracking-widest border-b border-white/5 pb-2">
+            <div className="bg-bg-raised border border-brand-primary/30 rounded-2xl p-5 space-y-3">
+              <h3 className="text-[10px] font-extrabold text-brand-primary uppercase tracking-widest border-b border-border pb-2">
                 Original Publisher Source
               </h3>
-              <p className="text-xs text-white/70 font-dm-sans">
-                Read the unedited original story published by <span className="font-bold text-white">{selectedNews.source}</span>.
+              <p className="text-xs text-text-secondary font-dm-sans">
+                Read the unedited original story published by <span className="font-bold text-text-primary">{selectedNews.source}</span>.
               </p>
               <a
                 href={selectedNews.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-xs font-bold bg-brand-primary text-black hover:bg-brand-primary/90 transition-all text-center"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-xs font-bold bg-brand-primary text-bg-base hover:bg-brand-primary/90 transition-all text-center"
               >
                 Read Full Story on {selectedNews.source}
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -367,40 +367,40 @@ export default function NewsDetail() {
           )}
 
           {/* Why It Matters */}
-          <div className="bg-[#171622] border border-border/30 rounded-2xl p-5 space-y-3">
-            <h3 className="text-[10px] font-extrabold text-white/50 uppercase tracking-widest border-b border-white/5 pb-2">Why It Matters</h3>
-            <p className="text-xs text-white/80 font-medium leading-relaxed font-dm-sans">
+          <div className="bg-bg-raised border border-border rounded-2xl p-5 space-y-3">
+            <h3 className="text-[10px] font-extrabold text-text-muted uppercase tracking-widest border-b border-border pb-2">Why It Matters</h3>
+            <p className="text-xs text-text-primary font-medium leading-relaxed font-dm-sans">
               {selectedNews.whyItMatters}
             </p>
           </div>
 
           {/* Implications */}
-          <div className="bg-[#171622] border border-border/30 rounded-2xl p-5 space-y-3">
-            <h3 className="text-[10px] font-extrabold text-white/50 uppercase tracking-widest border-b border-white/5 pb-2">Potential Implications</h3>
-            <p className="text-xs text-white/80 font-medium leading-relaxed font-dm-sans">
+          <div className="bg-bg-raised border border-border rounded-2xl p-5 space-y-3">
+            <h3 className="text-[10px] font-extrabold text-text-muted uppercase tracking-widest border-b border-border pb-2">Potential Implications</h3>
+            <p className="text-xs text-text-primary font-medium leading-relaxed font-dm-sans">
               {selectedNews.implications}
             </p>
           </div>
 
           {/* Related Equities */}
           {selectedNews.affectedStocks && selectedNews.affectedStocks.length > 0 && (
-            <div className="bg-[#171622] border border-border/30 rounded-2xl p-5 space-y-3">
-               <h3 className="text-[10px] font-extrabold text-white/50 uppercase tracking-widest border-b border-white/5 pb-2">Related Equities</h3>
+            <div className="bg-bg-raised border border-border rounded-2xl p-5 space-y-3">
+               <h3 className="text-[10px] font-extrabold text-text-muted uppercase tracking-widest border-b border-border pb-2">Related Equities</h3>
                <div className="flex flex-col gap-2">
                  {selectedNews.affectedStocks.map((ticker) => {
                    const stock = stocks.find(s => s.ticker === ticker);
                    const isPos = stock ? stock.change >= 0 : true;
                    return (
-                     <div key={ticker} className="flex items-center justify-between p-3 rounded-xl bg-bg-base border border-border/40 hover:border-brand-primary/30 transition-colors cursor-pointer" onClick={() => { setSelectedTicker(ticker); setView('stock-detail'); }}>
+                     <div key={ticker} className="flex items-center justify-between p-3 rounded-xl bg-bg-surface border border-border hover:border-brand-primary/30 transition-colors cursor-pointer" onClick={() => { setSelectedTicker(ticker); setView('stock-detail'); }}>
                        <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-[#0E0D25] flex items-center justify-center font-bold text-[10px] text-white border border-white/10">
+                         <div className="w-8 h-8 rounded-lg bg-bg-raised flex items-center justify-center font-bold text-[10px] text-text-primary border border-border">
                            {ticker.substring(0, 2)}
                          </div>
-                         <span className="text-xs font-bold text-white">{ticker}</span>
+                         <span className="text-xs font-bold text-text-primary">{ticker}</span>
                        </div>
                        {stock && (
                          <div className="text-right">
-                           <div className="text-xs font-bold text-white">₦{stock.price.toFixed(2)}</div>
+                           <div className="text-xs font-bold text-text-primary">₦{stock.price.toFixed(2)}</div>
                            <div className={`text-[10px] font-bold ${isPos ? 'text-gain' : 'text-danger'}`}>
                              {isPos ? '+' : ''}{stock.change.toFixed(2)}%
                            </div>
@@ -415,11 +415,11 @@ export default function NewsDetail() {
           
           {/* Tags */}
           {selectedNews.drivers && (
-            <div className="bg-[#171622] border border-border/30 rounded-2xl p-5 space-y-3">
-              <h3 className="text-[10px] font-extrabold text-white/50 uppercase tracking-widest border-b border-white/5 pb-2">Topic Drivers</h3>
+            <div className="bg-bg-raised border border-border rounded-2xl p-5 space-y-3">
+              <h3 className="text-[10px] font-extrabold text-text-muted uppercase tracking-widest border-b border-border pb-2">Topic Drivers</h3>
               <div className="flex flex-wrap gap-2">
                 {selectedNews.drivers.map(tag => (
-                  <span key={tag} className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-white/60 bg-bg-base border border-border/40">
+                  <span key={tag} className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-text-secondary bg-bg-surface border border-border">
                     #{tag}
                   </span>
                 ))}

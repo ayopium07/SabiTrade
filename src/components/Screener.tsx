@@ -298,35 +298,35 @@ export default function Screener() {
   function SortTh({ field, label, align = 'left' }: { field: SortField; label: React.ReactNode; align?: 'left' | 'right' | 'center' }) {
     const active = sortBy === field;
     return (
-      <th onClick={() => handleSort(field)} className={`px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider cursor-pointer select-none whitespace-nowrap hover:text-white transition-colors sticky top-0 z-30 ${align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'}`} style={{ background: '#12101E' }}>
-        <span className="inline-flex items-center gap-1">{label}<span className="flex flex-col leading-none ml-0.5"><ChevronUp className={`w-2.5 h-2.5 ${active && sortOrder === 'asc' ? 'text-white' : 'text-[#44475A]'}`} /><ChevronDown className={`w-2.5 h-2.5 ${active && sortOrder === 'desc' ? 'text-white' : 'text-[#44475A]'}`} /></span></span>
+      <th onClick={() => handleSort(field)} className={`px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-text-muted uppercase tracking-wider cursor-pointer select-none whitespace-nowrap hover:text-text-primary transition-colors sticky top-0 z-30 bg-bg-raised border-b border-border ${align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'}`}>
+        <span className="inline-flex items-center gap-1">{label}<span className="flex flex-col leading-none ml-0.5"><ChevronUp className={`w-2.5 h-2.5 ${active && sortOrder === 'asc' ? 'text-text-primary' : 'text-text-muted/40'}`} /><ChevronDown className={`w-2.5 h-2.5 ${active && sortOrder === 'desc' ? 'text-text-primary' : 'text-text-muted/40'}`} /></span></span>
       </th>
     );
   }
 
   return (
-    <div className="w-full flex flex-col gap-6 text-[#E0E0E0] font-dm-sans min-h-screen">
+    <div className="w-full flex flex-col gap-6 text-text-primary font-dm-sans min-h-screen">
       
       {/* ── TOP HEADER SECTION ── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-2">
         <div className="space-y-1.5 max-w-3xl">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-sora tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora tracking-tight">
             Every NGX stock. Every angle. One screen.
           </h1>
-          <p className="text-xs sm:text-sm text-[#94A3B8] font-medium leading-relaxed">
+          <p className="text-xs sm:text-sm text-text-muted font-medium leading-relaxed">
             18 curated screens across ratings, sectors, dividends, growth, value, small caps, special situations, mutual funds, and consensus sell-side calls from Nigeria's leading research desks.
           </p>
         </div>
         <div className="flex items-center gap-2.5 flex-shrink-0">
           <button
             onClick={exportCSV}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#141020] border border-white/10 hover:border-white/20 transition-all flex items-center gap-1.5 focus:outline-none"
+            className="px-4 py-2 rounded-xl text-xs font-bold text-text-primary bg-bg-surface border border-border hover:border-border-bright transition-all flex items-center gap-1.5 focus:outline-none"
           >
-            <Download className="w-3.5 h-3.5 text-[#94A3B8]" /> Export CSV
+            <Download className="w-3.5 h-3.5 text-text-muted" /> Export CSV
           </button>
           <button
             onClick={() => alert('Screen configuration saved to your EquityStack workspace.')}
-            className="px-4 py-2 rounded-xl text-xs font-extrabold text-[#0E0B14] bg-[#CFA343] hover:bg-[#B58C35] transition-all shadow-md shadow-[#CFA343]/20 font-sora focus:outline-none"
+            className="px-4 py-2 rounded-xl text-xs font-extrabold text-bg-base bg-brand-primary hover:bg-brand-primary/90 transition-all shadow-md shadow-brand-primary/20 font-sora focus:outline-none"
           >
             Save Screen
           </button>
@@ -334,15 +334,15 @@ export default function Screener() {
       </div>
 
       {/* ── DEMONSTRATION NOTICE BANNER ── */}
-      <div className="rounded-xl border border-[#CFA343]/30 bg-[#CFA343]/5 p-3 sm:p-3.5 flex items-start gap-2.5 text-xs text-[#CFA343] leading-relaxed font-medium">
-        <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#CFA343]" />
+      <div className="rounded-xl border border-brand-primary/30 bg-brand-primary/10 p-3 sm:p-3.5 flex items-start gap-2.5 text-xs text-brand-primary leading-relaxed font-medium">
+        <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-brand-primary" />
         <span>
           <strong className="font-extrabold font-sora">Sample data for product demonstration.</strong> Prices, ratings, short interest, M&A chatter, fund returns and broker calls shown here are illustrative placeholders, not live feeds or real research — wire in licensed NGX data and verified sell-side notes before launch.
         </span>
       </div>
 
       {/* ── METRICS OVERVIEW GRID CARD (6 COLUMNS) ── */}
-      <div className="rounded-2xl p-4 md:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-white/5" style={{ background: '#12101E' }}>
+      <div className="rounded-2xl p-4 md:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-border glass-elevated border border-border bg-bg-surface">
         
         {/* Col 1 */}
         <div className="flex flex-col justify-between">
@@ -421,8 +421,8 @@ export default function Screener() {
                 onClick={() => handleSelectCategory(c.id, c.label)}
                 className={`px-3.5 py-1.5 rounded-xl font-bold transition-all ${
                   activeCategory === c.id 
-                    ? 'bg-[#CFA343] text-[#0E0B14] shadow-md shadow-[#CFA343]/20' 
-                    : 'bg-[#141020] text-[#94A3B8] border border-white/8 hover:border-white/20 hover:text-white'
+                    ? 'bg-brand-primary text-bg-base shadow-md shadow-brand-primary/20' 
+                    : 'bg-bg-raised text-text-secondary border border-border hover:border-brand-primary/40 hover:text-text-primary'
                 }`}
               >
                 {c.label}
@@ -433,7 +433,7 @@ export default function Screener() {
 
         {/* BY SECTOR */}
         <div className="space-y-2">
-          <div className="text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider">BY SECTOR</div>
+          <div className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider">BY SECTOR</div>
           <div className="flex flex-wrap gap-2">
             {[
               { id: 'sector-financial', label: 'Financial' },
@@ -448,8 +448,8 @@ export default function Screener() {
                 onClick={() => handleSelectCategory(c.id, c.label)}
                 className={`px-3.5 py-1.5 rounded-xl font-bold transition-all ${
                   activeCategory === c.id 
-                    ? 'bg-[#CFA343] text-[#0E0B14] shadow-md shadow-[#CFA343]/20' 
-                    : 'bg-[#141020] text-[#94A3B8] border border-white/8 hover:border-white/20 hover:text-white'
+                    ? 'bg-brand-primary text-bg-base shadow-md shadow-brand-primary/20' 
+                    : 'bg-bg-raised text-text-secondary border border-border hover:border-brand-primary/40 hover:text-text-primary'
                 }`}
               >
                 {c.label}
@@ -460,7 +460,7 @@ export default function Screener() {
 
         {/* SPECIAL SITUATIONS */}
         <div className="space-y-2">
-          <div className="text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider">SPECIAL SITUATIONS</div>
+          <div className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider">SPECIAL SITUATIONS</div>
           <div className="flex flex-wrap gap-2">
             {[
               { id: 'ma-watch', label: 'M&A Watch' },
@@ -472,12 +472,12 @@ export default function Screener() {
                 onClick={() => handleSelectCategory(c.id, c.label)}
                 className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
                   activeCategory === c.id 
-                    ? 'bg-[#CFA343] text-[#0E0B14] shadow-md shadow-[#CFA343]/20' 
-                    : 'bg-[#141020] text-[#94A3B8] border border-white/8 hover:border-white/20 hover:text-white'
+                    ? 'bg-brand-primary text-bg-base shadow-md shadow-brand-primary/20' 
+                    : 'bg-bg-raised text-text-secondary border border-border hover:border-brand-primary/40 hover:text-text-primary'
                 }`}
               >
                 {c.label}
-                <span className="text-[8px] font-extrabold px-1.5 py-0.2 rounded bg-[#CFA343]/20 text-[#CFA343] border border-[#CFA343]/30 uppercase">PRO</span>
+                <span className="text-[8px] font-extrabold px-1.5 py-0.2 rounded bg-brand-primary/20 text-brand-primary border border-brand-primary/30 uppercase">PRO</span>
               </button>
             ))}
           </div>
@@ -485,7 +485,7 @@ export default function Screener() {
 
         {/* OTHER ASSETS */}
         <div className="space-y-2">
-          <div className="text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider">OTHER ASSETS</div>
+          <div className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider">OTHER ASSETS</div>
           <div className="flex flex-wrap gap-2">
             {[
               { id: 'mutual-funds', label: 'Mutual Funds' },
@@ -496,12 +496,12 @@ export default function Screener() {
                 onClick={() => handleSelectCategory(c.id, c.label)}
                 className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
                   activeCategory === c.id 
-                    ? 'bg-[#CFA343] text-[#0E0B14] shadow-md shadow-[#CFA343]/20' 
-                    : 'bg-[#141020] text-[#94A3B8] border border-white/8 hover:border-white/20 hover:text-white'
+                    ? 'bg-brand-primary text-bg-base shadow-md shadow-brand-primary/20' 
+                    : 'bg-bg-raised text-text-secondary border border-border hover:border-brand-primary/40 hover:text-text-primary'
                 }`}
               >
                 {c.label}
-                <span className="text-[8px] font-extrabold px-1.5 py-0.2 rounded bg-[#CFA343]/20 text-[#CFA343] border border-[#CFA343]/30 uppercase">PRO</span>
+                <span className="text-[8px] font-extrabold px-1.5 py-0.2 rounded bg-brand-primary/20 text-brand-primary border border-brand-primary/30 uppercase">PRO</span>
               </button>
             ))}
           </div>
@@ -511,21 +511,21 @@ export default function Screener() {
 
       {/* ── SEARCH & FILTER CONTROLS BAR ── */}
       <div className="space-y-2">
-        <div className="text-xs sm:text-sm font-bold text-white">
-          <strong className="text-white font-sora">{activeCategoryLabel}</strong>. <span className="text-[#94A3B8] font-normal">The complete NGX universe covered by EquityStack.</span>
+        <div className="text-xs sm:text-sm font-bold text-text-primary">
+          <strong className="text-text-primary font-sora">{activeCategoryLabel}</strong>. <span className="text-text-secondary font-normal">The complete NGX universe covered by EquityStack.</span>
         </div>
 
-        <div className="rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3" style={{ background: '#12101E' }}>
+        <div className="rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 bg-bg-raised border border-border">
           
           {/* Search Box */}
           <div className="relative min-w-[240px] sm:min-w-[300px] flex-grow">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#7B7E8E]" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search ticker or company — e.g. GTCO, Zenith Bank"
-              className="w-full pl-10 pr-4 py-2 rounded-xl text-xs font-medium bg-[#141020] border border-white/10 text-white placeholder:text-[#44475A] focus:outline-none focus:border-[#CFA343]/50"
+              className="w-full pl-10 pr-4 py-2 rounded-xl text-xs font-medium bg-bg-surface border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-primary/50"
             />
           </div>
 
@@ -533,7 +533,7 @@ export default function Screener() {
           <select
             value={sector}
             onChange={(e) => setSector(e.target.value)}
-            className="px-3.5 py-2 rounded-xl bg-[#141020] border border-white/10 text-white text-xs font-bold focus:outline-none focus:border-[#CFA343]/50"
+            className="px-3.5 py-2 rounded-xl bg-bg-surface border border-border text-text-primary text-xs font-bold focus:outline-none focus:border-brand-primary/50"
           >
             <option value="All">All Sectors</option>
             <option value="Banking">Banking</option>
@@ -546,7 +546,7 @@ export default function Screener() {
           <select
             value={mktCapFilter}
             onChange={(e) => setMktCapFilter(e.target.value)}
-            className="px-3.5 py-2 rounded-xl bg-[#141020] border border-white/10 text-white text-xs font-bold focus:outline-none focus:border-[#CFA343]/50"
+            className="px-3.5 py-2 rounded-xl bg-bg-surface border border-border text-text-primary text-xs font-bold focus:outline-none focus:border-brand-primary/50"
           >
             <option value="All">All Market Caps</option>
             <option value="Large">Large Cap (&gt;₦500bn)</option>
@@ -555,7 +555,7 @@ export default function Screener() {
           </select>
 
           {/* Rating Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {[
               { id: 'All', label: 'All Ratings' },
               { id: 'Bullish', label: '🟢 Bullish' },
@@ -568,8 +568,8 @@ export default function Screener() {
                 onClick={() => setRatingChip(r.id as any)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                   ratingChip === r.id 
-                    ? 'bg-white text-[#0E0B14] font-sora shadow-sm' 
-                    : 'bg-[#141020] text-[#94A3B8] border border-white/8 hover:text-white'
+                    ? 'bg-brand-primary text-bg-base font-extrabold shadow-sm' 
+                    : 'bg-bg-surface text-text-secondary border border-border hover:text-text-primary'
                 }`}
               >
                 {r.label}
@@ -580,7 +580,7 @@ export default function Screener() {
           {/* Reset Filters */}
           <button
             onClick={resetFilters}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-[#FF4D4F] hover:bg-[#FF4D4F]/10 transition-colors focus:outline-none ml-auto"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-danger hover:bg-danger/10 transition-colors focus:outline-none ml-auto"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Reset filters
           </button>
@@ -589,26 +589,26 @@ export default function Screener() {
       </div>
 
       {/* ── RESULTS TABLE WITH EXPANDABLE ROW DRAWER ── */}
-      <div className="rounded-2xl overflow-hidden" style={{ background: '#0F0D1A' }}>
-        <div className="overflow-x-auto">
+      <div className="rounded-2xl overflow-hidden glass-elevated">
+        <div className="overflow-x-auto no-scrollbar">
           <table className="w-full border-collapse">
             <thead>
-              <tr style={{ background: '#12101E' }}>
-                <th className="w-9 px-3 py-3 text-center sticky left-0 top-0 z-40" style={{ background: '#12101E' }}>
-                  <Star className="w-3.5 h-3.5 text-[#44475A] mx-auto" />
+              <tr className="bg-bg-raised border-b border-border">
+                <th className="w-9 px-3 py-3 text-center sticky left-0 top-0 z-40 bg-bg-raised border-b border-border">
+                  <Star className="w-3.5 h-3.5 text-text-muted mx-auto" />
                 </th>
                 <SortTh field="ticker" label="COMPANY" />
-                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider text-left sticky top-0 z-30" style={{ background: '#12101E' }}>SECTOR</th>
+                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-text-muted uppercase tracking-wider text-left sticky top-0 z-30 bg-bg-raised border-b border-border">SECTOR</th>
                 <SortTh field="price" label="PRICE (₦)" align="right" />
                 <SortTh field="change" label="CHG %" align="center" />
-                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider text-right sticky top-0 z-30" style={{ background: '#12101E' }}>MKT CAP</th>
+                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-text-muted uppercase tracking-wider text-right sticky top-0 z-30 bg-bg-raised border-b border-border">MKT CAP</th>
                 <SortTh field="peRatio" label="P/E" align="right" />
                 <SortTh field="divYield" label="DIV YLD" align="right" />
-                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider text-right sticky top-0 z-30" style={{ background: '#12101E' }}>ROE</th>
-                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider text-center sticky top-0 z-30" style={{ background: '#12101E' }}>52W RANGE</th>
-                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider text-center sticky top-0 z-30" style={{ background: '#12101E' }}>7 PILLARS</th>
+                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-text-muted uppercase tracking-wider text-right sticky top-0 z-30 bg-bg-raised border-b border-border">ROE</th>
+                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-text-muted uppercase tracking-wider text-center sticky top-0 z-30 bg-bg-raised border-b border-border">52W RANGE</th>
+                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-text-muted uppercase tracking-wider text-center sticky top-0 z-30 bg-bg-raised border-b border-border">7 PILLARS</th>
                 <SortTh field="rating" label="RATING" align="center" />
-                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-[#7B7E8E] uppercase tracking-wider text-center sticky top-0 z-30" style={{ background: '#12101E' }}>CONSENSUS</th>
+                <th className="px-3 py-3 text-[9px] md:text-[10px] font-extrabold text-text-muted uppercase tracking-wider text-center sticky top-0 z-30 bg-bg-raised border-b border-border">CONSENSUS</th>
               </tr>
             </thead>
             <tbody>
@@ -626,15 +626,15 @@ export default function Screener() {
                 return (
                   <React.Fragment key={stock.ticker}>
                     <tr
-                      className={`border-t border-white/5 transition-colors cursor-pointer group ${
-                        isExpanded ? 'bg-white/[0.04]' : 'hover:bg-white/[0.025]'
+                      className={`border-t border-border transition-colors cursor-pointer group ${
+                        isExpanded ? 'bg-bg-hover' : 'hover:bg-bg-hover'
                       }`}
                       onClick={() => setExpandedRow(isExpanded ? null : stock.ticker)}
                     >
                       {/* Star / Watchlist */}
-                      <td className="px-3 py-3.5 text-center sticky left-0 z-10" style={{ background: isExpanded ? '#141824' : '#0F0D1A' }} onClick={(e) => { e.stopPropagation(); toggleWatchlist(stock.ticker); }}>
-                        <button className="p-1 rounded hover:bg-white/5 transition-colors focus:outline-none flex items-center justify-center mx-auto" title={isStarred ? 'Remove from watchlist' : 'Add to watchlist'}>
-                          <Star className={`w-4 h-4 transition-transform active:scale-125 ${isStarred ? 'text-[#CFA343] fill-[#CFA343]' : 'text-[#44475A] hover:text-[#CFA343]'}`} />
+                      <td className="px-3 py-3.5 text-center sticky left-0 z-10 bg-bg-surface border-t border-border" onClick={(e) => { e.stopPropagation(); toggleWatchlist(stock.ticker); }}>
+                        <button className="p-1 rounded hover:bg-bg-hover transition-colors focus:outline-none flex items-center justify-center mx-auto" title={isStarred ? 'Remove from watchlist' : 'Add to watchlist'}>
+                          <Star className={`w-4 h-4 transition-transform active:scale-125 ${isStarred ? 'text-brand-primary fill-brand-primary' : 'text-text-muted hover:text-brand-primary'}`} />
                         </button>
                       </td>
 
@@ -643,57 +643,57 @@ export default function Screener() {
                         <div className="flex items-center gap-2.5 min-w-[130px]">
                           <StockAvatar ticker={stock.ticker} sector={stock.sector} logoUrl={stock.logoUrl} />
                           <div>
-                            <div className="text-[11px] md:text-[13px] font-extrabold text-white font-sora leading-none group-hover:text-[#CFA343] transition-colors">{stock.ticker}</div>
-                            <div className="text-[9px] font-medium text-[#7B7E8E] mt-0.5 truncate max-w-[120px]">{stock.name}</div>
+                            <div className="text-[11px] md:text-[13px] font-extrabold text-text-primary font-sora leading-none group-hover:text-brand-primary transition-colors">{stock.ticker}</div>
+                            <div className="text-[9px] font-medium text-text-muted mt-0.5 truncate max-w-[120px]">{stock.name}</div>
                           </div>
                         </div>
                       </td>
 
                       {/* Sector Badge */}
                       <td className="px-3 py-3.5">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/10 bg-white/5 text-[#94A3B8] whitespace-nowrap">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-border bg-bg-raised text-text-secondary whitespace-nowrap">
                           {stock.sector}
                         </span>
                       </td>
 
                       {/* Price */}
                       <td className="px-3 py-3.5 text-right">
-                        <span className="text-[11px] md:text-[13px] font-bold text-white font-sora">
+                        <span className="text-[11px] md:text-[13px] font-bold text-text-primary font-sora">
                           {priceVal.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </td>
 
                       {/* Change */}
                       <td className="px-3 py-3.5 text-center">
-                        <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[10px] font-extrabold ${isPositive ? 'bg-[#00D395]/15 text-[#00D395]' : 'bg-[#FF4D4F]/15 text-[#FF4D4F]'}`}>
+                        <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[10px] font-extrabold ${isPositive ? 'bg-gain/15 text-gain' : 'bg-danger/15 text-danger'}`}>
                           {isPositive ? '+' : ''}{changeVal.toFixed(2)}%
                         </span>
                       </td>
 
                       {/* MktCap */}
                       <td className="px-3 py-3.5 text-right">
-                        <span className="text-[11px] font-bold text-white font-sora">
+                        <span className="text-[11px] font-bold text-text-primary font-sora">
                           {pillars.mktCapFormatted}
                         </span>
                       </td>
 
                       {/* P/E Ratio */}
                       <td className="px-3 py-3.5 text-right">
-                        <span className="text-[11px] font-bold text-white font-sora">
+                        <span className="text-[11px] font-bold text-text-primary font-sora">
                           {peVal > 0 ? peVal.toFixed(1) : 'N/A'}
                         </span>
                       </td>
 
                       {/* Dividend Yield */}
                       <td className="px-3 py-3.5 text-right">
-                        <span className="text-[11px] font-bold text-white font-sora">
+                        <span className="text-[11px] font-bold text-text-primary font-sora">
                           {yieldVal > 0 ? `${yieldVal.toFixed(1)}%` : '0.0%'}
                         </span>
                       </td>
 
                       {/* ROE */}
                       <td className="px-3 py-3.5 text-right">
-                        <span className="text-[11px] font-bold text-white font-sora">
+                        <span className="text-[11px] font-bold text-text-primary font-sora">
                           {pillars.roeVal}
                         </span>
                       </td>
@@ -711,9 +711,9 @@ export default function Screener() {
                       {/* Rating */}
                       <td className="px-3 py-3.5 text-center">
                         <span className={`text-[9px] font-extrabold px-2.5 py-1 rounded-full whitespace-nowrap ${
-                          pillars.overallScore >= 72 ? 'bg-[#00D395]/15 text-[#00D395] border border-[#00D395]/30' :
-                          pillars.overallScore >= 55 ? 'bg-[#CFA343]/15 text-[#CFA343] border border-[#CFA343]/30' :
-                          'bg-[#FF4D4F]/15 text-[#FF4D4F] border border-[#FF4D4F]/30'
+                          pillars.overallScore >= 72 ? 'bg-gain/15 text-gain border border-gain/30' :
+                          pillars.overallScore >= 55 ? 'bg-warning/15 text-warning border border-warning/30' :
+                          'bg-danger/15 text-danger border border-danger/30'
                         }`}>
                           {pillars.bullishLabel}
                         </span>
@@ -721,7 +721,7 @@ export default function Screener() {
 
                       {/* Consensus */}
                       <td className="px-3 py-3.5 text-center">
-                        <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/90 whitespace-nowrap">
+                        <span className="text-[9px] font-extrabold px-2.5 py-1 rounded-lg bg-bg-raised border border-border text-text-primary whitespace-nowrap">
                           {pillars.consensusLabel}
                         </span>
                       </td>
@@ -729,7 +729,7 @@ export default function Screener() {
 
                     {/* ── EXPANDED ROW DETAIL DRAWER ── */}
                     {isExpanded && (
-                      <tr className="bg-[#0E141C] border-b border-white/10 animate-in fade-in duration-200">
+                      <tr className="bg-bg-raised border-b border-border animate-in fade-in duration-200">
                         <td colSpan={13} className="p-5 sm:p-6 text-left">
                           
                           {/* 7 Pillars Grid (7 Cards across) */}
@@ -737,11 +737,11 @@ export default function Screener() {
                             {pillars.pillarList.map((p) => {
                               const color = p.score >= 75 ? '#00D395' : p.score >= 55 ? '#CFA343' : '#FF4D4F';
                               return (
-                                <div key={p.label} className="bg-[#161F2B] border border-white/10 rounded-xl p-3.5 flex flex-col justify-between shadow-lg">
-                                  <div className="text-[9px] font-extrabold text-[#7B7E8E] uppercase tracking-wider mb-3 leading-tight">{p.label}</div>
+                                <div key={p.label} className="bg-bg-surface border border-border rounded-xl p-3.5 flex flex-col justify-between shadow-sm">
+                                  <div className="text-[9px] font-extrabold text-text-muted uppercase tracking-wider mb-3 leading-tight">{p.label}</div>
                                   <div>
                                     <div className="text-xl font-extrabold font-sora mb-2" style={{ color }}>{p.score}</div>
-                                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                                    <div className="w-full h-1 bg-border rounded-full overflow-hidden">
                                       <div className="h-full rounded-full transition-all duration-300" style={{ width: `${p.score}%`, backgroundColor: color }} />
                                     </div>
                                   </div>
@@ -751,13 +751,13 @@ export default function Screener() {
                           </div>
 
                           {/* Summary Metadata Row */}
-                          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-3 border-t border-white/8 text-xs font-dm-sans">
-                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[#94A3B8]">
-                              <div>52-Week Range: <strong className="text-white font-sora">₦{pillars.low} – ₦{pillars.high}</strong></div>
-                              <div>Avg Volume: <strong className="text-white font-sora">{pillars.avgVolume}</strong></div>
-                              <div>Sector: <strong className="text-white font-sora">{stock.sector}</strong></div>
-                              <div>Overall Score: <strong className="text-[#CFA343] font-sora">{pillars.overallScore}/100</strong></div>
-                              <div>Simulated Short Interest: <strong className="text-white font-sora">{pillars.shortInterest}</strong></div>
+                          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-3 border-t border-border text-xs font-dm-sans">
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-text-secondary">
+                              <div>52-Week Range: <strong className="text-text-primary font-sora">₦{pillars.low} – ₦{pillars.high}</strong></div>
+                              <div>Avg Volume: <strong className="text-text-primary font-sora">{pillars.avgVolume}</strong></div>
+                              <div>Sector: <strong className="text-text-primary font-sora">{stock.sector}</strong></div>
+                              <div>Overall Score: <strong className="text-brand-primary font-sora">{pillars.overallScore}/100</strong></div>
+                              <div>Simulated Short Interest: <strong className="text-text-primary font-sora">{pillars.shortInterest}</strong></div>
                             </div>
                             
                             <button
@@ -766,13 +766,13 @@ export default function Screener() {
                                 setSelectedTicker(stock.ticker);
                                 setView('stock-detail');
                               }}
-                              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[#0E0B14] bg-[#CFA343] hover:bg-[#B58C35] transition-all shadow-md shadow-[#CFA343]/15 focus:outline-none flex-shrink-0"
+                              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-bg-base bg-brand-primary hover:brightness-105 transition-all shadow-md focus:outline-none flex-shrink-0"
                             >
                               View Full Deep Dive →
                             </button>
                           </div>
 
-                          <div className="text-[10px] text-white/30 italic mt-2">
+                          <div className="text-[10px] text-text-muted italic mt-2">
                             Rating derived from the 7-pillar EquityStack framework, locally calibrated against NGX sector medians. Not investment advice.
                           </div>
 
@@ -785,7 +785,7 @@ export default function Screener() {
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={13} className="px-4 py-16 text-center text-xs font-medium text-[#7B7E8E]">
+                  <td colSpan={13} className="px-4 py-16 text-center text-xs font-medium text-text-muted">
                     No equities match your current filter parameters. Try adjusting your sliders or resetting filters.
                   </td>
                 </tr>
@@ -794,10 +794,10 @@ export default function Screener() {
           </table>
         </div>
 
-        <div className="flex items-center justify-between px-6 py-4 border-t border-white/5 text-[10px] md:text-[12px] font-medium text-[#7B7E8E]" style={{ background: '#12101E' }}>
-          <span>Showing <strong className="text-white font-semibold">{filtered.length}</strong> equities {sector !== 'All' ? `in ${sector}` : ''}</span>
-          <span className="text-[#00D395] font-semibold flex items-center gap-1.5 font-sora">
-            <span className="w-2 h-2 rounded-full bg-[#00D395] animate-pulse" />
+        <div className="flex items-center justify-between px-6 py-4 border-t border-border text-[10px] md:text-[12px] font-medium text-text-muted bg-bg-raised">
+          <span>Showing <strong className="text-text-primary font-semibold">{filtered.length}</strong> equities {sector !== 'All' ? `in ${sector}` : ''}</span>
+          <span className="text-gain font-semibold flex items-center gap-1.5 font-sora">
+            <span className="w-2 h-2 rounded-full bg-gain animate-pulse" />
             Live Quantitative Engine
           </span>
         </div>

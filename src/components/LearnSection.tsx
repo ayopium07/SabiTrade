@@ -41,13 +41,13 @@ export default function LearnSection() {
   ];
 
   return (
-    <div className="w-full mt-16 max-w-7xl mx-auto px-5 sm:px-8 mb-24">
+    <div className="w-full mt-12 max-w-7xl mx-auto px-4 sm:px-8 mb-16">
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-sora mb-6">
+      <div className="text-center max-w-3xl mx-auto mb-12">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora mb-4">
           Learn
         </h2>
-        <p className="text-[13px] leading-relaxed text-white/60">
+        <p className="text-[13px] leading-relaxed text-text-secondary">
           Master the Nigerian financial market with our curated educational resources. From understanding market basics to advanced investment strategies, our Learn section provides the knowledge you need to make informed decisions.
         </p>
       </div>
@@ -56,14 +56,14 @@ export default function LearnSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         
         {/* Large Feature Card (Spans 2 columns) */}
-        <div className="col-span-1 md:col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative flex flex-col justify-end p-8" style={{ background: 'linear-gradient(135deg, #2d184a, #150a24)', minHeight: '320px' }}>
+        <div className="col-span-1 md:col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative flex flex-col justify-end p-8 glass-elevated border border-border" style={{ minHeight: '320px' }}>
           <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
           
           <div className="relative z-10 space-y-4">
-            <h3 className="text-2xl sm:text-3xl font-bold text-white font-sora leading-tight group-hover:text-[#CFA343] transition-colors">
+            <h3 className="text-2xl sm:text-3xl font-bold text-text-primary font-sora leading-tight group-hover:text-brand-primary transition-colors">
               All about Investing in NGX Equities and related risks
             </h3>
-            <span className="inline-block px-3 py-1.5 text-[9px] font-bold text-white/70 uppercase tracking-widest rounded bg-white/5 border border-white/10">
+            <span className="inline-block px-3 py-1.5 text-[9px] font-bold text-brand-primary uppercase tracking-widest rounded bg-brand-primary-glow border border-brand-primary/20">
               EQUITY BASIC
             </span>
           </div>
@@ -71,16 +71,16 @@ export default function LearnSection() {
 
         {/* Regular Cards */}
         {learnItems.map((item, idx) => (
-          <div key={idx} className="col-span-1 rounded-2xl overflow-hidden cursor-pointer group flex flex-col" style={{ background: '#111116', border: '1px solid rgba(255,255,255,0.03)' }}>
+          <div key={idx} className="col-span-1 rounded-2xl overflow-hidden cursor-pointer group flex flex-col glass-elevated border border-border">
             <div className="h-32 w-full" style={{ background: item.gradient }}></div>
-            <div className="p-6 space-y-3 flex-1 flex flex-col items-start">
-              <span className="inline-block px-2.5 py-1 text-[8px] font-bold text-white/60 uppercase tracking-widest rounded bg-white/5 border border-white/10">
+            <div className="p-6 space-y-3 flex-1 flex flex-col items-start bg-bg-surface">
+              <span className="inline-block px-2.5 py-1 text-[8px] font-bold text-text-muted uppercase tracking-widest rounded bg-bg-raised border border-border">
                 {item.badge}
               </span>
-              <h4 className="text-[14px] font-bold text-white font-sora leading-tight group-hover:text-[#CFA343] transition-colors">
+              <h4 className="text-[14px] font-bold text-text-primary font-sora leading-tight group-hover:text-brand-primary transition-colors">
                 {item.title}
               </h4>
-              <p className="text-[11px] text-white/50 leading-relaxed mt-auto">
+              <p className="text-[11px] text-text-secondary leading-relaxed mt-auto">
                 {item.desc}
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function LearnSection() {
 
       {/* Footer Link */}
       <div className="text-left mt-2">
-        <a href="#" className="text-[13px] font-bold text-[#10B981] hover:underline">
+        <a href="#" className="text-[13px] font-bold text-gain hover:underline">
           See All Articles
         </a>
       </div>

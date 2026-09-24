@@ -164,7 +164,7 @@ export default function AboutUs({ onJoinClick }: AboutUsProps) {
                 {/* Name and Role */}
                 <div className="mb-16">
                   <div className="w-12 h-1 mb-6 rounded-full" style={{ background: activeMember.color }}></div>
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-sora mb-2">{activeMember.name}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-text-primary font-sora mb-2">{activeMember.name}</h3>
                   <p className="text-text-secondary/80 font-medium tracking-wide uppercase text-sm">{activeMember.role}</p>
                 </div>
               </div>
@@ -183,7 +183,7 @@ export default function AboutUs({ onJoinClick }: AboutUsProps) {
                           : 'opacity-50 hover:opacity-100 hover:scale-105'
                       }`}
                       style={{ 
-                        boxShadow: isActive ? `0 0 0 4px #041226, 0 0 0 6px ${member.color}` : 'none'
+                        boxShadow: isActive ? `0 0 0 4px var(--bg-base), 0 0 0 6px ${member.color}` : 'none'
                       }}
                     >
                       <img src={member.image} alt={member.name} className="w-full h-full object-cover object-top" />
@@ -200,7 +200,7 @@ export default function AboutUs({ onJoinClick }: AboutUsProps) {
         <div className="relative text-center mt-24 pb-12">
           
           <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white font-sora tracking-tight mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-text-primary font-sora tracking-tight mb-6 leading-tight">
               Ready to Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#CFA343] to-[#E5C06F]">Generational Wealth?</span>
             </h2>
             <p className="text-sm sm:text-base text-text-secondary/90 font-medium mb-10 max-w-xl">

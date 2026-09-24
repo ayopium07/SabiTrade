@@ -254,7 +254,7 @@ const SevenPillarsSection = ({ ticker }: { ticker: string }) => {
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {pillarsData.map((pillar) => (
-          <div key={pillar.id} className="p-5 rounded-2xl border border-border/40" style={{ background: 'linear-gradient(180deg, #141020 0%, #0A0810 100%)' }}>
+          <div key={pillar.id} className="p-5 rounded-2xl border border-border bg-bg-surface shadow-md">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <div className="text-[10px] font-bold text-brand-primary uppercase tracking-widest font-dm-sans mb-1">
@@ -380,9 +380,9 @@ export default function StockDetail() {
   const hoveredPoint = hoverIndex !== null ? points[hoverIndex] : null;
 
   const cardStyle = {
-    background: 'linear-gradient(180deg, #141020 0%, #0A0810 100%)',
-    border: '1px solid rgba(207, 163, 67, 0.2)',
-    boxShadow: '0 10px 30px rgba(207, 163, 67, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.02)',
+    background: 'var(--glass-elevated)',
+    border: '1px solid var(--border-bright)',
+    boxShadow: 'var(--card-shadow)',
   };
 
   // ─── Render Helper functions for Tabs ────────────────
@@ -436,7 +436,7 @@ export default function StockDetail() {
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8FA3C0' }} tickFormatter={(val) => `₦${val}`} />
                     <Tooltip 
                       cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
-                      contentStyle={{ backgroundColor: '#112240', border: '1px solid #1E3A5F', borderRadius: '8px' }}
+                      contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                       itemStyle={{ color: '#F0F4FF', fontWeight: 'bold' }}
                       formatter={(val) => [`₦${Number(val).toFixed(2)}`, 'EPS']}
                       labelStyle={{ color: '#8FA3C0', marginBottom: '4px' }}
@@ -520,7 +520,7 @@ export default function StockDetail() {
             <div className="p-6 rounded-3xl" style={cardStyle}>
                <div className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest font-dm-sans mb-6">NEXT EARNINGS</div>
                
-               <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20 text-center mb-6">
+               <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm text-center mb-6">
                   <div className="text-[10px] font-bold text-text-secondary uppercase tracking-widest font-dm-sans mb-2">H1 2025 RESULTS</div>
                   <div className="text-base font-serif font-bold text-text-primary mb-1">August 2025</div>
                   <div className="text-xs text-text-secondary">Estimated release window</div>
@@ -554,14 +554,14 @@ export default function StockDetail() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">CONSENSUS TARGET</div>
                 <div className="text-3xl font-bold font-sora text-text-primary mb-1">₦{stock.targetPrice.toFixed(2)}</div>
                 <div className={`text-sm font-bold ${upside >= 0 ? 'text-[#22C55E]' : 'text-[#EF4444]'}`}>
                   {upside >= 0 ? '+' : ''}{upside.toFixed(1)}% {upside >= 0 ? 'upside' : 'downside'}
                 </div>
              </div>
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">FY2025 EPS EST.</div>
                 <div className="text-3xl font-bold font-sora text-text-primary mb-1">₦{(baseEps * 1.15).toFixed(2)}</div>
                 <div className="text-sm font-bold text-[#22C55E]">+15.0% growth</div>
@@ -631,7 +631,7 @@ export default function StockDetail() {
           </div>
 
           {/* Interactive Chart — Premium Redesign */}
-          <div className="rounded-3xl overflow-hidden border border-brand-primary/15 shadow-[0_0_40px_rgba(0,0,0,0.6),0_0_1px_rgba(207,163,67,0.1)]" style={{ background: 'linear-gradient(160deg, #141020 0%, #0A0810 100%)' }}>
+          <div className="rounded-3xl overflow-hidden border border-border bg-bg-surface shadow-lg">
             
             {/* Chart Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3">
@@ -890,7 +890,7 @@ export default function StockDetail() {
                            {item.val} <span className="text-text-secondary font-normal mx-1">·</span> {item.pct}
                         </div>
                       </div>
-                      <div className="h-2 w-full bg-[#112240] rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-bg-raised rounded-full overflow-hidden">
                         <div className="h-full rounded-full" style={{ width: item.pct, backgroundColor: item.color }} />
                       </div>
                     </div>
@@ -950,7 +950,7 @@ export default function StockDetail() {
                { label: 'NET PROFIT MARGIN', val: '25.9%', desc: 'FY2024', color: '#22C55E' },
                { label: 'EBITDA MARGIN', val: '41.2%', desc: 'FY2024', color: '#22C55E' },
              ].map((ratio, i) => (
-               <div key={i} className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+               <div key={i} className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                  <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">{ratio.label}</div>
                  <div className="text-3xl font-bold font-sora mb-2" style={{ color: ratio.color }}>{ratio.val}</div>
                  <div className="text-sm text-text-secondary">{ratio.desc}</div>
@@ -1005,7 +1005,7 @@ export default function StockDetail() {
                     <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#8FA3C0', fontWeight: 'bold' }} dy={10} />
                     <Tooltip 
                       cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
-                      contentStyle={{ backgroundColor: '#112240', border: '1px solid #1E3A5F', borderRadius: '8px' }}
+                      contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                       itemStyle={{ color: '#F0F4FF', fontWeight: 'bold' }}
                       formatter={(val: any) => [`₦${Number(val).toFixed(2)}`, 'Total DPS']}
                       labelStyle={{ color: '#8FA3C0', marginBottom: '4px' }}
@@ -1112,37 +1112,37 @@ export default function StockDetail() {
            
            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
              {/* 6 Metric Cards */}
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">DIVIDEND YIELD</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{yieldPct.toFixed(1)}%</div>
                 <div className="text-sm text-text-secondary">vs NGX {stock.sector.toLowerCase()} avg {(yieldPct * 0.75).toFixed(1)}%</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">PAYOUT RATIO</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{payoutRatio.toFixed(1)}%</div>
                 <div className="text-sm text-text-secondary">{payoutRatio < 40 ? 'Very sustainable' : payoutRatio < 60 ? 'Sustainable' : 'High payout'}</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">DPS GROWTH (3Y)</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{dpsGrowth.toFixed(0)}%</div>
                 <div className="text-sm text-text-secondary">₦{dps3yAgo.toFixed(2)} → ₦{currentDps.toFixed(2)}</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">DIVIDEND COVER</div>
                 <div className="text-3xl font-bold font-sora text-[#22C55E] mb-1">{cover.toFixed(1)}x</div>
                 <div className="text-sm text-text-secondary">Earnings vs dividend</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">EX-DIV DATE</div>
                 <div className="text-2xl font-bold font-sora text-text-primary mb-1 mt-2">May 2025</div>
                 <div className="text-sm text-text-secondary">FY2024 final</div>
              </div>
              
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-3">PAYMENT DATE</div>
                 <div className="text-2xl font-bold font-sora text-text-primary mb-1 mt-2">Jun 2025</div>
                 <div className="text-sm text-text-secondary">FY2024 final</div>
@@ -1182,7 +1182,7 @@ export default function StockDetail() {
                      {metric.label} <span className="text-[10px] opacity-50 cursor-help">ⓘ</span>
                    </div>
                    <div className="flex-1 px-4 lg:px-8">
-                     <div className="h-2 w-full bg-[#112240] rounded-full overflow-hidden">
+                     <div className="h-2 w-full bg-bg-raised rounded-full overflow-hidden">
                        <div className="h-full rounded-full" style={{ width: metric.pct, backgroundColor: metric.rColor }} />
                      </div>
                    </div>
@@ -1313,12 +1313,12 @@ export default function StockDetail() {
           <p className="text-sm text-text-secondary mb-8">Derived from a blended DCF and peer multiple model, calibrated to NGX market conditions</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-2">FAIR VALUE ESTIMATE</div>
                 <div className="text-4xl font-bold font-sora text-[#C9A84C] mb-1">₦{stock.targetPrice.toFixed(2)}</div>
                 <div className="text-sm text-text-secondary">Intrinsic value (blended model)</div>
              </div>
-             <div className="p-5 rounded-2xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20">
+             <div className="p-5 rounded-2xl bg-bg-surface border border-border shadow-sm">
                 <div className="text-[10px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-2">CURRENT PRICE</div>
                 <div className="text-4xl font-bold font-sora text-text-primary mb-2">₦{stock.price.toFixed(2)}</div>
                 <div className={`text-sm font-bold ${stock.price < stock.targetPrice ? 'text-[#22C55E]' : 'text-[#EF4444]'}`}>
@@ -1327,7 +1327,7 @@ export default function StockDetail() {
              </div>
           </div>
           
-          <div className="p-5 rounded-xl bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/30 flex items-start gap-4">
+          <div className="p-5 rounded-xl bg-bg-surface border border-brand-primary/30 flex items-start gap-4">
              <span className="text-xl shrink-0">💡</span>
              <p className="text-sm text-text-secondary leading-relaxed">
                {stock.name}'s strong fundamentals justify a <strong className="text-[#C9A84C]">premium to fair value</strong>, but the gap is worth monitoring. The market may be pricing in continued earnings growth above consensus forecasts.
@@ -1505,7 +1505,7 @@ export default function StockDetail() {
                      <span className="text-text-secondary">Positive</span>
                      <span className="text-[#22C55E]">{posPct}%</span>
                    </div>
-                   <div className="h-1.5 w-full bg-[#112240] rounded-full overflow-hidden">
+                   <div className="h-1.5 w-full bg-bg-raised rounded-full overflow-hidden">
                      <div className="h-full bg-[#22C55E] rounded-full" style={{ width: `${posPct}%` }} />
                    </div>
                  </div>
@@ -1515,7 +1515,7 @@ export default function StockDetail() {
                      <span className="text-text-secondary">Neutral</span>
                      <span className="text-[#8FA3C0]">{neuPct}%</span>
                    </div>
-                   <div className="h-1.5 w-full bg-[#112240] rounded-full overflow-hidden">
+                   <div className="h-1.5 w-full bg-bg-raised rounded-full overflow-hidden">
                      <div className="h-full bg-[#8FA3C0] rounded-full" style={{ width: `${neuPct}%` }} />
                    </div>
                  </div>
@@ -1525,7 +1525,7 @@ export default function StockDetail() {
                      <span className="text-text-secondary">Negative</span>
                      <span className="text-[#EF4444]">{negPct}%</span>
                    </div>
-                   <div className="h-1.5 w-full bg-[#112240] rounded-full overflow-hidden">
+                   <div className="h-1.5 w-full bg-bg-raised rounded-full overflow-hidden">
                      <div className="h-full bg-[#EF4444] rounded-full" style={{ width: `${negPct}%` }} />
                    </div>
                  </div>
@@ -1621,7 +1621,7 @@ export default function StockDetail() {
         {/* Global Indices Area */}
         <div className="flex flex-wrap items-center gap-3 xl:justify-end">
           {/* EquityStack Rating Pill */}
-          <div className="flex items-center gap-3 bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/20 rounded-xl px-4 py-2.5 shadow-lg shrink-0">
+          <div className="flex items-center gap-3 bg-bg-surface border border-border rounded-xl px-4 py-2.5 shadow-lg shrink-0">
             <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[#10b981] shadow-[inset_0_-2px_6px_rgba(0,0,0,0.3)]">
               <div className="w-4 h-4 rounded-full bg-[#34d399] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_3px_6px_rgba(0,0,0,0.4)]" />
             </div>
@@ -1647,7 +1647,7 @@ export default function StockDetail() {
               { label: 'DIV YIELD', value: stock.dividendYield, valColor: '#10b981' },
               { label: '1Y RETURN', value: `${stock.change > 0 ? '+' : ''}${(Math.abs(stock.change) * 4.2).toFixed(1)}%`, valColor: stock.change >= 0 ? '#10b981' : '#EF4444' }
             ].map((m, i) => (
-              <div key={i} className="bg-gradient-to-b from-[#141020] to-[#0A0810] border border-brand-primary/15 rounded-xl px-3 py-2 flex flex-col items-center justify-center min-w-[75px] shrink-0 h-[64px]">
+              <div key={i} className="bg-bg-surface border border-border rounded-xl px-3 py-2 flex flex-col items-center justify-center min-w-[75px] shrink-0 h-[64px]">
                 <div className="text-[9px] font-bold text-[#8FA3C0] uppercase tracking-widest font-dm-sans mb-1">
                   {m.label}
                 </div>
@@ -1662,8 +1662,7 @@ export default function StockDetail() {
 
       {/* ── Horizontal Navigation Menu ────────────────── */}
       <div className="w-full">
-        <div className="p-2.5 rounded-3xl border border-border-bright/45 shadow-glow-indigo flex flex-row overflow-x-auto gap-2 scrollbar-none"
-          style={{ background: 'linear-gradient(90deg, #141020 0%, #0A0810 100%)' }}>
+        <div className="p-2.5 rounded-3xl border border-border bg-bg-surface shadow-md flex flex-row overflow-x-auto gap-2 custom-scrollbar">
           {([
             { id: 'overview', label: 'Overview', icon: BarChart2 },
             { id: 'earnings', label: 'Earnings', icon: TrendingUp },

@@ -73,11 +73,11 @@ export default function TopMovers() {
         </div>
 
         {/* Pill switcher */}
-        <div className="flex overflow-x-auto hide-scrollbar border border-border/40 p-1 rounded-2xl gap-1 flex-shrink-0 w-full md:w-auto">
+        <div className="flex overflow-x-auto hide-scrollbar border border-border p-1 rounded-2xl gap-1 flex-shrink-0 w-full md:w-auto bg-bg-surface">
           <button
             onClick={() => setActiveTab('gainers')}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'gainers'
-                ? 'bg-[#10B981] text-[#121212]'
+                ? 'bg-brand-primary text-bg-base'
                 : 'text-text-secondary hover:text-text-primary'
               }`}
           >
@@ -87,7 +87,7 @@ export default function TopMovers() {
           <button
             onClick={() => setActiveTab('losers')}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'losers'
-                ? 'bg-[#10B981] text-[#121212]'
+                ? 'bg-brand-primary text-bg-base'
                 : 'text-text-secondary hover:text-text-primary'
               }`}
           >
@@ -97,7 +97,7 @@ export default function TopMovers() {
           <button
             onClick={() => setActiveTab('volume')}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'volume'
-                ? 'bg-[#10B981] text-[#121212]'
+                ? 'bg-brand-primary text-bg-base'
                 : 'text-text-secondary hover:text-text-primary'
               }`}
           >
@@ -107,7 +107,7 @@ export default function TopMovers() {
           <button
             onClick={() => setActiveTab('value')}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all duration-200 ${activeTab === 'value'
-                ? 'bg-[#10B981] text-[#121212]'
+                ? 'bg-brand-primary text-bg-base'
                 : 'text-text-secondary hover:text-text-primary'
               }`}
           >
@@ -141,18 +141,14 @@ export default function TopMovers() {
             <button
               key={stock.ticker}
               onClick={() => setSelectedTicker(stock.ticker)}
-              className="snap-start flex-shrink-0 w-[220px] sm:w-auto border rounded-2xl text-left transition-all duration-300 group focus:outline-none relative overflow-hidden flex flex-col justify-between h-[160px]"
-              style={{
-                background: '#191A1D',
-                borderColor: 'rgba(255,255,255,0.05)',
-              }}
+              className="snap-start flex-shrink-0 w-[220px] sm:w-auto border border-border rounded-2xl text-left transition-all duration-300 group focus:outline-none relative overflow-hidden flex flex-col justify-between h-[160px] bg-bg-surface"
               onMouseEnter={e => {
                 (e.currentTarget as HTMLButtonElement).style.borderColor = isPos
-                  ? 'rgba(16,185,129,0.3)'
-                  : 'rgba(255,77,77,0.3)';
+                  ? 'rgba(16,185,129,0.5)'
+                  : 'rgba(255,77,77,0.5)';
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.05)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-color)';
               }}
             >
               <div className="p-5 pb-0">
@@ -166,7 +162,7 @@ export default function TopMovers() {
 
                 {/* Price row */}
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-extrabold font-sora text-white">
+                  <span className="text-[10px] font-extrabold font-sora text-text-primary">
                     ₦{stock.price.toLocaleString('en-NG', { minimumFractionDigits: 3 })}k
                   </span>
                   <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${isPos ? 'bg-[#10B981]/20 text-[#10B981]' : 'bg-[#FF4D4D]/20 text-[#FF4D4D]'

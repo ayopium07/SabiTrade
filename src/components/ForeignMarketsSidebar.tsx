@@ -72,16 +72,16 @@ export default function ForeignMarketsSidebar() {
   const linePath = points.reduce((d, p, i) => d + `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`, '');
 
   return (
-    <div className="w-full h-full flex flex-col rounded-xl overflow-hidden shadow-2xl border border-white/[0.05]" style={{ background: '#191A1D' }}>
+    <div className="w-full h-full flex flex-col rounded-xl overflow-hidden glass-elevated border border-border shadow-lg">
       
       {/* ── Tabs ── */}
-      <div className="flex bg-[#252528] text-[12px] font-bold text-white/50 border-b border-black">
+      <div className="flex bg-bg-raised text-[12px] font-bold text-text-muted border-b border-border">
         {(['Global Indices'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-center transition-colors ${
-              activeTab === tab ? 'bg-[#191A1D] text-white shadow-[0_-2px_0_#CFA343_inset]' : 'hover:bg-[#2A2B2F]'
+              activeTab === tab ? 'bg-bg-surface text-text-primary shadow-[0_-2px_0_#CFA343_inset]' : 'hover:bg-bg-hover'
             }`}
           >
             {tab === 'Global Indices' && <Activity className="w-3 h-3 inline-block mr-1 -mt-0.5" />}
@@ -91,28 +91,28 @@ export default function ForeignMarketsSidebar() {
       </div>
 
       {/* ── Chart Area ── */}
-      <div className="h-[120px] bg-[#222225] relative border-b border-[#333]">
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: 'linear-gradient(#444 1px, transparent 1px), linear-gradient(90deg, #444 1px, transparent 1px)',
+      <div className="h-[120px] bg-bg-surface relative border-b border-border">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: 'linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)',
           backgroundSize: '20px 20px'
         }} />
         
         {/* Price Axis */}
-        <div className="absolute right-2 top-2 bottom-6 flex flex-col justify-between text-[9px] text-white/40 font-mono text-right pointer-events-none">
+        <div className="absolute right-2 top-2 bottom-6 flex flex-col justify-between text-[9px] text-text-muted font-mono text-right pointer-events-none">
           <span>{Math.round(max).toLocaleString()}</span>
           <span>{Math.round((max + min) / 2).toLocaleString()}</span>
           <span>{Math.round(min).toLocaleString()}</span>
         </div>
         
         {/* Time Axis */}
-        <div className="absolute left-2 right-10 bottom-1 flex justify-between text-[9px] text-white/40 font-mono pointer-events-none">
+        <div className="absolute left-2 right-10 bottom-1 flex justify-between text-[9px] text-text-muted font-mono pointer-events-none">
           <span>{selectedIndex.name}</span>
           <span>Live Feed</span>
           <span>{selectedIndex.change >= 0 ? '+' : ''}{selectedIndex.change}%</span>
         </div>
 
         {/* Center line (Open price) */}
-        <div className="absolute left-0 right-0 top-[50%] h-px bg-[#CFA343]/20 pointer-events-none" />
+        <div className="absolute left-0 right-0 top-[50%] h-px bg-brand-primary/20 pointer-events-none" />
 
         <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 z-10 px-2 pb-6">
           <path d={linePath} fill="none" stroke={selectedIndex.change >= 0 ? '#10B981' : '#FF4D4D'} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
@@ -120,7 +120,7 @@ export default function ForeignMarketsSidebar() {
       </div>
 
       {/* ── Indices List ── */}
-      <div className="flex flex-col bg-[#191A1D]">
+      <div className="flex flex-col bg-bg-surface">
         {indices.map((idx) => {
           const isPos = idx.change >= 0;
           const isSelected = selectedIndexId === idx.id;
@@ -128,31 +128,31 @@ export default function ForeignMarketsSidebar() {
             <div 
               key={idx.id} 
               onClick={() => setSelectedIndexId(idx.id)}
-              className={`flex items-center justify-between px-3 py-2 text-[11px] font-medium border-b border-white/[0.03] ${
-                isSelected ? 'bg-white/[0.08] border-l-2 border-l-[#CFA343]' : 'hover:bg-white/[0.04]'
+              className={`flex items-center justify-between px-3 py-2 text-[11px] font-medium border-b border-border/50 ${
+                isSelected ? 'bg-brand-primary/10 border-l-2 border-l-brand-primary' : 'hover:bg-bg-hover'
               } cursor-pointer transition-colors`}
             >
               <div className="flex items-center gap-2 flex-1 overflow-hidden">
                 <span className="text-[14px] leading-none">{idx.flag}</span>
-                <span className={`truncate ${isSelected ? 'text-[#CFA343] font-bold' : 'text-white'}`}>{idx.name}</span>
+                <span className={`truncate ${isSelected ? 'text-brand-primary font-bold' : 'text-text-primary'}`}>{idx.name}</span>
               </div>
               
               <div className="flex items-center justify-end gap-3 w-[125px]">
-                <span className="text-white/90 font-mono">{idx.price}</span>
+                <span className="text-text-primary font-mono">{idx.price}</span>
                 
                 {/* Change Badge */}
                 <span 
                   className={`w-[52px] text-right font-mono flex items-center justify-end font-bold ${
                     isSelected 
-                      ? isPos ? 'bg-[#10B981] text-[#0E0B14] px-1 rounded' : 'bg-[#FF4D4D] text-white px-1 rounded'
-                      : isPos ? 'text-[#10B981]' : 'text-[#FF4D4D]'
+                      ? isPos ? 'bg-gain text-bg-base px-1 rounded' : 'bg-danger text-white px-1 rounded'
+                      : isPos ? 'text-gain' : 'text-danger'
                   }`}
                 >
                   {isPos ? '+' : ''}{idx.change.toFixed(2)}%
                 </span>
                 
                 {/* Status Dot */}
-                <span className={`w-1.5 h-1.5 rounded-full ${isPos ? 'bg-[#10B981]' : 'bg-[#FF4D4D]'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${isPos ? 'bg-gain' : 'bg-danger'}`} />
               </div>
             </div>
           );

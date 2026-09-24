@@ -29,6 +29,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   FileText,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
@@ -75,10 +77,10 @@ function NGXTickerCarousel() {
     <div className="w-full max-w-5xl mx-auto space-y-4 px-1 sm:px-0">
       {/* ── Section heading ── */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-white font-sora leading-tight">
+        <h2 className="text-xl sm:text-2xl font-bold text-text-primary font-sora leading-tight">
           Nigerian Exchange
         </h2>
-        <p className="text-[12px] font-medium mt-0.5" style={{ color: '#CFA343' }}>
+        <p className="text-[12px] font-medium mt-0.5 text-brand-primary">
           150+ equities · Lagos
         </p>
       </div>
@@ -86,18 +88,15 @@ function NGXTickerCarousel() {
       {/* ── Marquee wrapper ── */}
       <div className="relative w-full overflow-hidden py-2">
         {/* Edge fade masks */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-r from-[#041226] via-[#041226]/80 to-transparent z-10" />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-[#041226] via-[#041226]/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-r from-bg-base via-bg-base/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-bg-base via-bg-base/80 to-transparent z-10" />
 
         {/* Marquee track */}
         <div className="card-marquee-track flex gap-4">
           {marqueeItems.map((s, idx) => (
             <div
               key={`ngx-${s.id}-${idx}`}
-              className="relative w-[250px] sm:w-[260px] flex-shrink-0 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl transition-all duration-200 hover:-translate-y-1 shadow-lg group"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.06)'}
-              onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
+              className="relative w-[250px] sm:w-[260px] flex-shrink-0 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl transition-all duration-200 hover:-translate-y-1 shadow-md group bg-bg-surface border border-border hover:border-brand-primary/40"
             >
               {/* Row 1: logo circle + name + badge + ↗ */}
               <div className="flex items-center gap-2">
@@ -107,23 +106,21 @@ function NGXTickerCarousel() {
                 >
                   {s.initials}
                 </div>
-                <span className="text-[12px] font-extrabold text-white font-sora flex-1 truncate">{s.name}</span>
+                <span className="text-[12px] font-extrabold text-text-primary font-sora flex-1 truncate">{s.name}</span>
                 <span
-                  className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
-                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.35)' }}
+                  className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0 bg-bg-raised text-text-muted border border-border"
                 >
                   {s.badge}
                 </span>
                 <div
-                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center group-hover:bg-white/20 transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center bg-bg-raised group-hover:bg-brand-primary/20 transition-colors"
                 >
-                  <ArrowUpRight className="h-3 w-3 text-white/50 group-hover:text-white" />
+                  <ArrowUpRight className="h-3 w-3 text-text-muted group-hover:text-brand-primary" />
                 </div>
               </div>
 
               {/* Row 2: Price */}
-              <p className="text-[16px] font-extrabold font-sora text-white leading-none">{s.price}</p>
+              <p className="text-[16px] font-extrabold font-sora text-text-primary leading-none">{s.price}</p>
 
               {/* Row 3: Sparkline */}
               <div className="h-7 w-full">
@@ -171,24 +168,21 @@ function USMarketsCarousel() {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-4 px-1 sm:px-0">
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-white font-sora leading-tight">US Markets (NYSE &amp; NASDAQ)</h2>
-        <p className="text-[12px] font-medium mt-0.5" style={{ color: '#CFA343' }}>8,000+ equities &middot; New York</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-text-primary font-sora leading-tight">US Markets (NYSE &amp; NASDAQ)</h2>
+        <p className="text-[12px] font-medium mt-0.5 text-brand-primary">8,000+ equities &middot; New York</p>
       </div>
 
       <div className="relative w-full overflow-hidden py-2">
         {/* Edge fade masks */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-r from-[#041226] via-[#041226]/80 to-transparent z-10" />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-[#041226] via-[#041226]/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-r from-bg-base via-bg-base/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-bg-base via-bg-base/80 to-transparent z-10" />
 
         {/* Marquee track */}
         <div className="card-marquee-track-reverse flex gap-4">
           {marqueeItems.map((s, idx) => (
             <div
               key={`us-${s.id}-${idx}`}
-              className="relative w-[250px] sm:w-[260px] flex-shrink-0 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl transition-all duration-200 hover:-translate-y-1 shadow-lg group"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.06)'}
-              onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'}
+              className="relative w-[250px] sm:w-[260px] flex-shrink-0 flex flex-col gap-4 px-4 sm:px-5 py-5 sm:py-6 cursor-pointer rounded-xl transition-all duration-200 hover:-translate-y-1 shadow-md group bg-bg-surface border border-border hover:border-brand-primary/40"
             >
               <div className="flex items-center gap-2">
                 <div
@@ -197,21 +191,19 @@ function USMarketsCarousel() {
                 >
                   {s.id.slice(0, 2)}
                 </div>
-                <span className="text-[12px] font-extrabold text-white font-sora flex-1 truncate">{s.name}</span>
+                <span className="text-[12px] font-extrabold text-text-primary font-sora flex-1 truncate">{s.name}</span>
                 <span
-                  className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
-                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.35)' }}
+                  className="text-[8px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0 bg-bg-raised text-text-muted border border-border"
                 >
                   {s.badge}
                 </span>
                 <div
-                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center group-hover:bg-white/20 transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                  className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center bg-bg-raised group-hover:bg-brand-primary/20 transition-colors"
                 >
-                  <ArrowUpRight className="h-3 w-3 text-white/50 group-hover:text-white" />
+                  <ArrowUpRight className="h-3 w-3 text-text-muted group-hover:text-brand-primary" />
                 </div>
               </div>
-              <p className="text-[16px] font-extrabold font-sora text-white leading-none">{s.price}</p>
+              <p className="text-[16px] font-extrabold font-sora text-text-primary leading-none">{s.price}</p>
               <div className="h-7 w-full">
                 <svg className="w-full h-full" viewBox="0 0 100 24" preserveAspectRatio="none">
                   <path d={`${s.sparkPath} L100 24 L0 24 Z`} fill={s.up ? 'rgba(16,185,129,0.10)' : 'rgba(255,77,77,0.08)'} />
@@ -250,23 +242,23 @@ function RatingSystemDeepDive() {
     <div className="w-full mt-24 text-left max-w-7xl mx-auto px-5 sm:px-8">
       {/* Header */}
       <div className="mb-8">
-        <span className="text-[12px] font-semibold text-[#CFA343] block mb-2">
+        <span className="text-[12px] font-semibold text-brand-primary block mb-2">
           Product Deep Dive
         </span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-sora mb-2">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-text-primary font-sora mb-2">
           The EquityStack Rating System
         </h2>
-        <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.5)' }}>
-          Every rating is drive by 7 measurable pillars - fully transparent, locally calibrated
+        <p className="text-sm font-medium text-text-secondary">
+          Every rating is driven by 7 measurable pillars - fully transparent, locally calibrated
         </p>
       </div>
 
       {/* 4 Sentiments */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-14">
         {sentiments.map((s) => (
-          <div key={s.name} className="rounded-xl p-4 sm:p-5 flex flex-col items-center justify-start text-center" style={{ background: s.bg }}>
-            <h3 className="text-[13px] font-bold text-white font-sora tracking-wide mb-2">{s.name}</h3>
-            <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <div key={s.name} className="rounded-xl p-4 sm:p-5 flex flex-col items-center justify-start text-center bg-bg-surface border border-border shadow-sm">
+            <h3 className="text-[13px] font-bold text-text-primary font-sora tracking-wide mb-2">{s.name}</h3>
+            <p className="text-[11px] leading-relaxed text-text-secondary">
               {s.desc}
             </p>
           </div>
@@ -275,25 +267,21 @@ function RatingSystemDeepDive() {
 
       {/* 7 Pillars Grid */}
       <div>
-        <p className="text-[13px] font-semibold text-white mb-6">
+        <p className="text-[13px] font-semibold text-text-primary mb-6">
           The 7 scoring pillars behind every ratings:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {pillars.map((p, idx) => (
             <div
               key={p.title}
-              className={`rounded-xl p-4 flex items-center gap-3 ${idx === 6 ? 'lg:col-start-2' : ''}`}
-              style={{ background: '#111116', border: '1px solid rgba(255,255,255,0.03)' }}
+              className={`rounded-xl p-4 flex items-center gap-3 bg-bg-surface border border-border shadow-sm ${idx === 6 ? 'lg:col-start-2' : ''}`}
             >
-              <div className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center bg-[#2B273A] relative">
-                <span className="text-white font-bold text-lg italic font-serif">e</span>
-                <span className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#2B273A] flex items-center justify-center">
-                  <span className="w-1 h-1 rounded-full bg-[#2B273A]"></span>
-                </span>
+              <div className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center bg-brand-primary/10 border border-brand-primary/20 relative">
+                <span className="text-brand-primary font-bold text-lg italic font-serif">e</span>
               </div>
               <div>
-                <h4 className="text-[12px] font-bold text-white font-sora mb-0.5">{p.title}</h4>
-                <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.45)' }}>{p.desc}</p>
+                <h4 className="text-[12px] font-bold text-text-primary font-sora mb-0.5">{p.title}</h4>
+                <p className="text-[11px] text-text-muted">{p.desc}</p>
               </div>
             </div>
           ))}
@@ -310,13 +298,13 @@ function MarketReportSection() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         {/* Left Side: Content */}
         <div className="text-left">
-          <span className="text-[12px] font-semibold text-[#CFA343] uppercase tracking-wider block mb-3">
+          <span className="text-[12px] font-semibold text-brand-primary uppercase tracking-wider block mb-3">
             Market Report
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-sora leading-tight mb-6">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora leading-tight mb-6">
             Every Saturday, the market comes to your inbox.
           </h2>
-          <p className="text-[14px] leading-relaxed text-white/70 mb-6">
+          <p className="text-[14px] leading-relaxed text-text-secondary mb-6">
             The EquityStack Weekly Market Report is a comprehensive briefing on Nigerian stock market performance &mdash; sector highlights, notable price movements, volume leaders, and economic analysis. Delivered every Saturday so you're ready when Monday opens.
           </p>
           <ul className="space-y-3 mb-8">
@@ -327,68 +315,68 @@ function MarketReportSection() {
               'Economic developments and macro impact analysis',
               'Delivered to every subscriber\'s inbox, every Saturday'
             ].map((item, idx) => (
-              <li key={idx} className="flex items-center gap-3 text-[13px] text-white/80">
-                <span className="w-1.5 h-1.5 rounded-full bg-white/70 flex-shrink-0" />
+              <li key={idx} className="flex items-center gap-3 text-[13px] text-text-secondary">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-primary flex-shrink-0" />
                 {item}
               </li>
             ))}
           </ul>
-          <button className="bg-[#CFA343] hover:bg-[#B58C35] text-[#111] font-bold py-3 px-6 rounded-full text-sm transition-colors focus:outline-none">
+          <button className="bg-brand-primary hover:bg-brand-primary-dim text-bg-base font-bold py-3 px-6 rounded-full text-sm transition-colors focus:outline-none">
             Subscribe for Free
           </button>
         </div>
 
         {/* Right Side: Card Mockup */}
-        <div className="rounded-2xl border border-white/5" style={{ background: '#111116' }}>
+        <div className="rounded-2xl border border-border bg-bg-surface shadow-xl">
           {/* Card Header */}
           <div className="p-5 sm:p-6 flex items-start justify-between">
             <div>
-              <h4 className="text-white font-bold text-[14px] font-sora mb-1">EquityStack Weekly Market Report</h4>
-              <p className="text-[11px] text-white/40">Week ended 21 June 2026 &middot; Delivered Saturday</p>
+              <h4 className="text-text-primary font-bold text-[14px] font-sora mb-1">EquityStack Weekly Market Report</h4>
+              <p className="text-[11px] text-text-muted">Week ended 21 June 2026 &middot; Delivered Saturday</p>
             </div>
-            <div className="px-3 py-1 rounded-md text-[10px] font-bold text-[#CFA343] border border-[#CFA343]/20" style={{ background: 'rgba(207,163,67,0.05)' }}>
+            <div className="px-3 py-1 rounded-md text-[10px] font-bold text-brand-primary border border-brand-primary/20 bg-brand-primary-glow">
               Issue #24
             </div>
           </div>
 
-          <div className="w-full border-t border-white/5" />
+          <div className="w-full border-t border-border" />
 
           {/* Card Data */}
           <div className="p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-white/50">NGX All-Share Index</span>
-              <span className="text-[13px] font-semibold text-[#10B981]">104,256.80 <span className="text-[10px]">▲</span>1.4%</span>
+              <span className="text-[12px] text-text-secondary">NGX All-Share Index</span>
+              <span className="text-[13px] font-semibold text-gain">104,256.80 <span className="text-[10px]">▲</span>1.4%</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-white/50">Market Cap</span>
-              <span className="text-[13px] font-semibold text-white">₦58.3tn</span>
+              <span className="text-[12px] text-text-secondary">Market Cap</span>
+              <span className="text-[13px] font-semibold text-text-primary">₦58.3tn</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-white/50">Weekly Volume</span>
-              <span className="text-[13px] font-semibold text-white">2.14bn shares</span>
+              <span className="text-[12px] text-text-secondary">Weekly Volume</span>
+              <span className="text-[13px] font-semibold text-text-primary">2.14bn shares</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-white/50">Top Gainer</span>
-              <span className="text-[13px] font-semibold text-[#10B981]">DANGCEM +8.2%</span>
+              <span className="text-[12px] text-text-secondary">Top Gainer</span>
+              <span className="text-[13px] font-semibold text-gain">DANGCEM +8.2%</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-white/50">Top Loser</span>
-              <span className="text-[13px] font-semibold text-[#FF4D4D]">STANBIC -3.4%</span>
+              <span className="text-[12px] text-text-secondary">Top Loser</span>
+              <span className="text-[13px] font-semibold text-danger">STANBIC -3.4%</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-white/50">Sector Leader</span>
-              <span className="text-[13px] font-semibold text-white">Banking +3.1%</span>
+              <span className="text-[12px] text-text-secondary">Sector Leader</span>
+              <span className="text-[13px] font-semibold text-text-primary">Banking +3.1%</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-white/50">MPR (CBN)</span>
-              <span className="text-[13px] font-semibold text-white">26.75% &mdash; Unchanged</span>
+              <span className="text-[12px] text-text-secondary">MPR (CBN)</span>
+              <span className="text-[13px] font-semibold text-text-primary">26.75% &mdash; Unchanged</span>
             </div>
           </div>
 
-          <div className="w-full border-t border-white/5" />
+          <div className="w-full border-t border-border" />
 
           {/* Card Footer */}
-          <div className="p-4 sm:px-6 text-[11px] text-white/30 text-center sm:text-left rounded-b-2xl" style={{ background: 'rgba(255,255,255,0.01)' }}>
+          <div className="p-4 sm:px-6 text-[11px] text-text-muted text-center sm:text-left rounded-b-2xl bg-bg-raised">
             Next report: Saturday, 28 June 2026 &middot; Delivered 8:00 AM WAT
           </div>
         </div>
@@ -442,10 +430,10 @@ function NewsSection() {
     <div className="w-full mt-32 max-w-7xl mx-auto px-5 sm:px-8 mb-24">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-sora mb-6">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary font-sora mb-6">
           News
         </h2>
-        <p className="text-[13px] leading-relaxed text-white/60">
+        <p className="text-[13px] leading-relaxed text-text-secondary">
           Stay current with a curated feed of Nigerian financial news. From corporate announcements and regulatory updates to macroeconomic developments, the News section ensures you're always working with the latest information relevant to your investment decisions.
         </p>
       </div>
@@ -454,14 +442,12 @@ function NewsSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
         {/* Large Feature Card (Spans 2 columns) */}
-        <div className="col-span-1 md:col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative flex flex-col justify-end p-8" style={{ background: 'linear-gradient(135deg, #2d184a, #150a24)', minHeight: '320px' }}>
-          <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
-
+        <div className="col-span-1 md:col-span-2 rounded-2xl overflow-hidden cursor-pointer group relative flex flex-col justify-end p-8 bg-bg-surface border border-border shadow-lg" style={{ minHeight: '320px' }}>
           <div className="relative z-10 space-y-4">
-            <h3 className="text-2xl sm:text-3xl font-bold text-white font-sora leading-tight group-hover:text-[#CFA343] transition-colors">
+            <h3 className="text-2xl sm:text-3xl font-bold text-text-primary font-sora leading-tight group-hover:text-brand-primary transition-colors">
               All about Investing in NGX Equities and related risks
             </h3>
-            <span className="inline-block px-3 py-1.5 text-[9px] font-bold text-white/70 uppercase tracking-widest rounded bg-white/5 border border-white/10">
+            <span className="inline-block px-3 py-1.5 text-[9px] font-bold text-text-secondary uppercase tracking-widest rounded bg-bg-raised border border-border">
               EQUITY BASIC
             </span>
           </div>
@@ -469,16 +455,16 @@ function NewsSection() {
 
         {/* Regular Cards */}
         {newsItems.map((item, idx) => (
-          <div key={idx} className="col-span-1 rounded-2xl overflow-hidden cursor-pointer group flex flex-col" style={{ background: '#111116', border: '1px solid rgba(255,255,255,0.03)' }}>
-            <div className="h-32 w-full" style={{ background: item.gradient }}></div>
+          <div key={idx} className="col-span-1 rounded-2xl overflow-hidden cursor-pointer group flex flex-col bg-bg-surface border border-border hover:border-brand-primary/40 shadow-sm transition-all">
+            <div className="h-32 w-full bg-bg-raised"></div>
             <div className="p-6 space-y-3 flex-1 flex flex-col items-start">
-              <span className="inline-block px-2.5 py-1 text-[8px] font-bold text-white/60 uppercase tracking-widest rounded bg-white/5 border border-white/10">
+              <span className="inline-block px-2.5 py-1 text-[8px] font-bold text-text-muted uppercase tracking-widest rounded bg-bg-raised border border-border">
                 {item.badge}
               </span>
-              <h4 className="text-[14px] font-bold text-white font-sora leading-tight group-hover:text-[#CFA343] transition-colors">
+              <h4 className="text-[14px] font-bold text-text-primary font-sora leading-tight group-hover:text-brand-primary transition-colors">
                 {item.title}
               </h4>
-              <p className="text-[11px] text-white/50 leading-relaxed mt-auto">
+              <p className="text-[11px] text-text-muted leading-relaxed mt-auto">
                 {item.desc}
               </p>
             </div>
@@ -488,7 +474,7 @@ function NewsSection() {
 
       {/* Footer Link */}
       <div className="text-left mt-2">
-        <a href="#" className="text-[13px] font-bold text-[#10B981] hover:underline">
+        <a href="#" className="text-[13px] font-bold text-gain hover:underline">
           See All Articles
         </a>
       </div>
@@ -499,32 +485,32 @@ function NewsSection() {
 // ─── Footer Section ───────────────────────────────────────
 function FooterSection() {
   return (
-    <div className="w-full bg-[#0B0C10] pt-20 pb-8 mt-12 border-t border-white/5 relative z-10">
+    <div className="w-full bg-bg-surface pt-20 pb-8 mt-12 border-t border-border relative z-10">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
 
           {/* Brand Column */}
           <div className="col-span-1 md:col-span-4 lg:col-span-5">
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(207,163,67,0.2)' }}>
+              <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center border border-border">
                 <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
               </div>
-              <span className="font-sora font-medium text-white tracking-tight">EquityStack</span>
+              <span className="font-sora font-medium text-text-primary tracking-tight">EquityStack</span>
             </div>
-            <p className="text-[12px] leading-relaxed text-white/50 mb-8 max-w-sm">
+            <p className="text-[12px] leading-relaxed text-text-secondary mb-8 max-w-sm">
               Africa's intelligence layer for capital markets. Built for Nigerian investors, by people who care about the market.
             </p>
-            <div className="flex items-center gap-4 text-white/40">
-              <a href="#" className="hover:text-white transition-colors" aria-label="Instagram">
+            <div className="flex items-center gap-4 text-text-muted">
+              <a href="#" className="hover:text-text-primary transition-colors" aria-label="Instagram">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
               </a>
-              <a href="#" className="hover:text-white transition-colors" aria-label="Facebook">
+              <a href="#" className="hover:text-text-primary transition-colors" aria-label="Facebook">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
               </a>
-              <a href="#" className="hover:text-white transition-colors" aria-label="Twitter">
+              <a href="#" className="hover:text-text-primary transition-colors" aria-label="Twitter">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
               </a>
-              <a href="#" className="hover:text-white transition-colors" aria-label="YouTube">
+              <a href="#" className="hover:text-text-primary transition-colors" aria-label="YouTube">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
               </a>
             </div>
@@ -534,42 +520,42 @@ function FooterSection() {
           <div className="col-span-1 md:col-span-8 lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
             {/* Platform */}
             <div>
-              <h4 className="text-[13px] font-bold text-white mb-6">Platform</h4>
-              <ul className="space-y-4 text-[12px] text-white/50">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Legal & privacy</a></li>
+              <h4 className="text-[13px] font-bold text-text-primary mb-6">Platform</h4>
+              <ul className="space-y-4 text-[12px] text-text-secondary">
+                <li><a href="#" className="hover:text-text-primary transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Careers</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Legal & privacy</a></li>
               </ul>
             </div>
 
             {/* Markets */}
             <div>
-              <h4 className="text-[13px] font-bold text-white mb-6">Markets</h4>
-              <ul className="space-y-4 text-[12px] text-white/50">
-                <li><a href="#" className="hover:text-white transition-colors">Applications</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Buy Equities</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Affiliate</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Institutional Services</a></li>
+              <h4 className="text-[13px] font-bold text-text-primary mb-6">Markets</h4>
+              <ul className="space-y-4 text-[12px] text-text-secondary">
+                <li><a href="#" className="hover:text-text-primary transition-colors">Applications</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Buy Equities</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Affiliate</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Institutional Services</a></li>
               </ul>
             </div>
 
             {/* Company */}
             <div>
-              <h4 className="text-[13px] font-bold text-white mb-6">Company</h4>
-              <ul className="space-y-4 text-[12px] text-white/50">
-                <li><a href="#" className="hover:text-white transition-colors">What is the Stock Market?</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Market Basic</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Tips and Tutorials</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Market Update</a></li>
+              <h4 className="text-[13px] font-bold text-text-primary mb-6">Company</h4>
+              <ul className="space-y-4 text-[12px] text-text-secondary">
+                <li><a href="#" className="hover:text-text-primary transition-colors">What is the Stock Market?</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Market Basic</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Tips and Tutorials</a></li>
+                <li><a href="#" className="hover:text-text-primary transition-colors">Market Update</a></li>
               </ul>
             </div>
           </div>
         </div>
 
         {/* Divider & Copyright */}
-        <div className="w-full border-t border-white/5 pt-8 text-center">
-          <p className="text-[10px] font-medium text-white/40">
+        <div className="w-full border-t border-border pt-8 text-center">
+          <p className="text-[10px] font-medium text-text-muted">
             &copy; {new Date().getFullYear()} EquityStack &middot; Nigerian Financial Intelligence Platform &middot; MVP v1.0 &middot; Strictly Confidential
           </p>
         </div>
@@ -644,11 +630,13 @@ const Pillar5Illustration = () => (
   </svg>
 );
 
-// ─── Reusable dark input style ─────────────────────────
-const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none text-text-primary placeholder:text-text-secondary transition-all";
-const inputStyle = { background: 'rgba(14,13,37,0.8)', border: '1px solid #23214C' };
+// ─── Reusable input style ─────────────────────────
+const inputCls = "w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold focus:ring-0 focus:outline-none text-text-primary placeholder:text-text-muted transition-all bg-bg-raised border border-border";
+const inputStyle = { background: 'var(--bg-raised)', border: '1px solid var(--border-color)' };
 
 export default function Page() {
+  const theme = useAppStore((s) => s.theme);
+  const toggleTheme = useAppStore((s) => s.toggleTheme);
   const currentView = useAppStore((s) => s.currentView);
   const setView = useAppStore((s) => s.setView);
   const setSelectedTicker = useAppStore((s) => s.setSelectedTicker);
@@ -664,6 +652,15 @@ export default function Page() {
   const stocks = useAppStore((s) => s.stocks);
   const news = useAppStore((s) => s.news);
   const fetchNews = useAppStore((s) => s.fetchNews);
+
+  // Sync theme attribute to document element
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.classList.remove('dark', 'light');
+      document.documentElement.classList.add(theme);
+    }
+  }, [theme]);
 
   const [emailInput, setEmailInput] = useState('');
   const [nameInput, setNameInput] = useState('');
@@ -983,7 +980,7 @@ export default function Page() {
           <div className="lg:hidden w-full">
             <button
               onClick={() => setIsHomeMenuOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#191A1D] rounded-xl text-[13px] font-bold text-white border border-white/5 focus:outline-none"
+              className="flex items-center gap-2 px-4 py-2.5 bg-bg-surface rounded-xl text-[13px] font-bold text-text-primary border border-border focus:outline-none"
             >
               <Menu className="w-4 h-4 text-brand-primary" />
               Dashboard Menu
@@ -994,16 +991,16 @@ export default function Page() {
           {isHomeMenuOpen && (
             <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setIsHomeMenuOpen(false)} />
           )}
-          <div className={`fixed top-0 bottom-0 left-0 z-50 lg:static lg:z-auto w-[280px] lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6 h-full lg:h-auto overflow-y-auto lg:overflow-visible transition-transform duration-300 ${isHomeMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`} style={{ background: '#121212' }}>
+          <div className={`fixed top-0 bottom-0 left-0 z-50 lg:static lg:z-auto w-[280px] lg:w-[280px] flex-shrink-0 flex flex-col lg:sticky lg:top-6 h-full lg:h-auto overflow-y-auto lg:overflow-visible transition-transform duration-300 bg-bg-surface border-r border-border rounded-2xl ${isHomeMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
             {/* Mobile Close Header */}
-            <div className="lg:hidden flex justify-end p-4 border-b border-[#2C2D30]">
-              <button onClick={() => setIsHomeMenuOpen(false)} className="p-2 text-white/50 hover:text-white rounded-lg bg-white/5">
+            <div className="lg:hidden flex justify-end p-4 border-b border-border">
+              <button onClick={() => setIsHomeMenuOpen(false)} className="p-2 text-text-muted hover:text-text-primary rounded-lg bg-bg-raised">
                 <X className="w-5 h-5" />
               </button>
             </div>
             {/* Menu Navigation */}
-            <div className="p-5 pb-6 border-b border-[#2C2D30]">
-              <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans mb-5">
+            <div className="p-5 pb-6 border-b border-border">
+              <h3 className="text-[13px] font-bold text-text-primary font-dm-sans mb-5">
                 Menu
               </h3>
               <div className="flex flex-col gap-2">
@@ -1022,15 +1019,16 @@ export default function Page() {
                         setActiveHomeTab(tab.id);
                         setIsHomeMenuOpen(false); // Auto-close on mobile
                       }}
-                      className="flex items-center justify-between px-3 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 focus:outline-none"
-                      style={isSelected
-                        ? { backgroundColor: '#2D2619', color: '#FFFFFF' }
-                        : { color: '#8B95A5' }}
+                      className={`flex items-center justify-between px-3 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 focus:outline-none ${
+                        isSelected 
+                          ? 'bg-brand-primary/15 text-brand-primary border border-brand-primary/30' 
+                          : 'text-text-secondary hover:bg-bg-raised hover:text-text-primary'
+                      }`}
                     >
                       <div className="flex items-center gap-3 w-full">
                         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: tab.color }} />
                         <span className="flex-1 text-left">{tab.label}</span>
-                        {!isSelected && <ChevronDown className="h-4 w-4 text-[#8B95A5]/70 flex-shrink-0" />}
+                        {!isSelected && <ChevronDown className="h-4 w-4 text-text-muted flex-shrink-0" />}
                       </div>
                     </button>
                   );
@@ -1041,7 +1039,7 @@ export default function Page() {
             {/* Watchlist Preview Sidebar */}
             <div className="p-5 pt-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[13px] font-bold text-[#E5E7EB] font-dm-sans">
+                <h3 className="text-[13px] font-bold text-text-primary font-dm-sans">
                   Watchlist Preview
                 </h3>
               </div>
@@ -1110,10 +1108,10 @@ export default function Page() {
 
                   return (
                     <button key={stock.ticker} onClick={() => setSelectedTicker(stock.ticker)}
-                      className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors focus:outline-none text-left w-full group gap-4">
+                      className="flex items-center justify-between p-3 rounded-xl hover:bg-bg-raised transition-colors focus:outline-none text-left w-full group gap-4">
                       <div className="flex items-center gap-4">
                         {getCryptoIcon(stock.ticker)}
-                        <span className="text-[14px] font-bold text-[#8B95A5]">
+                        <span className="text-[14px] font-bold text-text-primary">
                           {stock.ticker}
                         </span>
                       </div>
@@ -1128,7 +1126,7 @@ export default function Page() {
               </div>
 
               <button onClick={() => setView('markets')}
-                className="mt-6 text-[12px] font-bold text-[#D4AF37] hover:underline font-dm-sans focus:outline-none w-full text-left px-2">
+                className="mt-6 text-[12px] font-bold text-brand-primary hover:underline font-dm-sans focus:outline-none w-full text-left px-2">
                 Manage all stocks &gt;
               </button>
             </div>
@@ -1379,7 +1377,7 @@ export default function Page() {
           >
             <div
               className="w-full max-w-md rounded-3xl p-6 sm:p-8 relative overflow-hidden"
-              style={{ background: '#0E0B14', border: '1px solid rgba(207,163,67,0.25)', boxShadow: '0 0 0 1px rgba(207,163,67,0.04), 0 40px 80px rgba(0,0,0,0.9)' }}
+              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-color)', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top gradient border */}
@@ -1390,8 +1388,7 @@ export default function Page() {
               {/* Close */}
               <button
                 onClick={() => setIsAuthModalOpen(false)}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-[#7B7E8E] hover:text-white transition-colors focus:outline-none"
-                style={{ background: 'rgba(255,255,255,0.05)' }}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-text-muted hover:text-text-primary transition-colors focus:outline-none bg-bg-raised border border-border"
               >
                 ✕
               </button>
@@ -1402,11 +1399,11 @@ export default function Page() {
                   <div className="h-9 w-9 rounded-xl overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(207,163,67,0.4)' }}>
                     <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
                   </div>
-                  <span className="font-sora font-extrabold text-white text-sm tracking-tight">EquityStack</span>
+                  <span className="font-sora font-extrabold text-text-primary text-sm tracking-tight">EquityStack</span>
                 </div>
 
                 {/* Mode tabs */}
-                <div className="flex gap-1 p-1 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                <div className="flex gap-1 p-1 rounded-xl mb-6 bg-bg-raised border border-border">
                   {(['signup', 'login'] as const).map((m) => (
                     <button
                       key={m}
@@ -1414,7 +1411,7 @@ export default function Page() {
                       className="flex-1 py-2 rounded-lg text-[12px] font-bold transition-all focus:outline-none"
                       style={{
                         background: authMode === m ? '#CFA343' : 'transparent',
-                        color: authMode === m ? '#0E0B14' : '#7B7E8E',
+                        color: authMode === m ? '#0E0B14' : 'var(--text-secondary)',
                       }}
                     >
                       {m === 'signup' ? 'Create Account' : 'Sign In'}
@@ -1422,10 +1419,10 @@ export default function Page() {
                   ))}
                 </div>
 
-                <h2 className="text-xl font-extrabold font-sora tracking-tight mb-1 text-white">
+                <h2 className="text-xl font-extrabold font-sora tracking-tight mb-1 text-text-primary">
                   {authMode === 'signup' ? 'Start Your Journey' : 'Welcome Back 👋'}
                 </h2>
-                <p className="text-[11px] text-[#7B7E8E] font-medium mb-5">
+                <p className="text-[11px] text-text-secondary font-medium mb-5">
                   {authMode === 'signup'
                     ? 'Join thousands of retail investors on the NGX.'
                     : 'Enter your credentials to access your dashboard.'}
@@ -1442,7 +1439,7 @@ export default function Page() {
                   {/* Full Name — signup only */}
                   {authMode === 'signup' && (
                     <div>
-                      <label className="block text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider mb-1.5">Full Name</label>
+                      <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider mb-1.5">Full Name</label>
                       <input
                         type="text"
                         placeholder="e.g. Tunde Balogun"
@@ -1451,14 +1448,14 @@ export default function Page() {
                         className={inputCls}
                         style={inputStyle}
                         onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.5)')}
-                        onBlur={e => (e.target.style.borderColor = '#23214C')}
+                        onBlur={e => (e.target.style.borderColor = 'var(--border-color)')}
                       />
                     </div>
                   )}
 
                   {/* Email */}
                   <div>
-                    <label className="block text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider mb-1.5">Email Address</label>
+                    <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider mb-1.5">Email Address</label>
                     <input
                       type="email"
                       placeholder="e.g. tunde@gmail.com"
@@ -1467,14 +1464,14 @@ export default function Page() {
                       className={inputCls}
                       style={inputStyle}
                       onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.5)')}
-                      onBlur={e => (e.target.style.borderColor = '#23214C')}
+                      onBlur={e => (e.target.style.borderColor = 'var(--border-color)')}
                     />
                   </div>
 
                   {/* Password */}
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider">Password</label>
+                      <label className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Password</label>
                       {authMode === 'login' && (
                         <button type="button" className="text-[10px] text-[#CFA343] font-bold hover:underline focus:outline-none">
                           Forgot password?
@@ -1490,12 +1487,12 @@ export default function Page() {
                         className={`${inputCls} pr-12`}
                         style={inputStyle}
                         onFocus={e => (e.target.style.borderColor = 'rgba(207,163,67,0.5)')}
-                        onBlur={e => (e.target.style.borderColor = '#23214C')}
+                        onBlur={e => (e.target.style.borderColor = 'var(--border-color)')}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(s => !s)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7B7E8E] hover:text-white transition-colors focus:outline-none text-[11px] font-bold"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors focus:outline-none text-[11px] font-bold"
                       >
                         {showPassword ? 'HIDE' : 'SHOW'}
                       </button>
@@ -1506,10 +1503,10 @@ export default function Page() {
                       <div className="mt-2">
                         <div className="flex gap-1 mb-1">
                           {[1, 2, 3, 4].map(i => (
-                            <div key={i} className="h-1 flex-1 rounded-full transition-all" style={{ background: i <= pwStrength ? pwColors[pwStrength - 1] : 'rgba(255,255,255,0.08)' }} />
+                            <div key={i} className="h-1 flex-1 rounded-full transition-all" style={{ background: i <= pwStrength ? pwColors[pwStrength - 1] : 'var(--border-color)' }} />
                           ))}
                         </div>
-                        <span className="text-[10px] font-bold" style={{ color: pwColors[pwStrength - 1] || '#7B7E8E' }}>
+                        <span className="text-[10px] font-bold" style={{ color: pwColors[pwStrength - 1] || 'var(--text-muted)' }}>
                           {pwStrength > 0 ? pwLabels[pwStrength - 1] : ''}
                         </span>
                       </div>
@@ -1519,7 +1516,7 @@ export default function Page() {
                   {/* Confirm Password — signup only */}
                   {authMode === 'signup' && (
                     <div>
-                      <label className="block text-[10px] text-[#7B7E8E] font-bold uppercase tracking-wider mb-1.5">Confirm Password</label>
+                      <label className="block text-[10px] text-text-secondary font-bold uppercase tracking-wider mb-1.5">Confirm Password</label>
                       <div className="relative">
                         <input
                           type={showPassword ? 'text' : 'password'}
@@ -1529,7 +1526,7 @@ export default function Page() {
                           className={`${inputCls} pr-10`}
                           style={inputStyle}
                           onFocus={e => (e.target.style.borderColor = confirmInput && confirmInput !== passwordInput ? 'rgba(255,77,79,0.5)' : 'rgba(207,163,67,0.5)')}
-                          onBlur={e => (e.target.style.borderColor = '#23214C')}
+                          onBlur={e => (e.target.style.borderColor = 'var(--border-color)')}
                         />
                         {confirmInput && (
                           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px]">
@@ -1552,16 +1549,15 @@ export default function Page() {
 
                 {/* Divider */}
                 <div className="relative my-5 flex items-center">
-                  <div className="flex-grow border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
-                  <span className="mx-3 text-[10px] font-bold text-[#44475A] uppercase">or continue with</span>
-                  <div className="flex-grow border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+                  <div className="flex-grow border-t border-border" />
+                  <span className="mx-3 text-[10px] font-bold text-text-muted uppercase">or continue with</span>
+                  <div className="flex-grow border-t border-border" />
                 </div>
 
                 {/* Google */}
                 <button
                   onClick={() => { loginUser(nameInput.trim() || 'Google User', emailInput.trim() || 'user@gmail.com'); setIsAuthModalOpen(false); }}
-                  className="w-full py-2.5 rounded-xl text-[12px] font-bold text-white flex items-center justify-center gap-2.5 transition-all focus:outline-none border hover:opacity-80"
-                  style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
+                  className="w-full py-2.5 rounded-xl text-[12px] font-bold text-text-primary bg-bg-raised border border-border flex items-center justify-center gap-2.5 transition-all focus:outline-none hover:bg-bg-hover"
                 >
                   <svg className="h-4 w-4 flex-shrink-0" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -1572,7 +1568,7 @@ export default function Page() {
                   Google
                 </button>
 
-                <p className="mt-5 text-center text-[11px] font-medium text-[#7B7E8E]">
+                <p className="mt-5 text-center text-[11px] font-medium text-text-secondary">
                   {authMode === 'signup' ? 'Already have an account?' : "Don't have an account?"}
                   <button
                     onClick={() => switchAuthMode(authMode === 'signup' ? 'login' : 'signup')}
@@ -1674,7 +1670,14 @@ export default function Page() {
             </div>
 
             {/* Desktop/Tablet Action Buttons */}
-            <div className="hidden sm:flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-3">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full border border-border text-text-secondary hover:text-text-primary transition-all focus:outline-none flex items-center justify-center bg-bg-raised"
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-amber-600" />}
+              </button>
               <button onClick={() => { setAuthMode('login'); setIsAuthModalOpen(true); }}
                 className="text-sm font-medium px-6 py-2.5 rounded-full border border-[#443E55] text-[#CFA343] bg-transparent hover:bg-[#CFA343]/10 transition-all focus:outline-none">
                 Sign In
@@ -1687,7 +1690,14 @@ export default function Page() {
             </div>
 
             {/* Mobile Actions and Hamburger Toggle */}
-            <div className="flex sm:hidden items-center gap-3 z-40">
+            <div className="flex sm:hidden items-center gap-2 z-40">
+              <button
+                onClick={toggleTheme}
+                className="p-1.5 text-text-secondary hover:text-text-primary transition-colors focus:outline-none"
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-amber-600" />}
+              </button>
               <button
                 onClick={() => setIsLandingMenuOpen(!isLandingMenuOpen)}
                 className="p-1.5 text-white hover:text-[#CFA343] transition-colors focus:outline-none"
@@ -2127,30 +2137,30 @@ export default function Page() {
     { id: 'profile', label: 'Profile', icon: User },
   ] as const;
 
-  // Mobile bottom 5-tab bar
+  // Mobile bottom 4-tab bar (5th tab is More)
   const mobileBottomTabs = [
     { id: 'home' as const, label: 'Home', icon: HomeIcon },
-    { id: 'markets' as const, label: 'Markets', icon: BarChart2 },
-    { id: 'portfolio' as const, label: 'Portfolio', icon: Briefcase },
     { id: 'news' as const, label: 'News', icon: Newspaper, badge: true },
+    { id: 'screener' as const, label: 'Screener', icon: Filter },
+    { id: 'portfolio' as const, label: 'Portfolio', icon: Briefcase },
   ] as const;
 
-  // Drawer items (More panel) — all overflow items
+  // Drawer items (More panel) — overflow items including Markets
   const mobileNavItems = [
+    { id: 'markets' as const, label: 'Markets', icon: BarChart2 },
     { id: 'trade' as const, label: 'Trade', icon: TrendingUp },
-    { id: 'screener' as const, label: 'Screener', icon: Filter },
     { id: 'learn' as const, label: 'Learn', icon: GraduationCap },
     { id: 'about' as const, label: 'About', icon: Info },
     { id: 'profile' as const, label: 'Profile', icon: User },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0E0B14] font-dm-sans flex flex-col">
+    <div className="min-h-screen bg-bg-base text-text-primary font-dm-sans flex flex-col">
       <TickerTape />
       {/* ══════════════════════════════════════════════════════
           DESKTOP TOP NAVIGATION
           ══════════════════════════════════════════════════════ */}
-      <header className="hidden lg:flex sticky top-0 z-40 items-center border-t-[3px]" style={{ background: '#191A1D', borderTopColor: '#53A6F6', height: '60px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+      <header className="hidden lg:flex sticky top-0 z-40 items-center border-t-[3px] border-t-brand-primary bg-bg-surface border-b border-border shadow-md" style={{ height: '60px' }}>
         <div className="w-full max-w-[1600px] mx-auto px-6 flex items-center justify-between" style={{ height: '100%' }}>
 
           <div className="flex items-center">
@@ -2163,8 +2173,8 @@ export default function Page() {
                 <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
               </div>
               <div className="leading-none mt-0.5">
-                <span className="font-sora font-medium text-[15px] tracking-tight text-white block">EquityStack</span>
-                <span className="text-[10px] font-medium block mt-[3px]" style={{ color: '#D3A84B' }}>NGX Intelligence</span>
+                <span className="font-sora font-medium text-[15px] tracking-tight text-text-primary block">EquityStack</span>
+                <span className="text-[10px] font-bold block mt-[3px] text-brand-primary">NGX Intelligence</span>
               </div>
             </button>
 
@@ -2177,21 +2187,11 @@ export default function Page() {
                   <button
                     key={item.id}
                     onClick={() => setView(item.id as Parameters<typeof setView>[0])}
-                    className="relative flex items-center justify-center px-2.5 lg:px-3 xl:px-4 py-1.5 rounded-md text-[12.5px] xl:text-[13.5px] font-medium transition-all duration-150 focus:outline-none whitespace-nowrap"
-                    style={{
-                      color: isActive ? '#ffffff' : '#D3A84B',
-                      background: isActive ? '#3F392B' : 'transparent',
-                    }}
-                    onMouseEnter={e => {
-                      if (!isActive) {
-                        (e.currentTarget as HTMLButtonElement).style.color = '#F2C96D';
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      if (!isActive) {
-                        (e.currentTarget as HTMLButtonElement).style.color = '#D3A84B';
-                      }
-                    }}
+                    className={`relative flex items-center justify-center px-2.5 lg:px-3 xl:px-4 py-1.5 rounded-lg text-[12.5px] xl:text-[13.5px] font-bold transition-all duration-150 focus:outline-none whitespace-nowrap ${
+                      isActive
+                        ? 'bg-brand-primary text-bg-base shadow-sm font-extrabold'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover'
+                    }`}
                   >
                     <span>{item.label}</span>
                   </button>
@@ -2201,7 +2201,20 @@ export default function Page() {
           </div>
 
           {/* ── Right Controls ──────────────────────────────── */}
-          <div className="flex items-center gap-5 flex-shrink-0">
+          <div className="flex items-center gap-4 flex-shrink-0">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center p-2 rounded-xl transition-all focus:outline-none bg-bg-raised hover:bg-bg-hover border border-border"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4 text-amber-400" />
+              ) : (
+                <Moon className="h-4 w-4 text-amber-600" />
+              )}
+            </button>
+
             {/* Search */}
             <button
               onClick={() => setIsHeaderSearchOpen(true)}
@@ -2220,14 +2233,7 @@ export default function Page() {
 
             {/* Notifications */}
             <button
-              className="flex items-center justify-center transition-all focus:outline-none"
-              style={{ color: '#E0E0E0' }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.color = '#E0E0E0';
-              }}
+              className="flex items-center justify-center transition-all focus:outline-none text-text-secondary hover:text-text-primary"
               title="Notifications"
             >
               <Bell className="h-5 w-5" strokeWidth={2} />
@@ -2236,8 +2242,7 @@ export default function Page() {
             {/* Avatar */}
             <button
               onClick={() => setView('profile')}
-              className="flex items-center justify-center w-[30px] h-[30px] rounded-full focus:outline-none overflow-hidden flex-shrink-0"
-              style={{ border: '1px solid rgba(255,255,255,0.2)' }}
+              className="flex items-center justify-center w-[30px] h-[30px] rounded-full focus:outline-none overflow-hidden flex-shrink-0 border border-border"
               title="Profile"
             >
               {user?.profileImage ? (
@@ -2253,14 +2258,7 @@ export default function Page() {
             {/* Logout Icon */}
             <button
               onClick={logoutUser}
-              className="flex items-center justify-center transition-all focus:outline-none ml-2"
-              style={{ color: '#E0E0E0' }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.color = '#E0E0E0';
-              }}
+              className="flex items-center justify-center transition-all focus:outline-none text-text-secondary hover:text-text-primary ml-1"
               title="Sign out"
             >
               <LogOut className="h-[18px] w-[18px]" strokeWidth={2.5} />
@@ -2278,23 +2276,30 @@ export default function Page() {
             onClick={() => setView('landing')}
             className="flex items-center gap-2 text-left focus:outline-none"
           >
-            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center"
-              style={{ boxShadow: '0 0 10px rgba(207,163,67,0.35)' }}>
+            <div className="h-8 w-8 rounded-lg overflow-hidden flex items-center justify-center border border-border-bright shadow-sm">
               <img src="/EquityStack.jpeg" alt="EquityStack Logo" className="h-full w-full object-cover" />
             </div>
             <span className="font-sora font-extrabold text-sm text-text-primary">EquityStack</span>
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-text-secondary hover:text-text-primary focus:outline-none transition-colors"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4 text-amber-400" />
+              ) : (
+                <Moon className="h-4 w-4 text-amber-600" />
+              )}
+            </button>
             <button onClick={() => setIsHeaderSearchOpen(true)}
-              className="p-1.5 rounded-lg focus:outline-none"
-              style={{ color: 'rgba(255,255,255,0.6)' }}>
+              className="p-2 rounded-lg text-text-secondary hover:text-text-primary focus:outline-none transition-colors">
               <Search className="h-4 w-4" />
             </button>
-            <button className="relative p-1.5 rounded-lg focus:outline-none"
-              style={{ color: 'rgba(255,255,255,0.6)' }}>
+            <button className="relative p-2 rounded-lg text-text-secondary hover:text-text-primary focus:outline-none transition-colors">
               <Bell className="h-4 w-4" />
-              <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full"
-                style={{ background: '#10B981', boxShadow: '0 0 4px rgba(207,163,67,0.7)' }} />
+              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-gain shadow-sm" />
             </button>
           </div>
         </div>
@@ -2303,12 +2308,12 @@ export default function Page() {
       {/* ══════════════════════════════════════════════════════
           MAIN CONTENT
           ══════════════════════════════════════════════════════ */}
-      <main className="flex-grow flex flex-col">
-        <div className="flex-grow p-4 sm:p-6 lg:p-8 w-full mx-auto pb-24 lg:pb-10 max-w-[100%]">
+      <main className="flex-grow flex flex-col min-w-0">
+        <div className="flex-grow px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 w-full mx-auto pb-32 lg:pb-10 max-w-[100%] overflow-x-hidden">
           {renderViewContent()}
         </div>
         {currentView === 'home' && (
-          <div className="px-4 sm:px-6 lg:px-8 w-full flex flex-col gap-10">
+          <div className="px-3 sm:px-6 lg:px-8 w-full flex flex-col gap-10 pb-20 lg:pb-0">
             <TrendingStocks />
             <LearnSection />
           </div>
@@ -2319,32 +2324,32 @@ export default function Page() {
       {/* ══════════════════════════════════════════════════════
           MOBILE BOTTOM TAB BAR
           ══════════════════════════════════════════════════════ */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-stretch" style={{ background: 'rgba(4,18,38,0.97)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(207,163,67,0.1)', boxShadow: '0 -8px 32px rgba(0,0,0,0.5)' }}>
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-stretch glass-nav border-t border-border shadow-lg bg-bg-surface/95 backdrop-blur-md">
         {mobileBottomTabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = currentView === tab.id || (tab.id === 'markets' && currentView === 'stock-detail');
+          const isActive = currentView === tab.id || (tab.id === 'news' && currentView === 'news-detail');
           return (
             <button key={tab.id} onClick={() => setView(tab.id)}
-              className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2 focus:outline-none relative transition-all duration-200"
-              style={{ color: isActive ? '#CFA343' : 'rgba(255,255,255,0.45)' }}>
-              {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style={{ background: '#CFA343', boxShadow: '0 0 8px rgba(207,163,67,0.7)' }} />}
+              className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 focus:outline-none relative transition-all duration-200"
+              style={{ color: isActive ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
+              {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-brand-primary shadow-sm" />}
               <div className="relative">
                 <Icon className="h-[18px] w-[18px]" />
                 {'badge' in tab && tab.badge && (
-                  <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full" style={{ background: '#10B981', boxShadow: '0 0 4px rgba(16,185,129,0.8)' }} />
+                  <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-gain shadow-sm" />
                 )}
               </div>
-              <span className={`text-[9px] font-semibold tracking-tight ${isActive ? 'text-brand-primary' : 'text-text-secondary'}`}>{tab.label}</span>
+              <span className={`text-[10px] font-bold tracking-tight ${isActive ? 'text-brand-primary' : 'text-text-muted'}`}>{tab.label}</span>
             </button>
           );
         })}
         {/* More tab */}
         <button onClick={() => setIsMobileDrawerOpen(true)}
-          className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2 focus:outline-none relative transition-all duration-200"
-          style={{ color: mobileNavItems.some(i => i.id === currentView) ? '#CFA343' : 'rgba(255,255,255,0.45)' }}>
-          {mobileNavItems.some(i => i.id === currentView) && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style={{ background: '#CFA343', boxShadow: '0 0 8px rgba(207,163,67,0.7)' }} />}
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 focus:outline-none relative transition-all duration-200"
+          style={{ color: mobileNavItems.some(i => i.id === currentView) || currentView === 'stock-detail' ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
+          {(mobileNavItems.some(i => i.id === currentView) || currentView === 'stock-detail') && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-brand-primary shadow-sm" />}
           <Menu className="h-[18px] w-[18px]" />
-          <span className={`text-[9px] font-semibold tracking-tight ${mobileNavItems.some(i => i.id === currentView) ? 'text-brand-primary' : 'text-text-secondary'}`}>More</span>
+          <span className={`text-[10px] font-bold tracking-tight ${mobileNavItems.some(i => i.id === currentView) || currentView === 'stock-detail' ? 'text-brand-primary' : 'text-text-muted'}`}>More</span>
         </button>
       </nav>
 
@@ -2355,8 +2360,7 @@ export default function Page() {
           onClick={() => setIsMobileDrawerOpen(false)}>
 
           {/* Drawer Panel */}
-          <div className="w-[290px] h-full bg-[#141020] border-l border-brand-primary/15 p-6 flex flex-col justify-between shadow-2xl relative animate-in slide-in-from-right duration-300"
-            style={{ boxShadow: '-10px 0 30px rgba(0,0,0,0.5)' }}
+          <div className="w-[290px] h-full bg-bg-surface border-l border-border p-6 flex flex-col justify-between shadow-2xl relative animate-in slide-in-from-right duration-300"
             onClick={(e) => e.stopPropagation()}>
 
             <div>
@@ -2400,8 +2404,24 @@ export default function Page() {
                 </div>
               )}
 
+              {/* Theme Switch Control */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-bg-raised border border-border mb-4">
+                <div className="flex items-center gap-2.5">
+                  {theme === 'dark' ? <Moon className="h-4 w-4 text-amber-400" /> : <Sun className="h-4 w-4 text-amber-600" />}
+                  <span className="text-xs font-bold text-text-primary">
+                    {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                  </span>
+                </div>
+                <button
+                  onClick={toggleTheme}
+                  className="px-3 py-1 rounded-full text-[10px] font-extrabold transition-all border border-brand-primary/30 text-brand-primary bg-brand-primary/10 hover:bg-brand-primary/20"
+                >
+                  {theme === 'dark' ? 'Light ☀️' : 'Dark 🌙'}
+                </button>
+              </div>
+
               {/* Navigation Links */}
-              <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1 custom-scrollbar">
+              <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-320px)] pr-1 custom-scrollbar">
                 {mobileNavItems.map((item) => {
                   const IconComp = item.icon;
                   const isActive = currentView === item.id;
@@ -2412,12 +2432,11 @@ export default function Page() {
                         setView(item.id);
                         setIsMobileDrawerOpen(false);
                       }}
-                      className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left font-bold text-xs transition-all duration-200 focus:outline-none relative"
-                      style={{
-                        background: isActive ? 'rgba(207,163,67,0.1)' : 'transparent',
-                        color: isActive ? '#CFA343' : 'rgba(255,255,255,0.6)',
-                        border: isActive ? '1px solid rgba(207,163,67,0.15)' : '1px solid transparent',
-                      }}
+                      className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left font-bold text-xs transition-all duration-200 focus:outline-none relative ${
+                        isActive
+                          ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20'
+                          : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover border border-transparent'
+                      }`}
                     >
                       <IconComp className="h-4.5 w-4.5" />
                       <span>{item.label}</span>
